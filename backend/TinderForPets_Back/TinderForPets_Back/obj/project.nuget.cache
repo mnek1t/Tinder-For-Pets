@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jcJ2ajvBwVg=",
+  "dgSpecHash": "DbmciTrqGZc=",
   "success": true,
-  "projectFilePath": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets_Back\\TinderForPets_Back.csproj",
+  "projectFilePath": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets_Back\\TinderForPets.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\medni\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\medni\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
