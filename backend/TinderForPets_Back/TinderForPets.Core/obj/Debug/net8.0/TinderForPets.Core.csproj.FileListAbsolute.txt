@@ -1,0 +1,16 @@
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\bin\Debug\net8.0\TinderForPets.Core.deps.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\bin\Debug\net8.0\TinderForPets.Core.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\bin\Debug\net8.0\TinderForPets.Core.pdb
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.AssemblyInfoInputs.cache
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.AssemblyInfo.cs
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.csproj.CoreCompileInputs.cache
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.sourcelink.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\refint\TinderForPets.Core.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.pdb
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\ref\TinderForPets.Core.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\bin\Debug\net8.0\SharedKernel.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\bin\Debug\net8.0\SharedKernel.pdb
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderForPets.Core.csproj.AssemblyReference.cache
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.Core\obj\Debug\net8.0\TinderFo.C119241A.Up2Date

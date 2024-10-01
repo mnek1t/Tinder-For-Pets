@@ -434,9 +434,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets_Back\\TinderForPets_Back.csproj",
-      "projectName": "TinderForPets_Back",
-      "projectPath": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets_Back\\TinderForPets_Back.csproj",
+      "projectUniqueName": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets_Back\\TinderForPets.API.csproj",
+      "projectName": "TinderForPets.API",
+      "projectPath": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets_Back\\TinderForPets.API.csproj",
       "packagesPath": "C:\\Users\\medni\\.nuget\\packages\\",
       "outputPath": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets_Back\\obj\\",
       "projectStyle": "PackageReference",
