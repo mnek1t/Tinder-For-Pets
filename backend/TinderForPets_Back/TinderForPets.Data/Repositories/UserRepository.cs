@@ -2,7 +2,6 @@
 using TinderForPets.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using TinderForPets.Data.Entities;
-using TinderForPets.Data.Exceptions;
 using SharedKernel;
 using TinderForPets.Core;
 using AutoMapper;
