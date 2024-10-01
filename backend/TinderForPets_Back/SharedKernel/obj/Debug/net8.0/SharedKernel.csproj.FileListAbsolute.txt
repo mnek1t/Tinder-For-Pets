@@ -1,0 +1,12 @@
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\bin\Debug\net8.0\SharedKernel.deps.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\bin\Debug\net8.0\SharedKernel.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\bin\Debug\net8.0\SharedKernel.pdb
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\SharedKernel.GeneratedMSBuildEditorConfig.editorconfig
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\SharedKernel.AssemblyInfoInputs.cache
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\SharedKernel.AssemblyInfo.cs
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\SharedKernel.csproj.CoreCompileInputs.cache
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\SharedKernel.sourcelink.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\SharedKernel.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\refint\SharedKernel.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\SharedKernel.pdb
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\SharedKernel\obj\Debug\net8.0\ref\SharedKernel.dll
