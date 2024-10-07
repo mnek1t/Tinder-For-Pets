@@ -8,6 +8,8 @@ namespace TinderForPets.Core
             "Users.NotFound", $"The user with the Id = {userId} was not found");
         public static Error NotFoundByEmail(string email) => new(
             "Users.NotFoundByEmail", $"The user with the Email = {email} was not found");
+        public static Error DuplicateUser(string email) => new(
+            "Users.DuplicateUser", $"The user with the Email = {email} already exists");
 
         public static readonly Error EmailNotUnique = new(
         "Users.EmailNotUnique", "The provided email is not unique");
@@ -17,5 +19,12 @@ namespace TinderForPets.Core
 
         public static readonly Error InvalidEmailFormat = new(
         "Users.InvalidEmailFormat", "The provided email is invalid format");
+
+        public static readonly Error NotCreated = new(
+        "Users.NotCreated", "The provided user was not created (null)");
+
+        public static readonly Error NotMatchPassword = new(
+        "User.NotMatchPassword", "New Password and Confirm Password do not match");
+       
     }
 }

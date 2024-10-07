@@ -6,16 +6,15 @@ namespace TinderForPets.Data.Configurations.AutoMapper
 {
     public class MapperConfig : Profile
     {
-        public static Mapper InitializeAutomapper()
+        public MapperConfig()
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<User, UserAccount>();
-                cfg.CreateMap<UserAccount, User>();
-            });
+            CreateMap<User, UserAccount>()
+                    .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.PasswordHash))
+                    .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(src => src.Email));
 
-            var mapper = new Mapper(config);
-            return mapper;
+            CreateMap<UserAccount, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailAddress));
         }
     }
 }

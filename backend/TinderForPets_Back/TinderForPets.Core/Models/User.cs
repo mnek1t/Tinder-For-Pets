@@ -2,6 +2,9 @@
 {
     public class User
     {
+        public User()
+        {
+        }
         private User(Guid id, string userName, string passwordHash, string email)
         {
             Id = id;
@@ -16,12 +19,6 @@
 
         public static User Create(Guid id, string userName, string passwordHash, string email)
         {
-            var error = string.Empty;
-            if (string.IsNullOrEmpty(userName) ) 
-            {
-
-            }
-
             return new User(id, userName, passwordHash, email);
         }
     }

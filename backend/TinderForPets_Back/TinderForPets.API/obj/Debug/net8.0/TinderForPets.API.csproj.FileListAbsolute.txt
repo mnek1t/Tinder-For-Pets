@@ -55,3 +55,7 @@ D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\ba
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\TinderForPets.Infrastructure.pdb
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\SharedKernel.dll
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\SharedKernel.pdb
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\AutoMapper.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\SendGrid.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\StarkbankEcdsa.dll
