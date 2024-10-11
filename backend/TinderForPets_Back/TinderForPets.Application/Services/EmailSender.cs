@@ -37,13 +37,14 @@ namespace TinderForPets.Application.Services
             var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "reset-password-template.html");
             var htmlMessage = await File.ReadAllTextAsync(templatePath);
             var emailData = JsonSerializer.Deserialize<ResetPasswordEmailDto>(message);
-            htmlMessage = htmlMessage.Replace("{{Username}}", emailData.UserName);
+            htmlMessage = htmlMessage.Replace("{{UserName}}", emailData.UserName);
             htmlMessage = htmlMessage.Replace("{{ResetLink}}", emailData.ResetLink);
 
             var msg = new SendGridMessage()
             {
                 From = new EmailAddress(Options.SendGridSenderEmail, Options.SendGridSenderName + " Password Recovery"),
                 Subject = subject,
+                // TODO: add PlainTextContent property and pass just text 
                 HtmlContent = htmlMessage
             };
             msg.AddTo(new EmailAddress(toEmail));
