@@ -13,4 +13,5 @@ public partial class UserAccount
 
     public string EmailAddress { get; set; } = null!;
     public virtual ICollection<Animal> Animals { get; set; } = new List<Animal>();
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

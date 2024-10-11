@@ -29,6 +29,11 @@ namespace TinderForPets.Data.Configurations
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("animal_user_id_fkey");
+
+            builder.HasOne(a => a.Profile).WithOne(ap => ap.Animal)
+                .HasForeignKey<AnimalProfile>(p => p.AnimalId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("animal_profile_id_fkey");
         }
     }
 }

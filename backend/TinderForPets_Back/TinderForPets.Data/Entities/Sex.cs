@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TinderForPets.Data.Entities;
+﻿namespace TinderForPets.Data.Entities;
 
 public partial class Sex
 {

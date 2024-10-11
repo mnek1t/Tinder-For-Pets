@@ -16,4 +16,5 @@ public partial class Animal
     public virtual AnimalType Type { get; set; } = null!;
 
     public virtual UserAccount User { get; set; } = null!;
+    public virtual AnimalProfile Profile { get; set; } = null!;
 }
