@@ -6,4 +6,4 @@
 /ClientApp/.env.test.local
 /ClientApp/.env.production.local
 
-.vs/
+/backend/TinderForPets_Back/.vs
