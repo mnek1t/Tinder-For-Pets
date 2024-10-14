@@ -18,14 +18,14 @@ namespace TinderForPets.Data.Configurations
             
             builder.ToTable("animal_profile");
 
-            builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.AnimalId).HasColumnName("animal_id");
-            builder.Property(e => e.Name).HasColumnName("name");
+            builder.Property(e => e.Id).IsRequired().HasColumnName("id");
+            builder.Property(e => e.AnimalId).IsRequired().HasColumnName("animal_id");
+            builder.Property(e => e.Name).IsRequired().HasColumnName("name");
             builder.Property(e => e.Description).HasColumnName("description");
-            builder.Property(e => e.Age).HasColumnName("age");
-            builder.Property(e => e.SexId).HasColumnName("sex_id");
-            builder.Property(e => e.IsVaccinated).HasColumnName("is_vaccinated");
-            builder.Property(e => e.IsSterilized).HasColumnName("is_sterilized");
+            builder.Property(e => e.Age).IsRequired().HasColumnName("age");
+            builder.Property(e => e.SexId).IsRequired().HasColumnName("sex_id");
+            builder.Property(e => e.IsVaccinated).IsRequired().HasColumnName("is_vaccinated");
+            builder.Property(e => e.IsSterilized).IsRequired().HasColumnName("is_sterilized");
 
             builder.HasMany(ap => ap.Images).WithOne(i => i.AnimalProfile)
                 .HasForeignKey(i => i.AnimalProfileId)

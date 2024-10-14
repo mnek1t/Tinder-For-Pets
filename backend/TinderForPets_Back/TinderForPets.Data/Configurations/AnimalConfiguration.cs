@@ -16,7 +16,6 @@ namespace TinderForPets.Data.Configurations
             builder.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            builder.Property(e => e.Age).HasColumnName("age");
             builder.Property(e => e.TypeId).HasColumnName("type_id");
             builder.Property(e => e.UserId).HasColumnName("user_id");
 

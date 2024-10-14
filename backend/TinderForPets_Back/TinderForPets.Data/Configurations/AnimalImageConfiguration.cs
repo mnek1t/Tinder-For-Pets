@@ -23,6 +23,10 @@ namespace TinderForPets.Data.Configurations
                 .HasColumnName("description");
             builder.Property(ai => ai.ImageFormat)
                 .HasColumnName("image_format");
+
+            builder.HasOne(ai => ai.AnimalProfile).WithMany(ap => ap.Images)
+                .HasForeignKey(ai => ai.AnimalProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
