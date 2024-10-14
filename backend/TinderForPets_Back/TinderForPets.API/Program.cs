@@ -24,6 +24,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 // DataBase 
 builder.Services.AddDbContext<TinderForPetsDbContext>(
     options => 
@@ -31,6 +32,7 @@ builder.Services.AddDbContext<TinderForPetsDbContext>(
         options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(TinderForPetsDbContext)));
     });
 
+builder.Services.AddMemoryCache();
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 // Repositories
