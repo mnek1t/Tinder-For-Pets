@@ -19,8 +19,13 @@ namespace TinderForPets.Data.Repositories
             _mapper = mapper;
         }
 
-        public async Task<Guid> Add(User user)
+        public async Task<Result<Guid>> Add(User user)
         {
+            if (user == null) 
+            {
+                return Result.Failure<Guid>(UserErrors.NotCreated);
+            }
+
             var userEntity = _mapper.Map<UserAccount>(user);
 
             await _context.AddAsync(userEntity);
@@ -67,6 +72,17 @@ namespace TinderForPets.Data.Repositories
             // TODO: Create User type defined in Core from Entity. Use Mapper!   
 
             throw new NotImplementedException();
+        }
+
+        public async Task<Result<string>> ResetPassword(string email, string hashedPassword)
+        {
+            var rowsUpdated = await _context.UserAccounts
+               .Where(u => u.EmailAddress == email)
+               .ExecuteUpdateAsync(u => u
+                   .SetProperty(u => u.Password, hashedPassword));
+            await _context.SaveChangesAsync();
+
+            return rowsUpdated == 0 ? Result.Failure<string>(UserErrors.NotFoundByEmail(email)) : Result.Success<string>("Sucessfull update");
         }
     }
 }

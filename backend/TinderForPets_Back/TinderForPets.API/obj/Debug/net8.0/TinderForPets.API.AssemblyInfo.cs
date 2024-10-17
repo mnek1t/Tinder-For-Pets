@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("20faf96e-0a3a-447d-81f1-410689ed87ff")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("TinderForPets.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39ce14cb6bde39c7e2badf3818041662c4617daa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1884e17c2d39105a3ce185186c60f1a3e629e19f")]
 [assembly: System.Reflection.AssemblyProductAttribute("TinderForPets.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TinderForPets.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,16 +1,162 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1B65BBC5-95FD-47F0-8E0B-5BAF73E2F727}|TinderForPets.API\\TinderForPets.API.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.api\\tinderforpets.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1B65BBC5-95FD-47F0-8E0B-5BAF73E2F727}|TinderForPets.API\\TinderForPets.API.csproj|solutionrelative:tinderforpets.api\\tinderforpets.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\tinderforpetsdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\tinderforpetsdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B65BBC5-95FD-47F0-8E0B-5BAF73E2F727}|TinderForPets.API\\TinderForPets.API.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B65BBC5-95FD-47F0-8E0B-5BAF73E2F727}|TinderForPets.API\\TinderForPets.API.csproj|solutionrelative:tinderforpets.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\tinderforpets.data.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\tinderforpets.data.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\entities\\animalimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\entities\\animalimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\entities\\animal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\entities\\animal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\entities\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\entities\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\entities\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\entities\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\entities\\useraccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\entities\\useraccount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|d:\\university\\3 course\\fall semester\\adaptive data processing\\tinder for pets\\backend\\tinderforpets_back\\tinderforpets.data\\entities\\sex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ACC63B84-9124-48BE-8971-C4EB611EE5E4}|TinderForPets.Data\\TinderForPets.Data.csproj|solutionrelative:tinderforpets.data\\entities\\sex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "DockedWidth": 123,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Sex.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\Sex.cs",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\Entities\\Sex.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\Sex.cs",
+              "RelativeToolTip": "TinderForPets.Data\\Entities\\Sex.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T11:15:32.289Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TinderForPets.API",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.API\\TinderForPets.API.csproj",
+              "RelativeDocumentMoniker": "TinderForPets.API\\TinderForPets.API.csproj",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.API\\TinderForPets.API.csproj*",
+              "RelativeToolTip": "TinderForPets.API\\TinderForPets.API.csproj*",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-10-11T12:27:01.944Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.API\\Program.cs",
+              "RelativeDocumentMoniker": "TinderForPets.API\\Program.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.API\\Program.cs",
+              "RelativeToolTip": "TinderForPets.API\\Program.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAAAAB4AAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T12:29:27.304Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TinderForPets.Data",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\TinderForPets.Data.csproj",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\TinderForPets.Data.csproj",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\TinderForPets.Data.csproj",
+              "RelativeToolTip": "TinderForPets.Data\\TinderForPets.Data.csproj",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAAABkAAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-10-11T12:16:10.148Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AnimalImage.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\AnimalImage.cs",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\Entities\\AnimalImage.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\AnimalImage.cs",
+              "RelativeToolTip": "TinderForPets.Data\\Entities\\AnimalImage.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAA2AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T12:15:49.436Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TinderForPetsDbContext.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\TinderForPetsDbContext.cs",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\TinderForPetsDbContext.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\TinderForPetsDbContext.cs",
+              "RelativeToolTip": "TinderForPets.Data\\TinderForPetsDbContext.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T11:30:19.52Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "UserAccount.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\UserAccount.cs",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\Entities\\UserAccount.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\UserAccount.cs",
+              "RelativeToolTip": "TinderForPets.Data\\Entities\\UserAccount.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAxwA8AAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T11:17:28.579Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "UserRole.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\UserRole.cs",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\Entities\\UserRole.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\UserRole.cs",
+              "RelativeToolTip": "TinderForPets.Data\\Entities\\UserRole.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T11:16:31.882Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
@@ -30,6 +176,32 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Role.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\Role.cs",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\Entities\\Role.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\Role.cs",
+              "RelativeToolTip": "TinderForPets.Data\\Entities\\Role.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T11:15:21.009Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Animal.cs",
+              "DocumentMoniker": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\Animal.cs",
+              "RelativeDocumentMoniker": "TinderForPets.Data\\Entities\\Animal.cs",
+              "ToolTip": "D:\\University\\3 course\\Fall semester\\Adaptive Data Processing\\Tinder For Pets\\backend\\TinderForPets_Back\\TinderForPets.Data\\Entities\\Animal.cs",
+              "RelativeToolTip": "TinderForPets.Data\\Entities\\Animal.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-11T11:59:51.759Z",
+              "EditorCaption": ""
             }
           ]
         }

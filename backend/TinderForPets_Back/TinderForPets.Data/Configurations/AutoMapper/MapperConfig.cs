@@ -1,21 +1,24 @@
 ﻿using AutoMapper;
-using TinderForPets.Data.Entities;
-using TinderForPets.Core.Models;
+using dataLayer = TinderForPets.Data.Entities;
+using applicationLayer = TinderForPets.Core.Models;
 
 namespace TinderForPets.Data.Configurations.AutoMapper
 {
     public class MapperConfig : Profile
     {
-        public static Mapper InitializeAutomapper()
+        public MapperConfig()
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<User, UserAccount>();
-                cfg.CreateMap<UserAccount, User>();
-            });
+            CreateMap<applicationLayer.User, dataLayer.UserAccount>()
+                    .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.PasswordHash))
+                    .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(src => src.Email));
 
-            var mapper = new Mapper(config);
-            return mapper;
+            CreateMap<dataLayer.UserAccount, applicationLayer.User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailAddress));
+
+            CreateMap<dataLayer.AnimalProfile, applicationLayer.AnimalProfile>();
+            CreateMap<applicationLayer.AnimalProfile, dataLayer.AnimalProfile>();
+
         }
     }
 }

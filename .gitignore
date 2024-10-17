@@ -5,3 +5,5 @@
 /ClientApp/.env.development.local
 /ClientApp/.env.test.local
 /ClientApp/.env.production.local
+
+/backend/TinderForPets_Back/.vs

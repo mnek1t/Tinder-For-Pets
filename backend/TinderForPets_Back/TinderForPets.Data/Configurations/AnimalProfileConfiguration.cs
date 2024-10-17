@@ -14,15 +14,23 @@ namespace TinderForPets.Data.Configurations
         // TODO: make configurations
         public void Configure(EntityTypeBuilder<AnimalProfile> builder)
         {
-            builder
-                 .HasNoKey()
-                 .ToTable("animal_profile");
+            builder.HasKey(e => e.Id).HasName("animal_profile_pkey");
+            
+            builder.ToTable("animal_profile");
 
-            builder.Property(e => e.Age).HasColumnName("age");
-            builder.Property(e => e.Id).HasColumnName("id");
-            builder.Property(e => e.Image).HasColumnName("image");
-            builder.Property(e => e.Name).HasColumnName("name");
-            builder.Property(e => e.SexId).HasColumnName("sex_id");
+            builder.Property(e => e.Id).IsRequired().HasColumnName("id");
+            builder.Property(e => e.AnimalId).IsRequired().HasColumnName("animal_id");
+            builder.Property(e => e.Name).IsRequired().HasColumnName("name");
+            builder.Property(e => e.Description).HasColumnName("description");
+            builder.Property(e => e.Age).IsRequired().HasColumnName("age");
+            builder.Property(e => e.SexId).IsRequired().HasColumnName("sex_id");
+            builder.Property(e => e.IsVaccinated).IsRequired().HasColumnName("is_vaccinated");
+            builder.Property(e => e.IsSterilized).IsRequired().HasColumnName("is_sterilized");
+
+            builder.HasMany(ap => ap.Images).WithOne(i => i.AnimalProfile)
+                .HasForeignKey(i => i.AnimalProfileId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("animal_image_id_fkey");
         }
     }
 }
