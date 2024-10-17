@@ -22,6 +22,11 @@ namespace TinderForPets.Data.Configurations
 
             builder.Property(e => e.Id).HasColumnName("id");
             builder.Property(e => e.TypeName).HasColumnName("type_name");
+            
+            builder.HasMany(at => at.Breeds).WithOne(b => b.AnimalType)
+                .HasForeignKey(b => b.AnimalTypeId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("animal_breed_type_id_fkey");
         }
     }
 }

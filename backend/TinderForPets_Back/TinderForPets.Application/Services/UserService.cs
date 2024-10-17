@@ -11,6 +11,7 @@ namespace TinderForPets.Application.Services
         private readonly IPasswordHasher _passwordHasher;
         private readonly IUserRepository _userRepository;
         private readonly IJwtProvider _jwtProvider;
+        
 
         public UserService(
             IUserRepository userRepository, 
@@ -20,10 +21,17 @@ namespace TinderForPets.Application.Services
             _passwordHasher = passwordHasher;
             _userRepository = userRepository;
             _jwtProvider = jwtProvider;
+            
         }
 
         public async Task<Result<Guid>> Register(string userName, string email, string password)
         {
+            var result = await _userRepository.GetByEmail(email);
+            if (result.IsSuccess) 
+            {
+                return Result.Failure<Guid>(UserErrors.DuplicateUser(email));
+            }
+
             var hashedPassword = _passwordHasher.Generate(password);
             var user = User.Create(Guid.NewGuid(), userName, hashedPassword, email);
 
@@ -50,5 +58,35 @@ namespace TinderForPets.Application.Services
 
             return Result.Success<string>(token);
         }
+
+        public async Task<Result<string>> ResetPassword(string newPassword, string confirmPassword, string token) 
+        {
+            if (newPassword != confirmPassword) 
+            {
+                return Result.Failure<string>(UserErrors.NotMatchPassword);
+            }
+
+            var varifyTokenResult = _jwtProvider.ValidateResetPasswordToken(token);
+            if (varifyTokenResult.IsFailure) 
+            {
+                return varifyTokenResult;
+            }
+            string hashedPassword = _passwordHasher.Generate(newPassword);
+            var userEmail = varifyTokenResult.Value;
+            var result = await _userRepository.ResetPassword(userEmail, hashedPassword);
+            return result;
+        }
+
+        public async Task<Result<User>> FindUser(string email) 
+        {
+            var result = await _userRepository.GetByEmail(email);
+            return result;
+        }
+        public Result<string> GenerateResetPasswordToken(string email)
+        {
+            var token = _jwtProvider.GenerateResetPasswordToken(email);
+            return Result.Success<string>(token); 
+        }
     }
+
 }
