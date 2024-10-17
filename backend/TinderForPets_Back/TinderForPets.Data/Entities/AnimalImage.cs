@@ -8,6 +8,7 @@
 
         public byte[] ImageData { get; set; }
         public string ImageFormat { get; set; } = string.Empty;
+        public DateOnly UploadDate { get; set; }
         public string Description { get; set; } = string.Empty; // main image or something else
     }
 }
