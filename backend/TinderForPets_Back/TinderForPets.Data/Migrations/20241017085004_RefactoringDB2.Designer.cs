@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TinderForPets.Data;
@@ -11,9 +12,11 @@ using TinderForPets.Data;
 namespace TinderForPets.Data.Migrations
 {
     [DbContext(typeof(TinderForPetsDbContext))]
-    partial class TinderForPetsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241017085004_RefactoringDB2")]
+    partial class RefactoringDB2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,9 +73,6 @@ namespace TinderForPets.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("image_format");
-
-                    b.Property<DateOnly>("UploadDate")
-                        .HasColumnType("date");
 
                     b.HasKey("Id")
                         .HasName("aminal_image_pkey");
@@ -144,6 +144,9 @@ namespace TinderForPets.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("type_name");
+
+                    b.Property<DateOnly>("UploadDate")
+                        .HasColumnType("date");
 
                     b.HasKey("Id")
                         .HasName("animal_type_pkey");
