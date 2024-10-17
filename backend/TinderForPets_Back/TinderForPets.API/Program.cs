@@ -10,7 +10,8 @@ using TinderForPets.Data.Configurations.AutoMapper;
 using TinderForPets.Infrastructure;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
+using TinderForPets.API;
+using TinderForPets.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,22 +26,37 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-// DataBase 
+// DataBase and data handling
 builder.Services.AddDbContext<TinderForPetsDbContext>(
     options => 
     {
         options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(TinderForPetsDbContext)));
     });
 
-builder.Services.AddMemoryCache();
+builder.Services.AddTransient<TinderForPetsDataSeeder>();
+
+// Add services to the container.
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["RedisCacheOptions:Configuration"];
+    options.InstanceName = builder.Configuration["RedisCacheOptions:InstanceName"];
+});
+
+// Mapping
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBreedRepository, BreedRepository>();
+builder.Services.AddScoped<ISexRepository, SexRepository>();
+builder.Services.AddScoped<IAnimalTypeRepository, AnimalTypeRepository>();
+builder.Services.AddScoped<IAnimalProfileRepository, AnimalProfileRepository>();
 
 // Services
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AnimalProfileService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
 // Infrastructure
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
@@ -77,5 +93,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<TinderForPetsDataSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.Run();
