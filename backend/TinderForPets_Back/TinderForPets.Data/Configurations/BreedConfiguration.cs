@@ -13,9 +13,9 @@ namespace TinderForPets.Data.Configurations
 
             builder.ToTable("breed");
 
-            builder.Property(b => b.Name)
+            builder.Property(b => b.BreedName)
                 .IsRequired()
-                .HasColumnName("name");
+                .HasColumnName("breed_name");
 
             builder.Property(b => b.AnimalTypeId)
                 .HasColumnName("animal_type_id");
