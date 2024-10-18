@@ -1,12 +1,12 @@
 ﻿namespace TinderForPets.Core.Models
 {
-    public class AnimalProfile
+    public class AnimalProfileModel
     {
-        public AnimalProfile()
+        public AnimalProfileModel()
         {
         }
 
-        public AnimalProfile(Guid id, Guid animalId, string name, string description, int age, int sexId, bool isVaccinated, bool isSterilized, string breed)
+        public AnimalProfileModel(Guid id, Guid animalId, string name, string description, int age, int sexId, bool isVaccinated, bool isSterilized)
         {
             Id = id;
             AnimalId = animalId;
@@ -26,12 +26,11 @@
         public int Age { get; private set; }
 
         public int SexId { get; set; }
-        public int BreedId { get; private set; }
         public bool IsVaccinated { get; private set; }
         public bool IsSterilized { get; private set; }
-        public static AnimalProfile Create(Guid id, Guid animalId, string name, string description, int age, int sexId, bool isVaccinated, bool isSterilized, string breed) 
+        public static AnimalProfileModel Create(Guid id, Guid animalId, string name, string description, int age, int sexId, bool isVaccinated, bool isSterilized) 
         {
-            return new AnimalProfile(id, animalId,name,description, age, sexId, isVaccinated, isSterilized, breed);
+            return new AnimalProfileModel(id, animalId,name,description, age, sexId, isVaccinated, isSterilized);
         }
     }
 }
