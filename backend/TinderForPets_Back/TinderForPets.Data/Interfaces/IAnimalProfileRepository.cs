@@ -4,7 +4,8 @@ namespace TinderForPets.Data.Interfaces
 {
     public interface IAnimalProfileRepository
     {
-        Task<Result<Guid>> CreateProfile(AnimalProfile animalProfile);
+        Task<Guid> CreateAnimalAsync(AnimalModel animalModel);
+        Task<Guid> CreateProfileAsync(AnimalProfileModel animalProfile);
         void DeleteProfile();
         void UpdateProfile();
 
