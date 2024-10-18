@@ -2,6 +2,7 @@
 using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Interfaces;
 using TinderForPets.Core;
+using TinderForPets.Core.Models;
 using TinderForPets.Data.Entities;
 using TinderForPets.Data.Interfaces;
 using TinderForPets.Data.Repositories;
@@ -91,9 +92,18 @@ namespace TinderForPets.Application.Services
             return Result.Success<List<Sex>>(sexes);
         }
 
-        public async Task<Result<Guid>> CreatePetProfile(string name, string description, int age, string sex, bool isVaccinated, bool isSterilized, string breed, Guid userId) 
+        public async Task<Result<Guid>> CreateAnimalAsync(Guid userId, int typeId, int breedId) 
         {
-            return null;
+            var animalModel = AnimalModel.Create(Guid.NewGuid(), userId, typeId, breedId);
+            var resultId = await _animalProfileRepository.CreateAnimalAsync(animalModel);
+            return Guid.Empty == resultId ? Result.Failure<Guid>(AnimalProfileErrors.NotCreatedAnimal) : Result.Success<Guid>(resultId);
+        }
+
+        public async Task<Result<Guid>> CreatePetProfile(Guid animalId, string name, string description, int age, int sexId, bool isVaccinated, bool isSterilized) 
+        {
+            var animalProfileModel = AnimalProfileModel.Create(Guid.NewGuid(), animalId, name, description, age, sexId, isVaccinated, isSterilized);
+            var resultId = await _animalProfileRepository.CreateProfileAsync(animalProfileModel);
+            return Guid.Empty == resultId ? Result.Failure<Guid>(AnimalProfileErrors.NotCreatedProfile) : Result.Success<Guid>(resultId);
         }
     }
 }
