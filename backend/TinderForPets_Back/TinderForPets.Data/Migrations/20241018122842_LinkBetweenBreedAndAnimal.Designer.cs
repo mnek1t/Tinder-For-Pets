@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TinderForPets.Data;
@@ -11,9 +12,11 @@ using TinderForPets.Data;
 namespace TinderForPets.Data.Migrations
 {
     [DbContext(typeof(TinderForPetsDbContext))]
-    partial class TinderForPetsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241018122842_LinkBetweenBreedAndAnimal")]
+    partial class LinkBetweenBreedAndAnimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,12 +137,7 @@ namespace TinderForPets.Data.Migrations
                     b.HasIndex("AnimalId")
                         .IsUnique();
 
-                    b.HasIndex("SexId");
-
-                    b.ToTable("animal_profile", null, t =>
-                        {
-                            t.HasCheckConstraint("chk_age_ge_than_1", "[age] => 1");
-                        });
+                    b.ToTable("animal_profile", (string)null);
                 });
 
             modelBuilder.Entity("TinderForPets.Data.Entities.AnimalType", b =>
@@ -322,16 +320,7 @@ namespace TinderForPets.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("animal_profile_id_fkey");
 
-                    b.HasOne("TinderForPets.Data.Entities.Sex", "Sex")
-                        .WithMany("AnimalProfiles")
-                        .HasForeignKey("SexId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("animal_profile_sex_id_fkey");
-
                     b.Navigation("Animal");
-
-                    b.Navigation("Sex");
                 });
 
             modelBuilder.Entity("TinderForPets.Data.Entities.Breed", b =>
@@ -388,11 +377,6 @@ namespace TinderForPets.Data.Migrations
             modelBuilder.Entity("TinderForPets.Data.Entities.Role", b =>
                 {
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("TinderForPets.Data.Entities.Sex", b =>
-                {
-                    b.Navigation("AnimalProfiles");
                 });
 
             modelBuilder.Entity("TinderForPets.Data.Entities.UserAccount", b =>

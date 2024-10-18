@@ -14,5 +14,6 @@ public partial class AnimalProfile
     public bool IsVaccinated { get; set; }
     public bool IsSterilized { get; set; }
     public Animal Animal { get; set; }
+    public Sex Sex { get; set;}
     public ICollection<AnimalImage> Images { get; set; } = new List<AnimalImage>();
 }

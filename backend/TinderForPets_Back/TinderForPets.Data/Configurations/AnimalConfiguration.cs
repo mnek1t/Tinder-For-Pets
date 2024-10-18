@@ -18,6 +18,7 @@ namespace TinderForPets.Data.Configurations
                 .HasColumnName("id");
             builder.Property(e => e.TypeId).HasColumnName("type_id");
             builder.Property(e => e.UserId).HasColumnName("user_id");
+            builder.Property(e => e.BreedId).HasColumnName("breed_id");
 
             builder.HasOne(d => d.Type).WithMany(p => p.Animals)
                 .HasForeignKey(d => d.TypeId)
@@ -33,6 +34,11 @@ namespace TinderForPets.Data.Configurations
                 .HasForeignKey<AnimalProfile>(p => p.AnimalId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("animal_profile_id_fkey");
+
+            builder.HasOne(a => a.Breed).WithMany()
+                .HasForeignKey(a => a.BreedId)
+                .HasConstraintName("animal_breed_id_fkey");
+
         }
     }
 }
