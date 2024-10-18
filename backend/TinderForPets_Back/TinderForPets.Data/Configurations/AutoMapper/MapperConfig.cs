@@ -16,8 +16,15 @@ namespace TinderForPets.Data.Configurations.AutoMapper
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailAddress));
 
-            CreateMap<dataLayer.AnimalProfile, applicationLayer.AnimalProfile>();
-            CreateMap<applicationLayer.AnimalProfile, dataLayer.AnimalProfile>();
+            CreateMap<dataLayer.Animal, applicationLayer.AnimalModel>();
+            CreateMap<applicationLayer.AnimalModel, dataLayer.Animal>();
+
+
+            CreateMap<dataLayer.AnimalProfile, applicationLayer.AnimalProfileModel>();
+            CreateMap<applicationLayer.AnimalProfileModel, dataLayer.AnimalProfile>();
+
+            CreateMap<dataLayer.AnimalImage, applicationLayer.AnimalImageModel>();
+            CreateMap<applicationLayer.AnimalImageModel, dataLayer.AnimalImage>();
 
         }
     }
