@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TinderForPets.API.Contracts.Profiles;
 using TinderForPets.API.Extensions;
+using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Services;
 using TinderForPets.Data.Entities;
 
@@ -13,11 +14,13 @@ namespace TinderForPets.API.Controllers
     {
         private readonly AnimalProfileService _profileService;
         private readonly ImageHandlerService _imageResizerService;
+        private readonly GeocodingService _geoCodingService;
 
-        public AnimalProfileController(AnimalProfileService profileService, ImageHandlerService imageResizerService)
+        public AnimalProfileController(AnimalProfileService profileService, ImageHandlerService imageResizerService, GeocodingService geoCodingService)
         {
             _profileService = profileService;
             _imageResizerService = imageResizerService;
+            _geoCodingService = geoCodingService;
         }
 
         [HttpGet("animal-types")]
@@ -43,19 +46,62 @@ namespace TinderForPets.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("animal/create-profile")]
+        [HttpPost("animal/profile/create")]
         public async Task<IResult> CreateProfile([FromBody] CreateAnimalProfileRequest request) 
         {
-            var result = await _profileService.CreateAnimalAsync(request.OwnerId, request.TypeId, request.BreedId);
+            var geoCodingResult = await _geoCodingService.GetLocationCoordinates(request.City, request.Country);
+            if (geoCodingResult.IsFailure) 
+            {
+                return geoCodingResult.ToProblemDetails();
+            }
+
+            var animalDto = new AnimalDto 
+            { 
+                OwnerId = request.OwnerId, 
+                AnimalTypeId = request.TypeId,
+                BreedId = request.BreedId
+            };
+
+            var result = await _profileService.CreateAnimalAsync(animalDto);
+
             if (result.IsSuccess) 
             {
-                result = await _profileService.CreatePetProfile(result.Value, request.Name, request.Description, request.Age, request.SexId, request.IsVaccinated, request.IsSterilized);
+                var animalProfileDto = new AnimalProfileDto 
+                {
+                    AnimalId = result.Value,
+                    Name = request.Name,
+                    Description = request.Description,
+                    Age = request.Age,
+                    SexId = request.SexId,
+                    IsVaccinated = request.IsVaccinated,
+                    IsSterilized = request.IsSterilized,
+                    Country = request.Country,
+                    City = request.City,
+                    Latitude = geoCodingResult.Value.latitude,
+                    Longitude = geoCodingResult.Value.longitude,
+                    Height = request.Height,
+                    Width = request.Width
+                };
+                result = await _profileService.CreatePetProfile(animalProfileDto);
 
             }
             return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
         }
 
-        [HttpPost("animal/image-upload")]
+        //[Authorize]
+        //[HttpPost("animal/profile/update")]
+        //public async Task<IResult> UpdateProfile([FromBody] CreateAnimalProfileRequest request)
+        //{
+        //    var result = await _profileService.CreateAnimalAsync(request.OwnerId, request.TypeId, request.BreedId);
+        //    if (result.IsSuccess)
+        //    {
+        //        result = await _profileService.CreatePetProfile(result.Value, request.Name, request.Description, request.Age, request.SexId, request.IsVaccinated, request.IsSterilized);
+
+        //    }
+        //    return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
+        //}
+
+        [HttpPost("animal/image/upload")]
         public async Task<IResult> UploadAnimalMedia([FromForm] AnimalMediaUploadRequest request) 
         {
             var resizedImagesResult = await _imageResizerService.ResizeImages(request.Files, request.AnimalProfileId, request.Description);
