@@ -2,11 +2,11 @@
 using dataLayer = TinderForPets.Data.Entities;
 using applicationLayer = TinderForPets.Core.Models;
 
-namespace TinderForPets.Data.Configurations.AutoMapper
+namespace TinderForPets.Infrastructure
 {
-    public class MapperConfig : Profile
+    public class AutoMapper : Profile
     {
-        public MapperConfig()
+        public AutoMapper()
         {
             CreateMap<applicationLayer.User, dataLayer.UserAccount>()
                     .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.PasswordHash))
@@ -25,7 +25,6 @@ namespace TinderForPets.Data.Configurations.AutoMapper
 
             CreateMap<dataLayer.AnimalImage, applicationLayer.AnimalImageModel>();
             CreateMap<applicationLayer.AnimalImageModel, dataLayer.AnimalImage>();
-
         }
     }
 }
