@@ -6,7 +6,6 @@ using TinderForPets.Application.Services;
 using TinderForPets.Data;
 using TinderForPets.Data.Interfaces;
 using TinderForPets.Data.Repositories;
-using TinderForPets.Data.Configurations.AutoMapper;
 using TinderForPets.Infrastructure;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +15,9 @@ using TinderForPets.Application.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddUserSecrets<Program>();
+
+// Add services to the container.
+builder.Services.AddHttpClient();
 
 // Adding Options for Configuration
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
@@ -43,7 +45,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 // Mapping
-builder.Services.AddAutoMapper(typeof(MapperConfig));
+builder.Services.AddAutoMapper(typeof(TinderForPets.Infrastructure.AutoMapper));
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -57,6 +59,7 @@ builder.Services.AddScoped<IAnimalImageRepository, AnimalImageRepository>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AnimalProfileService>();
 builder.Services.AddScoped<ImageHandlerService>();
+builder.Services.AddScoped<GeocodingService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
