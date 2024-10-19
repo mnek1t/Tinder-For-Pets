@@ -38,8 +38,8 @@ namespace TinderForPets.Application.Services
             {
                 return Result.Success(cachedData);
             }
-            var result = await _animalTypeRepository.GetAllAnimalTypesAsync();
-            var animalTypeDto = result.Value.Select(a => new AnimalTypeDto
+            var animalTypes = await _animalTypeRepository.GetAllAnimalTypesAsync();
+            var animalTypeDto = animalTypes.Select(a => new AnimalTypeDto
             {
                 Id = a.Id,
                 TypeName = a.TypeName

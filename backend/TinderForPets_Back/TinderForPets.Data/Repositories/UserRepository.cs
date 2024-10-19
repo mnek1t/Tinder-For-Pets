@@ -2,9 +2,9 @@
 using TinderForPets.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using TinderForPets.Data.Entities;
-using SharedKernel;
 using TinderForPets.Core;
 using AutoMapper;
+using TinderForPets.Data.Exceptions;
 
 namespace TinderForPets.Data.Repositories
 {
@@ -19,11 +19,11 @@ namespace TinderForPets.Data.Repositories
             _mapper = mapper;
         }
 
-        public async Task<Result<Guid>> Add(User user)
+        public async Task<Guid> Add(User user)
         {
             if (user == null) 
             {
-                return Result.Failure<Guid>(UserErrors.NotCreated);
+                throw new UserNotFoundException();
             }
 
             var userEntity = _mapper.Map<UserAccount>(user);
@@ -49,19 +49,19 @@ namespace TinderForPets.Data.Repositories
                     .SetProperty(u => u.Password, user.PasswordHash));
         }
 
-        public async Task<Result<User>> GetByEmail(string email)
+        public async Task<User> GetByEmail(string email)
         {
             var userEntity = await _context.UserAccounts
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.EmailAddress == email);
             if (userEntity == null) 
             {
-                return Result.Failure<User>(UserErrors.NotFoundByEmail(email));
+                throw new UserNotFoundException(email);
             }
 
             var user = _mapper.Map<User>(userEntity);
 
-            return Result.Success<User>(user);
+            return user;
         }
 
         public async Task<List<User>> GetUsers()
@@ -74,7 +74,7 @@ namespace TinderForPets.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<Result<string>> ResetPassword(string email, string hashedPassword)
+        public async Task<string> ResetPassword(string email, string hashedPassword)
         {
             var rowsUpdated = await _context.UserAccounts
                .Where(u => u.EmailAddress == email)
@@ -82,7 +82,7 @@ namespace TinderForPets.Data.Repositories
                    .SetProperty(u => u.Password, hashedPassword));
             await _context.SaveChangesAsync();
 
-            return rowsUpdated == 0 ? Result.Failure<string>(UserErrors.NotFoundByEmail(email)) : Result.Success<string>("Sucessfull update");
+            return rowsUpdated == 0 ? throw new UserNotFoundException(email) : "Sucess. Password was reset";
         }
     }
 }
