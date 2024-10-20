@@ -22,14 +22,15 @@ namespace TinderForPets.Data.Configurations
 
             builder.HasOne(d => d.Type).WithMany(p => p.Animals)
                 .HasForeignKey(d => d.TypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                //.OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("animal_type_id_fkey");
 
             builder.HasOne(d => d.User).WithMany(p => p.Animals)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("animal_user_id_fkey");
 
+            //TODO WHy has one?
             builder.HasOne(a => a.Profile).WithOne(ap => ap.Animal)
                 .HasForeignKey<AnimalProfile>(p => p.AnimalId)
                 .OnDelete(DeleteBehavior.Cascade)

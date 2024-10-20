@@ -14,7 +14,7 @@ namespace TinderForPets.Data.Configurations
             builder.ToTable("animal_profile")
                 .HasCheckConstraint("chk_age_ge_than_1", "age >= 1")
                 .HasCheckConstraint("chk_height_ge_than_10", "height>=10")
-                .HasCheckConstraint("chk_age_ge_than_0_3", "width >= 0.3");
+                .HasCheckConstraint("chk_width_ge_than_0_3", "width >= 0.3");
 
             builder.Property(e => e.Id).IsRequired().HasColumnName("id");
             builder.Property(e => e.AnimalId).IsRequired().HasColumnName("animal_id");
