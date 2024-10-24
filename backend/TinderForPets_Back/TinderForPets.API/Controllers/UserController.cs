@@ -33,10 +33,10 @@ namespace TinderForPets.API.Controllers
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IResult> Register(
-            [FromBody]RegisterUserRequest request,
+            [FromBody] RegisterUserRequest request,
             CancellationToken token)
         {
-            var result =  await _userService.Register(request.UserName, request.Email, request.Password);
+            var result = await _userService.Register(request.UserName, request.Email, request.Password);
             return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
         }
 
@@ -47,7 +47,7 @@ namespace TinderForPets.API.Controllers
             CancellationToken token)
         {
             var result = await _userService.Login(request.Email, request.Password);
-            if (result.IsFailure) 
+            if (result.IsFailure)
             {
                 return result.ToProblemDetails();
             }
@@ -57,7 +57,24 @@ namespace TinderForPets.API.Controllers
             HttpContext.Response.Cookies.Append("AuthToken", jwtToken);
 
             return Results.Ok(jwtToken);
-            
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public IResult Logout()
+        {
+            Response.Cookies.Delete("AuthToken");
+            return Results.Ok("You have been logged out");
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IResult> DeleteAccount(Guid id)
+        {
+            Logout();
+
+            var result = await _userService.DeleteUser(id);
+            return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
         }
 
         [HttpPost("resetPassword")]
@@ -78,7 +95,7 @@ namespace TinderForPets.API.Controllers
         {
             var result = await _userService.FindUser(request.Email);
 
-            if (result.IsFailure) 
+            if (result.IsFailure)
             {
                 return result.ToProblemDetails();
             }
@@ -97,5 +114,6 @@ namespace TinderForPets.API.Controllers
 
             return Results.Ok(jwtToken);
         }
+
     }
 }

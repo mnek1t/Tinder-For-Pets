@@ -104,6 +104,19 @@ namespace TinderForPets.Application.Services
             } 
         }
 
+        public async Task<Result<string>> DeleteUser(Guid userId) 
+        {
+            try
+            {
+                var result = await _userRepository.Delete(userId);
+                return Result.Success<string>(result);
+            }
+            catch (UserNotFoundException)
+            {
+                return Result.Failure<string>(UserErrors.NotFound(userId));
+            }
+        }
+
         public Result<string> GenerateResetPasswordToken(string email)
         {
             var token = _jwtProvider.GenerateResetPasswordToken(email);
