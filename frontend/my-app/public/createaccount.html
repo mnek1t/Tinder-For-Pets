@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo"></div> <!-- Лого слева -->
+        <nav>
+            <a href="#" class="sign-in-link">Sign in</a> <!-- Ссылка на Sign in -->
+            <a href="createaccount.html" class="create-account-button">Create account</a> <!-- Кнопка Create account -->
+        </nav>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h2>Create an account</h2> 
+            <form id="sign-in-form">
+                <input type="name" id="name" name="name" placeholder="Name" required>
+                <input type="surname" id="surname" name="surname" placeholder="Surname" required>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <input type="password" id="password" name="repeat password" placeholder="Repeat Password" required>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </main>
+
+    
+    <footer>
+        <div class="social-icons">
+            <a href="#"><img src="instagram.png"  alt="Instagram"></a>
+            <a href="#"><img src="facebook.png" alt="Facebook"></a>
+        </div>
+        <p>© Paws&Play. All rights reserved.</p>
+        <div class="chat-bot">
+            <p>Talk to us</p>
+            <a href="#"><img src="chatbot.png"></a> 
+        </div>
+    </footer>
+
+    
+    <script src="script.js"></script>
+</body>
+</html>
