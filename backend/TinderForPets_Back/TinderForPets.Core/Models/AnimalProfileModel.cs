@@ -10,8 +10,9 @@
             Guid id, 
             Guid animalId, 
             string name, 
-            string description, 
-            int age, 
+            string description,
+            DateOnly dateOfBirth,
+            int age,
             int sexId, 
             bool isVaccinated, 
             bool isSterilized, 
@@ -20,12 +21,14 @@
             decimal latitude, 
             decimal longitude,
             decimal height,
-            decimal width)
+            decimal weight
+            )
         {
             Id = id;
             AnimalId = animalId;
             Name = name;
             Description = description;
+            DateOfBirth = dateOfBirth;
             Age = age;
             SexId = sexId;
             IsVaccinated = isVaccinated;
@@ -35,11 +38,11 @@
             Latitude = latitude;
             Longitude = longitude;
             Height = height;
-            Width = width;  
+            Weight = weight;  
         }
 
         public Guid Id { get; set; }
-        public Guid? AnimalId { get; set; }
+        public Guid AnimalId { get; set; }
         public string? Name { get; private set; }
         public string Description { get; private set; } = string.Empty;
 
@@ -53,13 +56,15 @@
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
         public decimal Height { get; set; }
-        public decimal Width { get; set; }
+        public decimal Weight { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public static AnimalProfileModel Create(
             Guid id, 
             Guid animalId, 
             string name, 
-            string description, 
-            int age, 
+            string description,
+            DateOnly dateOfBirth, 
+            int age,
             int sexId, 
             bool isVaccinated, 
             bool isSterilized, 
@@ -68,14 +73,15 @@
             decimal latitude, 
             decimal longitude,
             decimal height,
-            decimal width) 
+            decimal weight) 
         {
             return new AnimalProfileModel(
                 id, 
                 animalId,
                 name,
                 description, 
-                age, 
+                dateOfBirth, 
+                age,
                 sexId, 
                 isVaccinated, 
                 isSterilized, 
@@ -84,7 +90,7 @@
                 latitude, 
                 longitude,
                 height,
-                width
+                weight
             );
         }
     }

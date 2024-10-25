@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TinderForPets.Data;
@@ -11,9 +12,11 @@ using TinderForPets.Data;
 namespace TinderForPets.Data.Migrations
 {
     [DbContext(typeof(TinderForPetsDbContext))]
-    partial class TinderForPetsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241020143404_DateOfBirthColumn")]
+    partial class DateOfBirthColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,9 +156,9 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("sex_id");
 
-                    b.Property<decimal>("Weight")
+                    b.Property<decimal>("Width")
                         .HasColumnType("numeric")
-                        .HasColumnName("weight");
+                        .HasColumnName("width");
 
                     b.HasKey("Id")
                         .HasName("animal_profile_pkey");
@@ -171,7 +174,7 @@ namespace TinderForPets.Data.Migrations
 
                             t.HasCheckConstraint("chk_height_ge_than_10", "height>=10");
 
-                            t.HasCheckConstraint("chk_weight_ge_than_0_3", "weight >= 0.3");
+                            t.HasCheckConstraint("chk_width_ge_than_0_3", "width >= 0.3");
                         });
                 });
 
