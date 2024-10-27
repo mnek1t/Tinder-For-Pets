@@ -1,5 +1,6 @@
 # React-related files
 /frontend\my-app\node_modules
+node_modules/
 /ClientApp/build/
 /ClientApp/.env.local
 /ClientApp/.env.development.local
