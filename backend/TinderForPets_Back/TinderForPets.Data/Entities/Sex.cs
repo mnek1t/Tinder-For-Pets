@@ -11,4 +11,6 @@ public partial class Sex
     public int Id { get; set; }
 
     public string SexName { get; set; }
+
+    public ICollection<AnimalProfile> AnimalProfiles { get; set; } = new List<AnimalProfile>();
 }

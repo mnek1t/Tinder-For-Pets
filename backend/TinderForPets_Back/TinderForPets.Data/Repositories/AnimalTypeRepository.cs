@@ -13,10 +13,10 @@ namespace TinderForPets.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Result<List<AnimalType>>> GetAllAnimalTypesAsync() 
+        public async Task<List<AnimalType>> GetAllAnimalTypesAsync() 
         {
             var animalTypes = await _dbContext.AnimalTypes.ToListAsync();
-            return Result.Success<List<AnimalType>>(animalTypes);
+            return animalTypes;
         }
     }
 }

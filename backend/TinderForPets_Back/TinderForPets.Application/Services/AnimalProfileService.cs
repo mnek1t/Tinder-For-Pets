@@ -2,6 +2,7 @@
 using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Interfaces;
 using TinderForPets.Core;
+using TinderForPets.Core.Models;
 using TinderForPets.Data.Entities;
 using TinderForPets.Data.Interfaces;
 using TinderForPets.Data.Repositories;
@@ -37,8 +38,8 @@ namespace TinderForPets.Application.Services
             {
                 return Result.Success(cachedData);
             }
-            var result = await _animalTypeRepository.GetAllAnimalTypesAsync();
-            var animalTypeDto = result.Value.Select(a => new AnimalTypeDto
+            var animalTypes = await _animalTypeRepository.GetAllAnimalTypesAsync();
+            var animalTypeDto = animalTypes.Select(a => new AnimalTypeDto
             {
                 Id = a.Id,
                 TypeName = a.TypeName
@@ -77,23 +78,54 @@ namespace TinderForPets.Application.Services
             return Result.Success<List<BreedDto>>(breedDto);
         }
 
-        public async Task<Result<List<Sex>>> GetSexesAsync() 
+        public async Task<Result<List<SexDto>>> GetSexesAsync() 
         {
             var cacheKey = "GET_SEXES";
-            var cachedData = await _cacheService.GetAsync<List<Sex>>(cacheKey);
+            var cachedData = await _cacheService.GetAsync<List<SexDto>>(cacheKey);
             if (cachedData != null)
             {
                 return Result.Success(cachedData);
             }
 
-            var sexes = await _sexRepository.GetSexes();
+            var sexesData = await _sexRepository.GetSexes();
+            var sexesDtos = sexesData.Select(s => new SexDto
+            {
+                Id = s.Id,
+                SexName = s.SexName
+            }).ToList();
 
-            return Result.Success<List<Sex>>(sexes);
+            await _cacheService.SetAsync<List<SexDto>>(cacheKey, sexesDtos, TimeSpan.FromMinutes(5));
+
+            return Result.Success<List<SexDto>>(sexesDtos);
         }
 
-        public async Task<Result<Guid>> CreatePetProfile(string name, string description, int age, string sex, bool isVaccinated, bool isSterilized, string breed, Guid userId) 
+        public async Task<Result<Guid>> CreateAnimalAsync(AnimalDto animalDto) 
         {
-            return null;
+            var animalModel = AnimalModel.Create(Guid.NewGuid(), animalDto.OwnerId, animalDto.AnimalTypeId, animalDto.BreedId);
+            var resultId = await _animalProfileRepository.CreateAnimalAsync(animalModel);
+            return Guid.Empty == resultId ? Result.Failure<Guid>(AnimalProfileErrors.NotCreatedAnimal) : Result.Success<Guid>(resultId);
+        }
+
+        public async Task<Result<Guid>> CreatePetProfile(AnimalProfileDto animalProfileDto) 
+        {
+            var animalProfileModel = AnimalProfileModel.Create(
+                Guid.NewGuid(), 
+                animalProfileDto.AnimalId, 
+                animalProfileDto.Name, 
+                animalProfileDto.Description,
+                animalProfileDto.Age, 
+                animalProfileDto.SexId,
+                animalProfileDto.IsVaccinated, 
+                animalProfileDto.IsSterilized, 
+                animalProfileDto.Country, 
+                animalProfileDto.City,
+                animalProfileDto.Latitude,
+                animalProfileDto.Longitude,
+                animalProfileDto.Height,
+                animalProfileDto.Width);
+
+            var resultId = await _animalProfileRepository.CreateProfileAsync(animalProfileModel);
+            return Guid.Empty == resultId ? Result.Failure<Guid>(AnimalProfileErrors.NotCreatedProfile) : Result.Success<Guid>(resultId);
         }
     }
 }
