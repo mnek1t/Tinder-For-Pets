@@ -2,7 +2,7 @@
 /frontend\my-app\node_modules
 node_modules/
 OutsideProjectCatJSONDataCreator/
-.vs/
+.vs\TinderForPets_Back
 /ClientApp/build/
 /ClientApp/.env.local
 /ClientApp/.env.development.local
