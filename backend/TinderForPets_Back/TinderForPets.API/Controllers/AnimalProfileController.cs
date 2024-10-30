@@ -4,7 +4,7 @@ using TinderForPets.API.Contracts.Profiles;
 using TinderForPets.API.Extensions;
 using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Services;
-using TinderForPets.Data.Entities;
+using TinderForPets.Infrastructure;
 
 namespace TinderForPets.API.Controllers
 {
@@ -15,12 +15,14 @@ namespace TinderForPets.API.Controllers
         private readonly AnimalProfileService _profileService;
         private readonly ImageHandlerService _imageResizerService;
         private readonly GeocodingService _geoCodingService;
+        private readonly IJwtProvider _jwtProvider;
 
-        public AnimalProfileController(AnimalProfileService profileService, ImageHandlerService imageResizerService, GeocodingService geoCodingService)
+        public AnimalProfileController(AnimalProfileService profileService, ImageHandlerService imageResizerService, GeocodingService geoCodingService, IJwtProvider jwtProvider)
         {
             _profileService = profileService;
             _imageResizerService = imageResizerService;
             _geoCodingService = geoCodingService;
+            _jwtProvider = jwtProvider;
         }
 
         [HttpGet("animal-types")]
@@ -71,7 +73,7 @@ namespace TinderForPets.API.Controllers
                     AnimalId = result.Value,
                     Name = request.Name,
                     Description = request.Description,
-                    Age = request.Age,
+                    DateOfBirth = request.DateOfBirth,
                     SexId = request.SexId,
                     IsVaccinated = request.IsVaccinated,
                     IsSterilized = request.IsSterilized,
@@ -80,7 +82,7 @@ namespace TinderForPets.API.Controllers
                     Latitude = geoCodingResult.Value.latitude,
                     Longitude = geoCodingResult.Value.longitude,
                     Height = request.Height,
-                    Width = request.Width
+                    Weight = request.Weight
                 };
                 result = await _profileService.CreatePetProfile(animalProfileDto);
 
@@ -88,18 +90,56 @@ namespace TinderForPets.API.Controllers
             return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
         }
 
-        //[Authorize]
-        //[HttpPost("animal/profile/update")]
-        //public async Task<IResult> UpdateProfile([FromBody] CreateAnimalProfileRequest request)
-        //{
-        //    var result = await _profileService.CreateAnimalAsync(request.OwnerId, request.TypeId, request.BreedId);
-        //    if (result.IsSuccess)
-        //    {
-        //        result = await _profileService.CreatePetProfile(result.Value, request.Name, request.Description, request.Age, request.SexId, request.IsVaccinated, request.IsSterilized);
+        [Authorize]
+        [HttpPost("animal/profile/update/{id}")]
+        public async Task<IResult> UpdateProfile(Guid id, [FromBody] UpdateAnimalProfileRequest request)
+        {
+            var geoCodingResult = await _geoCodingService.GetLocationCoordinates(request.City, request.Country);
+            if (geoCodingResult.IsFailure)
+            {
+                return geoCodingResult.ToProblemDetails();
+            }
 
-        //    }
-        //    return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
-        //}
+            var token = Request.Cookies["AuthToken"] ?? "";
+            var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(token);
+            if (validationTokenResult.IsFailure) 
+            {
+                return validationTokenResult.ToProblemDetails();
+            }
+
+            var animalDto = new AnimalDto
+            {
+                Id = id,
+                OwnerId = validationTokenResult.Value,
+                AnimalTypeId = request.TypeId,
+                BreedId = request.BreedId
+            };
+
+            var result = await _profileService.UpdateAnimal(animalDto);
+            if (result.IsSuccess)
+            {
+                var animalProfileDto = new AnimalProfileDto
+                {
+                    AnimalId = id,
+                    Name = request.Name,
+                    Description = request.Description,
+                    DateOfBirth = request.DateOfBirth,
+                    SexId = request.SexId,
+                    IsVaccinated = request.IsVaccinated,
+                    IsSterilized = request.IsSterilized,
+                    Country = request.Country,
+                    City = request.City,
+                    Latitude = geoCodingResult.Value.latitude,
+                    Longitude = geoCodingResult.Value.longitude,
+                    Height = request.Height,
+                    Weight = request.Weight
+                };
+
+                result = await _profileService.UpdatePetProfile(animalProfileDto);
+            }
+
+            return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
+        }
 
         [HttpPost("animal/image/upload")]
         public async Task<IResult> UploadAnimalMedia([FromForm] AnimalMediaUploadRequest request) 
