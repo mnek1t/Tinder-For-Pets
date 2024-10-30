@@ -12,7 +12,6 @@
             string name, 
             string description,
             DateOnly dateOfBirth,
-            int age,
             int sexId, 
             bool isVaccinated, 
             bool isSterilized, 
@@ -29,7 +28,6 @@
             Name = name;
             Description = description;
             DateOfBirth = dateOfBirth;
-            Age = age;
             SexId = sexId;
             IsVaccinated = isVaccinated;
             IsSterilized = isSterilized;
@@ -64,7 +62,6 @@
             string name, 
             string description,
             DateOnly dateOfBirth, 
-            int age,
             int sexId, 
             bool isVaccinated, 
             bool isSterilized, 
@@ -81,7 +78,6 @@
                 name,
                 description, 
                 dateOfBirth, 
-                age,
                 sexId, 
                 isVaccinated, 
                 isSterilized, 
