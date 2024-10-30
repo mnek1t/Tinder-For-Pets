@@ -7,7 +7,7 @@ public partial class AnimalProfile
     public string? Name { get; set; }
     public string Description { get; set; } = string.Empty;
 
-    public int? Age { get; set; }
+    public int Age { get; set; }
     public DateOnly DateOfBirth { get; set; }
 
     public int? SexId { get; set; }
