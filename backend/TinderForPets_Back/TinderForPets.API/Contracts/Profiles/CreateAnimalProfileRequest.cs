@@ -6,7 +6,7 @@ namespace TinderForPets.API.Contracts.Profiles
         [Required] string Name,
         [Required] int TypeId,
             string Description,
-        [Required] int Age,
+        [Required] DateOnly DateOfBirth, 
         [Required] int SexId,
         [Required] bool IsVaccinated,
         [Required] bool IsSterilized,
@@ -14,7 +14,7 @@ namespace TinderForPets.API.Contracts.Profiles
         [Required] Guid OwnerId,// in the top of my head, we need to take this from cookie where jwt token is located. jwt token includes encrypted userId
         [Required] string Country,
         [Required] string City,
-        [Required] decimal Height,
-        [Required] decimal Width
+        decimal Height,
+        decimal Weight
         );
 }
