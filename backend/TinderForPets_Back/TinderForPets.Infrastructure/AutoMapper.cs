@@ -21,7 +21,9 @@ namespace TinderForPets.Infrastructure
 
 
             CreateMap<dataLayer.AnimalProfile, applicationLayer.AnimalProfileModel>();
+
             CreateMap<applicationLayer.AnimalProfileModel, dataLayer.AnimalProfile>();
+                //.ForAllMembers(options => options.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<dataLayer.AnimalImage, applicationLayer.AnimalImageModel>();
             CreateMap<applicationLayer.AnimalImageModel, dataLayer.AnimalImage>();
