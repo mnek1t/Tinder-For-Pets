@@ -9,7 +9,7 @@ namespace TinderForPets.Data.Exceptions
     public class AnimalNotFoundException : Exception
     {
         public AnimalNotFoundException()
-        : base($"Animal was not found.") { }
+        : base($"Animal was not found. (null)") { }
 
         public AnimalNotFoundException(Guid animalId)
         : base($"Animal with id '{animalId}' was not found.") { }
