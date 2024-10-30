@@ -132,3 +132,11 @@ D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\ba
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Data\AnimalTypeData.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Data\BreedCatData.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Data\BreedDogData.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Data\SexData.json
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\SixLabors.ImageSharp.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\StackExchange.Redis.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
