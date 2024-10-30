@@ -106,7 +106,7 @@ namespace TinderForPets.API.Controllers
             var emailData = new ResetPasswordEmailDto
             {
                 UserName = user.UserName,
-                ResetLink = $"https://localhost:5295/api/user/resetPassword?token={jwtToken}"
+                ResetLink = $"http://localhost:3000/accounts/password/reset?token={jwtToken}"
             };
             var message = JsonSerializer.Serialize(emailData);
 
