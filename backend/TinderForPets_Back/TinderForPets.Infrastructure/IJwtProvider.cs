@@ -8,5 +8,6 @@ namespace TinderForPets.Infrastructure
         string GenerateToken(User user);
         string GenerateResetPasswordToken(string email);
         Result<string> ValidateResetPasswordToken(string token);
+        Result<Guid> ValidateAuthTokenAndExtractUserId(string token);
     }
 }
