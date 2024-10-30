@@ -13,14 +13,14 @@ namespace TinderForPets.Data.Configurations
 
             builder.ToTable("animal_profile")
                 .HasCheckConstraint("chk_age_ge_than_1", "age >= 1")
-                .HasCheckConstraint("chk_height_ge_than_10", "height>=10")
-                .HasCheckConstraint("chk_weight_ge_than_0_3", "weight >= 0.3");
+                .HasCheckConstraint("chk_height_ge_than_10", "height IS NULL OR height >= 10")
+                .HasCheckConstraint("chk_weight_ge_than_0_3", "weight IS NULL OR weight >= 0.3");
 
             builder.Property(e => e.Id).IsRequired().HasColumnName("id");
             builder.Property(e => e.AnimalId).IsRequired().HasColumnName("animal_id");
             builder.Property(e => e.Name).IsRequired().HasColumnName("name");
             builder.Property(e => e.Description).HasColumnName("description");
-            builder.Property(e => e.Age).IsRequired().HasColumnName("age").HasColumnType("numeric(2,0)");
+            builder.Property(e => e.Age).HasColumnName("age").HasColumnType("numeric(2,0)");
             builder.Property(e => e.SexId).IsRequired().HasColumnName("sex_id");
             builder.Property(e => e.IsVaccinated).IsRequired().HasColumnName("is_vaccinated");
             builder.Property(e => e.IsSterilized).IsRequired().HasColumnName("is_sterilized");
