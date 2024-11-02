@@ -12,9 +12,21 @@ namespace TinderForPets.Infrastructure
     public class JwtProvider : IJwtProvider
     {
         private readonly JwtOptions _options;
+        private readonly JwtSecurityTokenHandler _tokenHandler;
+        private readonly TokenValidationParameters _validationParameters;
         public JwtProvider(IOptions<JwtOptions> options)
         {
             _options = options.Value;
+            _tokenHandler = new JwtSecurityTokenHandler();
+
+            _validationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey))
+            };
         }
  
         public string GenerateToken(User user)
@@ -56,19 +68,9 @@ namespace TinderForPets.Infrastructure
 
         public Result<string> ValidateResetPasswordToken(string token) 
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey))
-            };
-
             try
             {
-                var claimPrincipal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                var claimPrincipal = _tokenHandler.ValidateToken(token, _validationParameters, out SecurityToken validatedToken);
                 if(claimPrincipal == null) 
                 {
                     return Result.Failure<string>(JwtErrors.JwtTokenExpired);
@@ -92,7 +94,30 @@ namespace TinderForPets.Infrastructure
             {
                 return Result.Failure<string>(JwtErrors.InvalidToken);
             }
-
         }
+
+        public Result<Guid> ValidateAuthTokenAndExtractUserId(string token) 
+        {
+            try
+            {
+                var claimPrincipal = _tokenHandler.ValidateToken(token, _validationParameters, out SecurityToken validatedToken);
+                if (claimPrincipal == null)
+                {
+                    return Result.Failure<Guid>(JwtErrors.JwtTokenExpired);
+                }
+
+                var userId = claimPrincipal.FindFirst("userId").Value;
+
+                return Result.Success<Guid>(Guid.Parse(userId));
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                return Result.Failure<Guid>(JwtErrors.JwtTokenExpired);
+            }
+            catch (SecurityTokenException)
+            {
+                return Result.Failure<Guid>(JwtErrors.InvalidToken);
+            }
+        } 
     }
 }

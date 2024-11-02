@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using SharedKernel;
-using TinderForPets.Core;
+using Microsoft.EntityFrameworkCore;
 using TinderForPets.Core.Models;
 using TinderForPets.Data.Entities;
+using TinderForPets.Data.Exceptions;
 using TinderForPets.Data.Interfaces;
 
 namespace TinderForPets.Data.Repositories
@@ -48,9 +48,52 @@ namespace TinderForPets.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public void UpdateProfile()
+        public async Task<int> UpdateAnimalAsync(AnimalModel animalModel)
         {
-            throw new NotImplementedException();
+            if (animalModel == null) 
+            {
+                throw new AnimalNotFoundException();
+            }
+
+            var rowsUpdated = await _context.Animals
+            .Where(a => a.Id == animalModel.Id && a.UserId == animalModel.UserId)
+            .ExecuteUpdateAsync(animal =>
+                animal
+                .SetProperty(a => a.TypeId, animalModel.TypeId)
+                .SetProperty(a => a.BreedId, animalModel.BreedId)
+            );
+
+            return rowsUpdated == 0 ? throw new AnimalNotFoundException(animalModel.Id) : rowsUpdated;
+            
+        }
+
+        public async Task<int> UpdateProfileAsync(AnimalProfileModel animalProfileModel)
+        {
+            if (animalProfileModel == null)
+            {
+                throw new AnimalNotFoundException();
+            }
+
+            var rowsUpdated = await _context.AnimalProfiles
+            .Where(a => a.AnimalId == animalProfileModel.AnimalId)
+            .ExecuteUpdateAsync(animal =>
+                animal
+                .SetProperty(a => a.IsVaccinated, animalProfileModel.IsVaccinated)
+                .SetProperty(a => a.IsSterilized, animalProfileModel.IsSterilized)
+                .SetProperty(a => a.SexId, animalProfileModel.SexId)
+                .SetProperty(a => a.City, animalProfileModel.City)
+                .SetProperty(a => a.Country, animalProfileModel.Country)
+                .SetProperty(a => a.DateOfBirth, animalProfileModel.DateOfBirth)
+                .SetProperty(a => a.Description, animalProfileModel.Description)
+                .SetProperty(a => a.Height, animalProfileModel.Height)
+                .SetProperty(a => a.Weight, animalProfileModel.Weight)
+                .SetProperty(a => a.Latitude, animalProfileModel.Latitude)
+                .SetProperty(a => a.Longitude, animalProfileModel.Longitude)
+                .SetProperty(a => a.Name, animalProfileModel.Name)
+            );
+
+            return rowsUpdated == 0 ? throw new AnimalNotFoundException(animalProfileModel.Id) : rowsUpdated;
+
         }
     }
 }

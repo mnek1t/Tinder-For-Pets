@@ -76,7 +76,7 @@ namespace TinderForPets.Data.Repositories
                    .SetProperty(u => u.Password, hashedPassword));
             await _context.SaveChangesAsync();
 
-            return rowsUpdated == 0 ? throw new UserNotFoundException(email) : "Success. Password was reset";
+            return rowsUpdated == 0 ? throw new UserNotFoundException(email) : "Password was reset";
         }
     }
 }

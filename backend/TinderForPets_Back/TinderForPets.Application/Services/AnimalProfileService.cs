@@ -3,9 +3,8 @@ using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Interfaces;
 using TinderForPets.Core;
 using TinderForPets.Core.Models;
-using TinderForPets.Data.Entities;
+using TinderForPets.Data.Exceptions;
 using TinderForPets.Data.Interfaces;
-using TinderForPets.Data.Repositories;
 
 namespace TinderForPets.Application.Services
 {
@@ -113,7 +112,7 @@ namespace TinderForPets.Application.Services
                 animalProfileDto.AnimalId, 
                 animalProfileDto.Name, 
                 animalProfileDto.Description,
-                animalProfileDto.Age, 
+                animalProfileDto.DateOfBirth,
                 animalProfileDto.SexId,
                 animalProfileDto.IsVaccinated, 
                 animalProfileDto.IsSterilized, 
@@ -122,10 +121,53 @@ namespace TinderForPets.Application.Services
                 animalProfileDto.Latitude,
                 animalProfileDto.Longitude,
                 animalProfileDto.Height,
-                animalProfileDto.Width);
+                animalProfileDto.Weight);
 
             var resultId = await _animalProfileRepository.CreateProfileAsync(animalProfileModel);
             return Guid.Empty == resultId ? Result.Failure<Guid>(AnimalProfileErrors.NotCreatedProfile) : Result.Success<Guid>(resultId);
+        }
+
+        public async Task<Result<string>> UpdateAnimal(AnimalDto animalDto) 
+        {
+            var animal = AnimalModel.Create(animalDto.Id, animalDto.OwnerId, animalDto.AnimalTypeId, animalDto.BreedId);
+            try
+            {
+                await _animalProfileRepository.UpdateAnimalAsync(animal);
+                return Result.Success<string>($"Success. Pet with {animalDto.Id} id was successfully updated");
+            }
+            catch (AnimalNotFoundException ex)
+            {
+                return Result.Failure<string>(AnimalProfileErrors.NotUpdated(ex.Message));
+            }
+        }
+
+        public async Task<Result<string>> UpdatePetProfile(AnimalProfileDto animalProfileDto)
+        {
+            var animalProfileModel = AnimalProfileModel.Create(
+                animalProfileDto.Id,
+                animalProfileDto.AnimalId,
+                animalProfileDto.Name,
+                animalProfileDto.Description,
+                animalProfileDto.DateOfBirth,
+                animalProfileDto.SexId,
+                animalProfileDto.IsVaccinated,
+                animalProfileDto.IsSterilized,
+                animalProfileDto.Country,
+                animalProfileDto.City,
+                animalProfileDto.Latitude,
+                animalProfileDto.Longitude,
+                animalProfileDto.Height,
+                animalProfileDto.Weight);
+
+            try
+            {
+                await _animalProfileRepository.UpdateProfileAsync(animalProfileModel);
+                return Result.Success<string>($"Success. Pet with {animalProfileDto.AnimalId} id was successfully updated");
+            }
+            catch (AnimalNotFoundException ex)
+            {
+                return Result.Failure<string>(AnimalProfileErrors.NotUpdated(ex.Message));
+            }
         }
     }
 }

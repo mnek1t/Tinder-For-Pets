@@ -11,11 +11,21 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using TinderForPets.API;
 using TinderForPets.Application.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddUserSecrets<Program>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy => 
+    {
+        policy.WithOrigins("http://localhost:3000");
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+    });
+});
 // Add services to the container.
 builder.Services.AddHttpClient();
 
@@ -37,7 +47,6 @@ builder.Services.AddDbContext<TinderForPetsDbContext>(
 
 builder.Services.AddTransient<TinderForPetsDataSeeder>();
 
-// Add services to the container.
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration["RedisCacheOptions:Configuration"];
@@ -105,4 +114,5 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
+app.UseCors();
 app.Run();
