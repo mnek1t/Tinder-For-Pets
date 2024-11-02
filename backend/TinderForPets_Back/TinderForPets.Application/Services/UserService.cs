@@ -23,12 +23,12 @@ namespace TinderForPets.Application.Services
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<Result<Guid>> Register(string userName, string email, string password)
+        public async Task<Result<string>> Register(string userName, string email, string password)
         {
             try
             {
                 await _userRepository.GetByEmail(email);
-                return Result.Failure<Guid>(UserErrors.DuplicateUser(email));
+                return Result.Failure<string>(UserErrors.DuplicateUser(email));
             }
             catch (UserNotFoundException) 
             { }
@@ -38,12 +38,14 @@ namespace TinderForPets.Application.Services
             try
             {
                 var userId = await _userRepository.Add(user);
-                return Result.Success<Guid>(userId);
             }
             catch (UserNotFoundException)
             {
-                return Result.Failure<Guid>(UserErrors.NotCreated);
+                return Result.Failure<string>(UserErrors.NotCreated);
             }
+
+            var token = _jwtProvider.GenerateToken(user);
+            return Result.Success<string>(token);
         }
 
         public async Task<Result<string>> Login(string email, string password)
