@@ -3,6 +3,7 @@ interface ConfirmedWindowOptions {
     title: string,
     message: string
 }
+
 export default function ConfirmedWindow(props : ConfirmedWindowOptions) {
     return ( 
     <div className="email-sent">

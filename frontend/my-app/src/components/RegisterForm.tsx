@@ -11,7 +11,6 @@ interface RegisterProps {
 
 export default function RegisterForm(props:  RegisterProps) {
     const [error, setError] = useState<string | null>(null);
-
     const [registerCredentials, setRegisterCredentials] = useState<RegisterCredentials>({
         username: "",
         email: "",
@@ -43,7 +42,7 @@ export default function RegisterForm(props:  RegisterProps) {
 
     return(
         <form className={`register ${props.isOpen ? 'form-appear' : 'form-disappear closing'}`} onSubmit={(e) => makeRegister(e)}>
-            <CloseFormButton handleClose={(e) => props.handleModalClose(e)}/>
+            <CloseFormButton handleClose={props.handleModalClose}/>
             <div className='register-container'>
                 <h1 className="register__header">Create Account</h1>
                 <input className="register__input" placeholder="Username" value={registerCredentials.username} name="username" onChange={(e) => handleInput(e)} required></input>

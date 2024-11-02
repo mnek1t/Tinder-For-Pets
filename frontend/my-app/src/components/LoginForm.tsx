@@ -22,7 +22,7 @@ export default function Login(props: LoginProps) {
         event.preventDefault();
         console.log("Loggining");
         login(loginCredentials)
-        .then(() => {
+        .then((token) => {
             navigate("/about");
             setError(null);
         })
