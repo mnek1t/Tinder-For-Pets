@@ -11,7 +11,7 @@ namespace TinderForPets.API.Contracts.Profiles
         [Required] bool IsVaccinated,
         [Required] bool IsSterilized,
         [Required] int BreedId,
-        List<IFormFile> Files,
+        IFormFile File,
         [Required] string Country,
         [Required] string City,
         decimal Height,
