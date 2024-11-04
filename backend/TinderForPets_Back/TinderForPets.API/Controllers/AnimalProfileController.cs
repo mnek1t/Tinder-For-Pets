@@ -24,6 +24,30 @@ namespace TinderForPets.API.Controllers
             _geoCodingService = geoCodingService;
             _jwtProvider = jwtProvider;
         }
+
+        [Authorize]
+        [HttpGet("animal/image")]
+        public async Task<IResult> GetProfileImage()
+        {
+            var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
+            if (validationTokenResult.IsFailure)
+            {
+                return validationTokenResult.ToProblemDetails();
+            }
+
+            var animalProfileIdResult = await _profileService.GetAnimalProfileId(validationTokenResult.Value);
+
+            if (animalProfileIdResult.IsFailure)
+            {
+                return validationTokenResult.ToProblemDetails();
+            }
+
+            var result = await _profileService.GetAnimalImageAsync(animalProfileIdResult.Value);
+            var animalImageDto = result.Value;
+            return Results.Ok(File(animalImageDto.ImageData, animalImageDto.ImageFormat));
+
+        }
+
         [HttpGet("animal-types")]
         public async Task<IResult> GetAnimalTypes()
         {
