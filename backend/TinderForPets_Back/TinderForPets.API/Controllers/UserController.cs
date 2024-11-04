@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using SharedKernel;
 using System.Text.Json;
 using TinderForPets.API.Contracts.Users;
 using TinderForPets.API.DTOs;
@@ -23,14 +21,6 @@ namespace TinderForPets.API.Controllers
             _emailSender = emailSender;
         }
 
-        // TODO: DELETE: For testing Autentification
-        [Authorize]
-        [HttpGet("protected")]
-        public IActionResult GetProtectedData()
-        {
-            return Ok("This is a protected endpoint");
-        }
-
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IResult> Register(
@@ -39,12 +29,7 @@ namespace TinderForPets.API.Controllers
         {
             var result = await _userService.Register(request.UserName, request.Email, request.Password);
             var jwtToken = result.Value;
-            HttpContext.Response.Cookies.Append("AuthToken", jwtToken, new CookieOptions()
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None
-            });
+            SetAuthTokenInCookies(HttpContext, jwtToken);
 
             return result.IsSuccess ? Results.Ok(jwtToken) : result.ToProblemDetails();
         }
@@ -53,23 +38,17 @@ namespace TinderForPets.API.Controllers
         [AllowAnonymous]
         public async Task<IResult> Login(
             [FromBody] LoginUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.Login(request.Email, request.Password);
+            cancellationToken.ThrowIfCancellationRequested();
+            var result = await _userService.Login(request.Email, request.Password, cancellationToken);
             if (result.IsFailure)
             {
                 return result.ToProblemDetails();
             }
 
             var jwtToken = result.Value;
-
-            HttpContext.Response.Cookies.Append("AuthToken", jwtToken, new CookieOptions()
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None
-            });
-
+            SetAuthTokenInCookies(HttpContext, jwtToken);
 
             return Results.Ok(jwtToken);
         }
@@ -92,7 +71,7 @@ namespace TinderForPets.API.Controllers
             return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
         }
 
-        [HttpPost("resetPassword")]
+        [HttpPatch("resetPassword")]
         [AllowAnonymous]
         public async Task<IResult> ResetPassword(
             [FromBody] ResetPasswordUserRequest request,
@@ -117,7 +96,6 @@ namespace TinderForPets.API.Controllers
             var user = result.Value;
             var jwtToken = _userService.GenerateResetPasswordToken(request.Email).Value;
 
-            // TODO: here will be a link to frontend and then fronend will use this link below
             var emailData = new ResetPasswordEmailDto
             {
                 UserName = user.UserName,
@@ -130,5 +108,14 @@ namespace TinderForPets.API.Controllers
             return Results.Ok(jwtToken);
         }
 
+        private static void SetAuthTokenInCookies(HttpContext context, string jwtToken) 
+        {
+            context.Response.Cookies.Append("AuthToken", jwtToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+        }
     }
 }

@@ -11,61 +11,54 @@ namespace TinderForPets.Data.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly TinderForPetsDbContext _context;
-        private readonly IMapper _mapper;
 
-        public UserRepository(TinderForPetsDbContext context, IMapper mapper)
+        public UserRepository(TinderForPetsDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
-        public async Task<Guid> Add(User user)
+        public async Task<Guid> CreateAsync(UserAccount user)
         {
-            if (user == null) 
+            await _context.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user.Id;
+        }
+
+        public async Task DeleteAsync(Guid id) 
+        {
+            var rowsDeleted = await _context.UserAccounts.Where(u => u.Id == id)
+                .ExecuteDeleteAsync();
+            if (rowsDeleted == 0) 
             {
                 throw new UserNotFoundException();
             }
-
-            var userEntity = _mapper.Map<UserAccount>(user);
-
-            await _context.AddAsync(userEntity);
-            await _context.SaveChangesAsync();
-            return userEntity.Id;
         }
 
-        public async Task<string> Delete(Guid userId) 
-        {
-            var rowsDeleted = await _context.UserAccounts.Where(u => u.Id == userId)
-                .ExecuteDeleteAsync();
-
-            await _context.SaveChangesAsync();
-
-            return rowsDeleted == 0 ? throw new UserNotFoundException() : "Success. User Has been deleted and his pets as well";
-        }
-
-        public async Task<User> GetByEmail(string email)
+        public async Task<UserAccount> GetByIdAsync(Guid id)
         {
             var userEntity = await _context.UserAccounts
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.EmailAddress == email);
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (userEntity == null)
+            {
+                throw new UserNotFoundException(id.ToString());
+            }
+
+            return userEntity;
+        }
+
+        public async Task<UserAccount> GetByEmailAsync(string email, CancellationToken cancellationToken)
+        {
+            var userEntity = await _context.UserAccounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.EmailAddress == email, cancellationToken);
             if (userEntity == null) 
             {
                 throw new UserNotFoundException(email);
             }
 
-            var user = _mapper.Map<User>(userEntity);
-
-            return user;
-        }
-
-        public async Task<List<User>> GetUsers()
-        {
-            // TODO: complete 
-            var userEntities = await _context.UserAccounts.AsNoTracking().ToListAsync();
-
-            // TODO: Create User type defined in Core from Entity. Use Mapper!   
-
-            throw new NotImplementedException();
+            return userEntity;
         }
 
         public async Task<string> ResetPassword(string email, string hashedPassword)
@@ -74,9 +67,18 @@ namespace TinderForPets.Data.Repositories
                .Where(u => u.EmailAddress == email)
                .ExecuteUpdateAsync(u => u
                    .SetProperty(u => u.Password, hashedPassword));
-            await _context.SaveChangesAsync();
 
-            return rowsUpdated == 0 ? throw new UserNotFoundException(email) : "Password was reset";
+            if (rowsUpdated == 0) 
+            {
+                throw new UserNotFoundException(email);
+            }
+
+            return "Password was reset";
+        }
+
+        public Task UpdateAsync(UserAccount account)
+        {
+            throw new NotImplementedException();
         }
     }
 }

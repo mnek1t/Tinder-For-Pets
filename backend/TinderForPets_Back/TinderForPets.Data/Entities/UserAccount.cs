@@ -1,6 +1,6 @@
 ﻿namespace TinderForPets.Data.Entities;
 
-public partial class UserAccount
+public partial class UserAccount : IEntity
 {
     public UserAccount()
     {

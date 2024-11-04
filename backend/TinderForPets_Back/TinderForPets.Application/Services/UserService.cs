@@ -4,6 +4,8 @@ using TinderForPets.Data.Interfaces;
 using SharedKernel;
 using TinderForPets.Core;
 using TinderForPets.Data.Exceptions;
+using AutoMapper;
+using TinderForPets.Data.Entities;
 
 namespace TinderForPets.Application.Services
 {
@@ -12,54 +14,62 @@ namespace TinderForPets.Application.Services
         private readonly IPasswordHasher _passwordHasher;
         private readonly IUserRepository _userRepository;
         private readonly IJwtProvider _jwtProvider;
+        private readonly IMapper _mapper;
 
         public UserService(
             IUserRepository userRepository, 
             IPasswordHasher passwordHasher,
-            IJwtProvider jwtProvider)
+            IJwtProvider jwtProvider,
+            IMapper mapper)
         {
             _passwordHasher = passwordHasher;
             _userRepository = userRepository;
             _jwtProvider = jwtProvider;
+            _mapper = mapper;
         }
 
         public async Task<Result<string>> Register(string userName, string email, string password)
         {
             try
             {
-                await _userRepository.GetByEmail(email);
+                await _userRepository.GetByEmailAsync(email);
                 return Result.Failure<string>(UserErrors.DuplicateUser(email));
             }
             catch (UserNotFoundException) 
-            { }
-
-            var hashedPassword = _passwordHasher.Generate(password);
-            var user = User.Create(Guid.NewGuid(), userName, hashedPassword, email);
-            try
             {
-                var userId = await _userRepository.Add(user);
-            }
-            catch (UserNotFoundException)
-            {
-                return Result.Failure<string>(UserErrors.NotCreated);
-            }
-
-            var token = _jwtProvider.GenerateToken(user);
-            return Result.Success<string>(token);
+                var hashedPassword = _passwordHasher.Generate(password);
+                var user = User.Create(Guid.NewGuid(), userName, hashedPassword, email);
+                try
+                {
+                    var userEntity = _mapper.Map<UserAccount>(user);
+                    var userId = await _userRepository.CreateAsync(userEntity);
+                    var token = _jwtProvider.GenerateToken(userId);
+                    return Result.Success<string>(token);
+                }
+                catch (UserNotFoundException)
+                {
+                    return Result.Failure<string>(UserErrors.NotCreated);
+                }
+            }    
         }
 
-        public async Task<Result<string>> Login(string email, string password)
+        public async Task<Result<string>> Login(string email, string password, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                var user = await _userRepository.GetByEmail(email);
-
-                if (!_passwordHasher.Verify(password, user.PasswordHash))
+                var userEntity = await _userRepository.GetByEmailAsync(email, cancellationToken);
+                var userModel = _mapper.Map<User>(userEntity);
+                if (!_passwordHasher.Verify(password, userModel.PasswordHash))
                 {
                     return Result.Failure<string>(UserErrors.InvalidPassword);
                 }
-                var token = _jwtProvider.GenerateToken(user);
+                var token = _jwtProvider.GenerateToken(userEntity.Id);
                 return Result.Success<string>(token);
+            }
+            catch (OperationCanceledException)
+            {
+                return Result.Failure<string>(new Error("400","Operation canceled"));
             }
             catch (UserNotFoundException)
             {
@@ -67,19 +77,20 @@ namespace TinderForPets.Application.Services
             }
         }
 
-        public async Task<Result<string>> ResetPassword(string newPassword, string confirmPassword, string token) 
+        public async Task<Result<string>> ResetPassword(string newPassword, string confirmPassword, string resetPasswordToken) 
         {
             if (newPassword != confirmPassword) 
             {
                 return Result.Failure<string>(UserErrors.NotMatchPassword);
             }
 
-            var varifyTokenResult = _jwtProvider.ValidateResetPasswordToken(token);
+            var varifyTokenResult = _jwtProvider.ValidateResetPasswordToken(resetPasswordToken);
             if (varifyTokenResult.IsFailure) 
             {
                 return varifyTokenResult;
             }
-            string hashedPassword = _passwordHasher.Generate(newPassword);
+
+            var hashedPassword = _passwordHasher.Generate(newPassword);
             var userEmail = varifyTokenResult.Value;
             
             try
@@ -97,8 +108,9 @@ namespace TinderForPets.Application.Services
         {
             try
             {
-                var user = await _userRepository.GetByEmail(email);
-                return Result.Success<User>(user);
+                var userEntity = await _userRepository.GetByEmailAsync(email);
+                var userModel = _mapper.Map<User>(userEntity);
+                return Result.Success<User>(userModel);
             }
             catch (UserNotFoundException)
             {
@@ -106,16 +118,16 @@ namespace TinderForPets.Application.Services
             } 
         }
 
-        public async Task<Result<string>> DeleteUser(Guid userId) 
+        public async Task<Result> DeleteUser(Guid userId) 
         {
             try
             {
-                var result = await _userRepository.Delete(userId);
-                return Result.Success<string>(result);
+                await _userRepository.DeleteAsync(userId);
+                return Result.Success();
             }
             catch (UserNotFoundException)
             {
-                return Result.Failure<string>(UserErrors.NotFound(userId));
+                return Result.Failure(UserErrors.NotFound(userId));
             }
         }
 
