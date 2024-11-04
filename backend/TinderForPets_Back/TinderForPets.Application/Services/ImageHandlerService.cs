@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using SharedKernel;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
@@ -14,21 +15,23 @@ namespace TinderForPets.Application.Services
         private const int MAX_WIDTH = 500;
         private const int MAX_HEIGHT = 800;
         private readonly IAnimalImageRepository _animalImageRepository;
+        private readonly IMapper _mapper;
 
-        public ImageHandlerService(IAnimalImageRepository animalImageRepository)
+        public ImageHandlerService(IAnimalImageRepository animalImageRepository, IMapper mapper)
         {
             _animalImageRepository = animalImageRepository;
+            _mapper = mapper;
         }
-        public async Task<Result<List<AnimalImageModel>>> ResizeImages(List<IFormFile> files, Guid animalProfileId, string description = "main image") 
+        public async Task<Result<AnimalImage>> ResizeImages(IFormFile file, Guid animalProfileId, CancellationToken cancellationToken, string description = "main image") 
         {
-            var animalImageModels = new List<AnimalImageModel>();
-            foreach (var file in files)
+            try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 using var memoryStream = new MemoryStream();
                 await file.CopyToAsync(memoryStream);
                 byte[] imageData = memoryStream.ToArray();
 
-                if (file.ContentType.StartsWith("image")) 
+                if (file.ContentType.StartsWith("image"))
                 {
                     using var image = Image.Load(imageData);
                     image.Mutate(i => i.Resize(new ResizeOptions
@@ -38,22 +41,32 @@ namespace TinderForPets.Application.Services
                     }));
 
                     using var outStream = new MemoryStream();
-                    await image.SaveAsync(outStream, new PngEncoder());
+                    await image.SaveAsync(outStream, new PngEncoder(), cancellationToken);
                     imageData = outStream.ToArray();
                 }
 
                 var animalImageModel = AnimalImageModel.Create(Guid.NewGuid(), animalProfileId, imageData, description, DateOnly.FromDateTime(DateTime.UtcNow), file.ContentType);
-                animalImageModels.Add(animalImageModel);
+                var animalImageEntity = _mapper.Map<AnimalImage>(animalImageModel);
+                return Result.Success<AnimalImage>(animalImageEntity);
             }
-
-            return Result.Success<List<AnimalImageModel>>(animalImageModels);
-            
+            catch (OperationCanceledException)
+            {
+                return Result.Failure<AnimalImage>(new Error("400", "Operation canceled"));
+            }
         }
 
-        public async Task<Result<List<AnimalImage>>> SaveImages(List<AnimalImageModel> animalImageModels) 
+        public async Task<Result<Guid>> SaveImages(AnimalImage animalImage, CancellationToken cancellationToken) 
         {
-            var uploadedAnimalImages = await _animalImageRepository.SaveAnimalMediaAsync(animalImageModels);
-            return Result.Success<List<AnimalImage>>(uploadedAnimalImages);
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var uploadedAnimalImageId = await _animalImageRepository.CreateAsync(animalImage, cancellationToken);
+                return Result.Success<Guid>(uploadedAnimalImageId);
+            }
+            catch (OperationCanceledException)
+            {
+                return Result.Failure<Guid>(new Error("400", "Operation canceled"));
+            }
         }
 
     }

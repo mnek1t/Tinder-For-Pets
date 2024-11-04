@@ -17,38 +17,44 @@ namespace TinderForPets.Application.Services
             _httpClient = httpClient;
         }
 
-        public async Task<Result<(decimal latitude, decimal longitude)>> GetLocationCoordinates(string city, string country) 
+        public async Task<Result<(decimal latitude, decimal longitude)>> GetLocationCoordinates(string city, string country, CancellationToken cancellationToken) 
         {
-            if (geocodingApiUrl.IsNullOrEmpty())
+            try
             {
-                return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.InvalidRequestUrl);
-            }
-
-            _httpClient.BaseAddress = new Uri(geocodingApiUrl);
-            var requestUri = $"{geocodingApiUrl}?city={city}&country={country}&format=json";
-            _httpClient.DefaultRequestHeaders.Add(
-            HeaderNames.UserAgent, "GeocodingApiApp (mednikita2004@gmail.com)");
-
-            HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                JArray json = JArray.Parse(jsonResponse);
-                if (json.Count > 0)
+                if (geocodingApiUrl.IsNullOrEmpty())
                 {
-                    decimal latitude = (decimal)json[0]["lat"];
-                    decimal longitude = (decimal)json[0]["lon"];
-                    return Result.Success<(decimal latitude, decimal longitude)>((latitude, longitude));
+                    return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.InvalidRequestUrl);
+                }
+
+                _httpClient.BaseAddress = new Uri(geocodingApiUrl);
+                var requestUri = $"{geocodingApiUrl}?city={city}&country={country}&format=json";
+                _httpClient.DefaultRequestHeaders.Add(HeaderNames.UserAgent, "GeocodingApiApp (mednikita2004@gmail.com)");
+
+                HttpResponseMessage response = await _httpClient.GetAsync(requestUri);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    JArray json = JArray.Parse(jsonResponse);
+                    if (json.Count > 0)
+                    {
+                        decimal latitude = (decimal)json[0]["lat"];
+                        decimal longitude = (decimal)json[0]["lon"];
+                        return Result.Success<(decimal latitude, decimal longitude)>((latitude, longitude));
+                    }
+                    else
+                    {
+                        return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.ResponseWereNotReadCorrect);
+                    }
                 }
                 else
                 {
-                    return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.ResponseWereNotReadCorrect);
+                    return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.FailedResponse(response.StatusCode.ToString(), response.Content.ToString()));
                 }
             }
-            else 
+            catch (OperationCanceledException)
             {
-                return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.FailedResponse(response.StatusCode.ToString(), response.Content.ToString()));
+                return Result.Failure<(decimal latitude, decimal longitude)>(new Error("400", "Operation canceled"));
             }
         }
     }

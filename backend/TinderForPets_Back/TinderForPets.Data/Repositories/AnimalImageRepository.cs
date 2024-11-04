@@ -1,37 +1,39 @@
-﻿using AutoMapper;
+﻿
 using Microsoft.EntityFrameworkCore;
-using TinderForPets.Core.Models;
 using TinderForPets.Data.Entities;
 using TinderForPets.Data.Interfaces;
 
 namespace TinderForPets.Data.Repositories
 {
-    public class AnimalImageRepository : IAnimalImageRepository
+    public class AnimalImageRepository : TinderForPetsRepository<AnimalImage>, IAnimalImageRepository
     {
-        private readonly TinderForPetsDbContext _context;
-        private readonly IMapper _mapper;
-        public AnimalImageRepository(TinderForPetsDbContext dbContext, IMapper mapper)
-        {
-            _context = dbContext;
-            _mapper = mapper;
-        }
+        public AnimalImageRepository(TinderForPetsDbContext context) : base(context) { }
 
-        public async Task<AnimalImage> GetAnimalImageAsync(Guid animalProfileId)
+        public async Task<AnimalImage> GetAnimalImageAsync(Guid animalProfileId, CancellationToken cancellationToken)
         {
             var image = await _context.AnimalImage
                 .Where(ai => ai.AnimalProfileId == animalProfileId)
                 .Select(a => new AnimalImage() { ImageData = a.ImageData, ImageFormat = a.ImageFormat})
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
             return image;
         }
 
-        public async Task<List<AnimalImage>> SaveAnimalMediaAsync(IEnumerable<AnimalImageModel> animalImageModels)
+        public async override Task<Guid> CreateAsync(AnimalImage animalImage, CancellationToken cancellationToken)
         {
-            var animalImageEntities = animalImageModels.Select(am => _mapper.Map<AnimalImage>(am)).ToList();
-            await _context.AddRangeAsync(animalImageEntities);
-            await _context.SaveChangesAsync();
-            return animalImageEntities;
+            await _context.AddAsync(animalImage, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return animalImage.Id;
+        }
+
+        public override Task UpdateAsync(AnimalImage entity, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

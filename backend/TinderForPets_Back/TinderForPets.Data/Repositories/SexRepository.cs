@@ -11,9 +11,9 @@ namespace TinderForPets.Data.Repositories
         {
             _context = context;
         }
-        public Task<List<Sex>> GetSexes()
+        public Task<List<Sex>> GetSexes(CancellationToken cancellationToken)
         {
-            var sexes = _context.Sexes.ToListAsync();
+            var sexes = _context.Sexes.ToListAsync(cancellationToken);
             return sexes;
         }
     }

@@ -1,44 +1,36 @@
 ﻿using TinderForPets.Data.Interfaces;
-using TinderForPets.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using TinderForPets.Data.Entities;
-using TinderForPets.Core;
-using AutoMapper;
 using TinderForPets.Data.Exceptions;
 
 namespace TinderForPets.Data.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : TinderForPetsRepository<UserAccount>, IUserRepository
     {
-        private readonly TinderForPetsDbContext _context;
+        public UserRepository(TinderForPetsDbContext context) : base(context) { }
 
-        public UserRepository(TinderForPetsDbContext context)
+        public async override Task<Guid> CreateAsync(UserAccount user, CancellationToken cancellationToken)
         {
-            _context = context;
-        }
-
-        public async Task<Guid> CreateAsync(UserAccount user)
-        {
-            await _context.AddAsync(user);
+            await _context.AddAsync(user, cancellationToken);
             await _context.SaveChangesAsync();
             return user.Id;
         }
 
-        public async Task DeleteAsync(Guid id) 
+        public async override Task  DeleteAsync(Guid id, CancellationToken cancellationToken) 
         {
             var rowsDeleted = await _context.UserAccounts.Where(u => u.Id == id)
-                .ExecuteDeleteAsync();
+                .ExecuteDeleteAsync(cancellationToken);
             if (rowsDeleted == 0) 
             {
                 throw new UserNotFoundException();
             }
         }
 
-        public async Task<UserAccount> GetByIdAsync(Guid id)
+        public async override Task<UserAccount> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var userEntity = await _context.UserAccounts
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
             if (userEntity == null)
             {
@@ -61,12 +53,12 @@ namespace TinderForPets.Data.Repositories
             return userEntity;
         }
 
-        public async Task<string> ResetPassword(string email, string hashedPassword)
+        public async Task<string> ResetPassword(string email, string hashedPassword, CancellationToken cancellationToken)
         {
             var rowsUpdated = await _context.UserAccounts
                .Where(u => u.EmailAddress == email)
                .ExecuteUpdateAsync(u => u
-                   .SetProperty(u => u.Password, hashedPassword));
+                   .SetProperty(u => u.Password, hashedPassword), cancellationToken);
 
             if (rowsUpdated == 0) 
             {
@@ -76,7 +68,7 @@ namespace TinderForPets.Data.Repositories
             return "Password was reset";
         }
 
-        public Task UpdateAsync(UserAccount account)
+        public override Task UpdateAsync(UserAccount account, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

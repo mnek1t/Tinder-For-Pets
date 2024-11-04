@@ -13,14 +13,14 @@ namespace TinderForPets.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Breed>> GetBreedsAsync()
+        public async Task<List<Breed>> GetBreedsAsync(CancellationToken cancellationToken)
         {
-            return await _context.Breeds.ToListAsync();
+            return await _context.Breeds.ToListAsync(cancellationToken);
         }
 
-        public async Task<List<Breed>?> GetBreedsByTypeIdAsync(int id)
+        public async Task<List<Breed>?> GetBreedsByTypeIdAsync(int id, CancellationToken cancellationToken)
         {
-            var breeds = await _context.Breeds.Where(b => b.AnimalTypeId == id).ToListAsync();
+            var breeds = await _context.Breeds.Where(b => b.AnimalTypeId == id).ToListAsync(cancellationToken);
             return breeds.Count > 0 ? breeds : null;
         }
     }
