@@ -48,6 +48,16 @@ namespace TinderForPets.Data.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<Guid> GetAnimalProfileByOwnerId(Guid ownerId)
+        {
+            var animalProfileId = await _context.Animals
+                .Where(a => a.UserId == ownerId)
+                .Select(a => a.Profile.Id) 
+                .SingleOrDefaultAsync();
+
+            return animalProfileId;
+        }
+
         public async Task<int> UpdateAnimalAsync(AnimalModel animalModel)
         {
             if (animalModel == null) 
