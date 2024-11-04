@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using SharedKernel;
 using System.Text.Json;
 using TinderForPets.API.Contracts.Users;
@@ -37,7 +38,15 @@ namespace TinderForPets.API.Controllers
             CancellationToken token)
         {
             var result = await _userService.Register(request.UserName, request.Email, request.Password);
-            return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
+            var jwtToken = result.Value;
+            HttpContext.Response.Cookies.Append("AuthToken", jwtToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+
+            return result.IsSuccess ? Results.Ok(jwtToken) : result.ToProblemDetails();
         }
 
         [HttpPost("login")]
@@ -54,7 +63,13 @@ namespace TinderForPets.API.Controllers
 
             var jwtToken = result.Value;
 
-            HttpContext.Response.Cookies.Append("AuthToken", jwtToken);
+            HttpContext.Response.Cookies.Append("AuthToken", jwtToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+
 
             return Results.Ok(jwtToken);
         }
