@@ -30,9 +30,9 @@ namespace TinderForPets.Infrastructure
             };
         }
  
-        public string GenerateToken(User user)
+        public string GenerateToken(Guid userId)
         {
-            Claim[] claims = [new("userId", user.Id.ToString())];
+            Claim[] claims = [new("userId", userId.ToString())];
 
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(

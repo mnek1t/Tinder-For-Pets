@@ -6,7 +6,7 @@ namespace TinderForPets.Infrastructure
 {
     public interface IJwtProvider
     {
-        string GenerateToken(User user);
+        string GenerateToken(Guid userId);
         string GenerateResetPasswordToken(string email);
         Result<string> ValidateResetPasswordToken(string token);
         Result<Guid> ValidateAuthTokenAndExtractUserId(HttpContext context);
