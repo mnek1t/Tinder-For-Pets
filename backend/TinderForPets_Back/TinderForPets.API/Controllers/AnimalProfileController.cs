@@ -24,7 +24,6 @@ namespace TinderForPets.API.Controllers
             _geoCodingService = geoCodingService;
             _jwtProvider = jwtProvider;
         }
-
         [HttpGet("animal-types")]
         public async Task<IResult> GetAnimalTypes()
         {
@@ -49,45 +48,74 @@ namespace TinderForPets.API.Controllers
 
         [Authorize]
         [HttpPost("animal/profile/create")]
-        public async Task<IResult> CreateProfile([FromBody] CreateAnimalProfileRequest request) 
+        public async Task<IResult> CreateProfile([FromForm] CreateAnimalProfileRequest request) 
         {
+            // Extract and Validate JWT Token
+            var tokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
+            if (tokenResult.IsFailure) 
+            {
+                return tokenResult.ToProblemDetails();
+            }
+
+            // Get coordinates of pet / user location
             var geoCodingResult = await _geoCodingService.GetLocationCoordinates(request.City, request.Country);
             if (geoCodingResult.IsFailure) 
             {
                 return geoCodingResult.ToProblemDetails();
             }
 
+            // Create record in animal table
             var animalDto = new AnimalDto 
             { 
-                OwnerId = request.OwnerId, 
+                OwnerId = tokenResult.Value, 
                 AnimalTypeId = request.TypeId,
                 BreedId = request.BreedId
             };
 
-            var result = await _profileService.CreateAnimalAsync(animalDto);
-
-            if (result.IsSuccess) 
+            var createAnimalResult = await _profileService.CreateAnimalAsync(animalDto);
+            if (createAnimalResult.IsFailure) 
             {
-                var animalProfileDto = new AnimalProfileDto 
-                {
-                    AnimalId = result.Value,
-                    Name = request.Name,
-                    Description = request.Description,
-                    DateOfBirth = request.DateOfBirth,
-                    SexId = request.SexId,
-                    IsVaccinated = request.IsVaccinated,
-                    IsSterilized = request.IsSterilized,
-                    Country = request.Country,
-                    City = request.City,
-                    Latitude = geoCodingResult.Value.latitude,
-                    Longitude = geoCodingResult.Value.longitude,
-                    Height = request.Height,
-                    Weight = request.Weight
-                };
-                result = await _profileService.CreatePetProfile(animalProfileDto);
-
+                return createAnimalResult.ToProblemDetails();
             }
-            return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
+
+            // Create record in animal_profile table
+            var animalProfileDto = new AnimalProfileDto 
+            {
+                AnimalId = createAnimalResult.Value,
+                Name = request.Name,
+                Description = request.Description,
+                DateOfBirth = request.DateOfBirth,
+                SexId = request.SexId,
+                IsVaccinated = request.IsVaccinated,
+                IsSterilized = request.IsSterilized,
+                Country = request.Country,
+                City = request.City,
+                Latitude = geoCodingResult.Value.latitude,
+                Longitude = geoCodingResult.Value.longitude,
+                Height = request.Height,
+                Weight = request.Weight
+            };
+
+            var createAnimalProfileResult = await _profileService.CreatePetProfile(animalProfileDto);
+            if (createAnimalProfileResult.IsFailure) 
+            {
+                return createAnimalProfileResult.ToProblemDetails();
+            }
+
+            //Upload imagesto animal_images table
+            var resizedImagesResult = await _imageResizerService.ResizeImages(request.Files, createAnimalProfileResult.Value);
+            if (resizedImagesResult.IsFailure)
+            {
+                return resizedImagesResult.ToProblemDetails();
+            }
+
+            var uploadImageResult = await _imageResizerService.SaveImages(resizedImagesResult.Value);
+            if (uploadImageResult.IsFailure)
+            {
+                return uploadImageResult.ToProblemDetails();
+            }
+
+            return Results.Ok(createAnimalProfileResult);
         }
 
         [Authorize]
@@ -99,9 +127,7 @@ namespace TinderForPets.API.Controllers
             {
                 return geoCodingResult.ToProblemDetails();
             }
-
-            var token = Request.Cookies["AuthToken"] ?? "";
-            var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(token);
+            var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
             if (validationTokenResult.IsFailure) 
             {
                 return validationTokenResult.ToProblemDetails();
