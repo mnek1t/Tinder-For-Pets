@@ -1,6 +1,6 @@
 ﻿namespace TinderForPets.Data.Entities;
 
-public partial class AnimalProfile
+public partial class AnimalProfile : IEntity
 {
     public Guid Id { get; set; }
     public Guid? AnimalId { get; set; }
