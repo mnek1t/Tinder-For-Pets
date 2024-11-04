@@ -21,9 +21,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy => 
     {
-        policy.WithOrigins("http://localhost:3000");
+        policy.WithOrigins("https://localhost:3000");
         policy.AllowAnyHeader();
         policy.AllowAnyMethod();
+        policy.AllowCredentials();
     });
 });
 // Add services to the container.
@@ -86,7 +87,7 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
        o.TokenLifespan = TimeSpan.FromHours(3));
 
 var app = builder.Build();
-
+app.UseCors();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -114,5 +115,4 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
-app.UseCors();
 app.Run();
