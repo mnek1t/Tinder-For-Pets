@@ -25,9 +25,9 @@ namespace TinderForPets.API.Controllers
         [AllowAnonymous]
         public async Task<IResult> Register(
             [FromBody] RegisterUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.Register(request.UserName, request.Email, request.Password);
+            var result = await _userService.Register(request.UserName, request.Email, request.Password, cancellationToken);
             var jwtToken = result.Value;
             SetAuthTokenInCookies(HttpContext, jwtToken);
 
@@ -40,7 +40,6 @@ namespace TinderForPets.API.Controllers
             [FromBody] LoginUserRequest request,
             CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var result = await _userService.Login(request.Email, request.Password, cancellationToken);
             if (result.IsFailure)
             {
@@ -63,31 +62,30 @@ namespace TinderForPets.API.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IResult> DeleteAccount(Guid id)
+        public async Task<IResult> DeleteAccount(Guid id, CancellationToken cancellationToken)
         {
             Logout();
-
-            var result = await _userService.DeleteUser(id);
+            var result = await _userService.DeleteUser(id, cancellationToken);
             return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
         }
 
-        [HttpPatch("resetPassword")]
+        [HttpPatch("password/reset")]
         [AllowAnonymous]
         public async Task<IResult> ResetPassword(
             [FromBody] ResetPasswordUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.ResetPassword(request.NewPassword, request.ConfirmPassword, request.Token);
+            var result = await _userService.ResetPassword(request.NewPassword, request.ConfirmPassword, request.Token, cancellationToken);
             return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
         }
 
-        [HttpPost("forgot-password")]
+        [HttpPost("password/forgot")]
         [AllowAnonymous]
         public async Task<IResult> ForgotPassword(
             [FromBody] ForgotPasswordUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.FindUser(request.Email);
+            var result = await _userService.FindUser(request.Email, cancellationToken);
 
             if (result.IsFailure)
             {

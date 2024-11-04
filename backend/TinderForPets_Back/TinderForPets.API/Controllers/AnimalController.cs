@@ -10,16 +10,16 @@ namespace TinderForPets.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AnimalProfileController : ControllerBase
+    public class AnimalController : ControllerBase
     {
-        private readonly AnimalProfileService _profileService;
+        private readonly AnimalService _animalService;
         private readonly ImageHandlerService _imageResizerService;
         private readonly GeocodingService _geoCodingService;
         private readonly IJwtProvider _jwtProvider;
 
-        public AnimalProfileController(AnimalProfileService profileService, ImageHandlerService imageResizerService, GeocodingService geoCodingService, IJwtProvider jwtProvider)
+        public AnimalController(AnimalService profileService, ImageHandlerService imageResizerService, GeocodingService geoCodingService, IJwtProvider jwtProvider)
         {
-            _profileService = profileService;
+            _animalService = profileService;
             _imageResizerService = imageResizerService;
             _geoCodingService = geoCodingService;
             _jwtProvider = jwtProvider;
@@ -27,7 +27,7 @@ namespace TinderForPets.API.Controllers
 
         [Authorize]
         [HttpGet("animal/image")]
-        public async Task<IResult> GetProfileImage()
+        public async Task<IResult> GetProfileImage(CancellationToken cancellationToken)
         {
             var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
             if (validationTokenResult.IsFailure)
@@ -35,44 +35,44 @@ namespace TinderForPets.API.Controllers
                 return validationTokenResult.ToProblemDetails();
             }
 
-            var animalProfileIdResult = await _profileService.GetAnimalProfileId(validationTokenResult.Value);
+            var animalProfileIdResult = await _animalService.GetAnimalProfileId(validationTokenResult.Value, cancellationToken);
 
             if (animalProfileIdResult.IsFailure)
             {
                 return validationTokenResult.ToProblemDetails();
             }
 
-            var result = await _profileService.GetAnimalImageAsync(animalProfileIdResult.Value);
+            var result = await _animalService.GetAnimalImageAsync(animalProfileIdResult.Value, cancellationToken);
             var animalImageDto = result.Value;
             return Results.Ok(File(animalImageDto.ImageData, animalImageDto.ImageFormat));
 
         }
 
         [HttpGet("animal-types")]
-        public async Task<IResult> GetAnimalTypes()
+        public async Task<IResult> GetAnimalTypes(CancellationToken cancellationToken)
         {
-            var result = await _profileService.GetAnimalTypesAsync();
+            var result = await _animalService.GetAnimalTypesAsync(cancellationToken);
             var animalTypes = result.Value;
             return Results.Ok(animalTypes);
         }
 
         [HttpGet("breeds/{id}")]
-        public async Task<IResult> GetBreedsByAnimalId(int id)
+        public async Task<IResult> GetBreedsByAnimalId(int id, CancellationToken cancellationToken)
         {
-            var result = await _profileService.GetAnimalBreedByIdAsync(id);
+            var result = await _animalService.GetAnimalBreedByIdAsync(id, cancellationToken);
             return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
         }
 
         [HttpGet("sexes")]
-        public async Task<IResult> GetSexes()
+        public async Task<IResult> GetSexes(CancellationToken cancellationToken)
         {
-            var result = await _profileService.GetSexesAsync();
+            var result = await _animalService.GetSexesAsync(cancellationToken);
             return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
         }
 
         [Authorize]
         [HttpPost("animal/profile/create")]
-        public async Task<IResult> CreateProfile([FromForm] CreateAnimalProfileRequest request) 
+        public async Task<IResult> CreateProfile([FromForm] CreateAnimalProfileRequest request, CancellationToken cancellationToken) 
         {
             // Extract and Validate JWT Token
             var tokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
@@ -82,7 +82,7 @@ namespace TinderForPets.API.Controllers
             }
 
             // Get coordinates of pet / user location
-            var geoCodingResult = await _geoCodingService.GetLocationCoordinates(request.City, request.Country);
+            var geoCodingResult = await _geoCodingService.GetLocationCoordinates(request.City, request.Country, cancellationToken);
             if (geoCodingResult.IsFailure) 
             {
                 return geoCodingResult.ToProblemDetails();
@@ -96,7 +96,7 @@ namespace TinderForPets.API.Controllers
                 BreedId = request.BreedId
             };
 
-            var createAnimalResult = await _profileService.CreateAnimalAsync(animalDto);
+            var createAnimalResult = await _animalService.CreateAnimalAsync(animalDto, cancellationToken);
             if (createAnimalResult.IsFailure) 
             {
                 return createAnimalResult.ToProblemDetails();
@@ -120,20 +120,20 @@ namespace TinderForPets.API.Controllers
                 Weight = request.Weight
             };
 
-            var createAnimalProfileResult = await _profileService.CreatePetProfile(animalProfileDto);
+            var createAnimalProfileResult = await _animalService.CreatePetProfile(animalProfileDto, cancellationToken);
             if (createAnimalProfileResult.IsFailure) 
             {
                 return createAnimalProfileResult.ToProblemDetails();
             }
 
-            //Upload imagesto animal_images table
-            var resizedImagesResult = await _imageResizerService.ResizeImages(request.Files, createAnimalProfileResult.Value);
+            //Upload image dto animal_images table
+            var resizedImagesResult = await _imageResizerService.ResizeImages(request.File, createAnimalProfileResult.Value, cancellationToken);
             if (resizedImagesResult.IsFailure)
             {
                 return resizedImagesResult.ToProblemDetails();
             }
 
-            var uploadImageResult = await _imageResizerService.SaveImages(resizedImagesResult.Value);
+            var uploadImageResult = await _imageResizerService.SaveImages(resizedImagesResult.Value, cancellationToken);
             if (uploadImageResult.IsFailure)
             {
                 return uploadImageResult.ToProblemDetails();
@@ -144,9 +144,9 @@ namespace TinderForPets.API.Controllers
 
         [Authorize]
         [HttpPost("animal/profile/update/{id}")]
-        public async Task<IResult> UpdateProfile(Guid id, [FromBody] UpdateAnimalProfileRequest request)
+        public async Task<IResult> UpdateProfile(Guid id, [FromBody] UpdateAnimalProfileRequest request, CancellationToken cancellationToken)
         {
-            var geoCodingResult = await _geoCodingService.GetLocationCoordinates(request.City, request.Country);
+            var geoCodingResult = await _geoCodingService.GetLocationCoordinates(request.City, request.Country, cancellationToken);
             if (geoCodingResult.IsFailure)
             {
                 return geoCodingResult.ToProblemDetails();
@@ -165,7 +165,7 @@ namespace TinderForPets.API.Controllers
                 BreedId = request.BreedId
             };
 
-            var result = await _profileService.UpdateAnimal(animalDto);
+            var result = await _animalService.UpdateAnimal(animalDto, cancellationToken);
             if (result.IsSuccess)
             {
                 var animalProfileDto = new AnimalProfileDto
@@ -185,22 +185,22 @@ namespace TinderForPets.API.Controllers
                     Weight = request.Weight
                 };
 
-                result = await _profileService.UpdatePetProfile(animalProfileDto);
+                result = await _animalService.UpdatePetProfile(animalProfileDto, cancellationToken);
             }
 
             return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
         }
 
         [HttpPost("animal/image/upload")]
-        public async Task<IResult> UploadAnimalMedia([FromForm] AnimalMediaUploadRequest request) 
+        public async Task<IResult> UploadAnimalMedia([FromForm] AnimalMediaUploadRequest request, CancellationToken cancellationToken) 
         {
-            var resizedImagesResult = await _imageResizerService.ResizeImages(request.Files, request.AnimalProfileId, request.Description);
+            var resizedImagesResult = await _imageResizerService.ResizeImages(request.File, request.AnimalProfileId, cancellationToken, request.Description);
             if (resizedImagesResult.IsFailure) 
             {
                 return resizedImagesResult.ToProblemDetails();
             }
 
-            var uploadImageResult = await _imageResizerService.SaveImages(resizedImagesResult.Value);
+            var uploadImageResult = await _imageResizerService.SaveImages(resizedImagesResult.Value, cancellationToken);
             return uploadImageResult.IsSuccess ? Results.Ok(uploadImageResult) : uploadImageResult.ToProblemDetails();
         }
     }
