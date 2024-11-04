@@ -19,7 +19,7 @@ namespace TinderForPets.Application.Services
         {
             _animalImageRepository = animalImageRepository;
         }
-        public async Task<Result<List<AnimalImageModel>>> ResizeImages(List<IFormFile> files, Guid animalProfileId, string description) 
+        public async Task<Result<List<AnimalImageModel>>> ResizeImages(List<IFormFile> files, Guid animalProfileId, string description = "main image") 
         {
             var animalImageModels = new List<AnimalImageModel>();
             foreach (var file in files)
