@@ -15,18 +15,21 @@ namespace TinderForPets.Application.Services
         private readonly IBreedRepository _breedRepository;
         private readonly ICacheService _cacheService;
         private readonly ISexRepository _sexRepository;
+        private readonly IAnimalImageRepository _animalImageRepository;
         public AnimalProfileService(
             IAnimalProfileRepository animalProfileRepository, 
             ICacheService cacheService, 
             IAnimalTypeRepository animalTypeRepository, 
             IBreedRepository breedRepository,
-            ISexRepository sexRepository)
+            ISexRepository sexRepository,
+            IAnimalImageRepository animalImageRepository)
         {
             _animalProfileRepository = animalProfileRepository;
             _animalTypeRepository = animalTypeRepository;
             _cacheService = cacheService;
             _breedRepository = breedRepository;
             _sexRepository = sexRepository;
+            _animalImageRepository = animalImageRepository;
         }
 
         public async Task<Result<List<AnimalTypeDto>>> GetAnimalTypesAsync() 
@@ -98,6 +101,27 @@ namespace TinderForPets.Application.Services
             return Result.Success<List<SexDto>>(sexesDtos);
         }
 
+        public async Task<Result<AnimalImageDto>> GetAnimalImageAsync(Guid animalProfileId)
+        {
+            var cacheKey = $"GET_ANIMAL_IMAGE {animalProfileId}";
+            var cachedData = await _cacheService.GetAsync<AnimalImageDto>(cacheKey);
+            if (cachedData != null)
+            {
+                return Result.Success(cachedData);
+            }
+
+            var animalImageEntity = await _animalImageRepository.GetAnimalImageAsync(animalProfileId);
+            var animalImageDto = new AnimalImageDto()
+            {
+                ImageData = animalImageEntity.ImageData,
+                ImageFormat = animalImageEntity.ImageFormat
+            };
+
+            await _cacheService.SetAsync<AnimalImageDto>(cacheKey, animalImageDto, TimeSpan.FromMinutes(5));
+
+            return Result.Success<AnimalImageDto>(animalImageDto);
+        }
+
         public async Task<Result<Guid>> CreateAnimalAsync(AnimalDto animalDto) 
         {
             var animalModel = AnimalModel.Create(Guid.NewGuid(), animalDto.OwnerId, animalDto.AnimalTypeId, animalDto.BreedId);
@@ -167,6 +191,19 @@ namespace TinderForPets.Application.Services
             catch (AnimalNotFoundException ex)
             {
                 return Result.Failure<string>(AnimalProfileErrors.NotUpdated(ex.Message));
+            }
+        }
+        public async Task<Result<Guid>> GetAnimalProfileId(Guid ownerId) 
+        {
+            try 
+            {
+                var animalProfileId = await _animalProfileRepository.GetAnimalProfileByOwnerId(ownerId);
+                return Result.Success<Guid>(animalProfileId);
+            }
+            catch (Exception ex) 
+            {
+                return Result.Failure<Guid>(new Error("400", ex.Message));
+
             }
         }
     }
