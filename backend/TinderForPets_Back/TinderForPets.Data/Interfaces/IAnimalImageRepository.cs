@@ -6,5 +6,6 @@ namespace TinderForPets.Data.Interfaces
     public interface IAnimalImageRepository
     {
         Task<List<AnimalImage>> SaveAnimalMediaAsync(IEnumerable<AnimalImageModel> animalMedia);
+        Task<AnimalImage> GetAnimalImageAsync(Guid animalProfileId);
     }
 }

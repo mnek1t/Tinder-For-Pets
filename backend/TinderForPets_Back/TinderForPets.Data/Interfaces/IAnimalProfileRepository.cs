@@ -8,5 +8,7 @@ namespace TinderForPets.Data.Interfaces
         void DeleteProfile();
         Task<int> UpdateAnimalAsync(AnimalModel animalModel);
         Task<int> UpdateProfileAsync(AnimalProfileModel animalProfileModel);
+
+        Task<Guid> GetAnimalProfileByOwnerId(Guid ownerId);
     }
 }
