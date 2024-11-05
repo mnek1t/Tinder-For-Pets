@@ -81,7 +81,7 @@
     color: #864c4c;
 }
 
-.login__button, .register__button, .reset-password__button {
+.login__button, .register__button, .reset-password__button, .create-profile-btn {
     cursor: pointer;
     border-radius: 20px;
     margin-right: 10px;
@@ -94,7 +94,7 @@
     font-size: 16px;
 }
 
-.login__button:hover, .register__button:hover, .reset-password__button:hover{
+.login__button:hover, .register__button:hover, .reset-password__button:hover, .create-profile-btn:hover{
     background-color: #864c4c;
 }
 
@@ -240,7 +240,7 @@ label {
     outline: none;
 }
 
-#animal-type-dropbox, #breeds-dropbox, #date-of-birth-dropbox, #location-input {
+#animal-type-dropbox, #breeds-dropbox, #date-of-birth-dropbox, #location-input, #data-input {
     border-radius: 5px;
     height: 40px;
     width: 300px;
@@ -280,7 +280,12 @@ label {
     background-color: #A75D5D;
     color: #FFFFFF;
 }
-
+.gender-button.selected:hover {
+    background-color: #A75D5D;
+}
+.gender-button:hover {
+    background-color:#b5b4b4;
+}
 
 .checkbox-inputs {
     display: flex;
@@ -295,7 +300,7 @@ label {
 }
 
 .checkbox-group label {
-    margin-right: 8px; /* Space between label and checkbox */
+    margin-right: 8px; 
 }
 
 .location {
@@ -331,25 +336,29 @@ label {
 }
 
 .size-input-container {
-    position: relative; /* Establishes a positioning context for the child elements */
-    width: 100%; /* Adjust to your design needs */
+    position: relative; 
+    width: 100%; 
 }
 
 .unit-label {
-    position: absolute; /* Absolute positioning for the unit label */
-    left: 75%; /* Adjust this value to position the label */
-    top: 50%; /* Center the label vertically */
-    transform: translateY(-50%); /* Offset the label vertically */
-    background-color: white; /* Prevent overlap with the input */
-    padding: 0 4px; /* Optional: add some padding around the label */
+    position: absolute;
+    left: 75%; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background-color: white; 
+    padding: 0 4px; 
     color: #333; 
 }
 
 .height-input,
 .weight-input {
-    width: 100%; /* Full width of the container */
-    border: 1px solid #ccc; /* Border for the input */
-    border-radius: 4px; /* Rounded corners */
-    height: 38px; /* Adjust height as needed */
-    font-size: 16px; /* Font size for the input text */
+    width: 100%; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    height: 38px;
+    font-size: 16px;
+}
+
+.create-profile-btn {
+    margin-left: 150px;
 }

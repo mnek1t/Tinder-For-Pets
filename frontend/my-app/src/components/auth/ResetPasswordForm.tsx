@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import {ResetPasswordCredentials} from '../api/authApi';
-import "../styles/form.css"
-import { resetPassword } from '../api/authApi';
+import {ResetPasswordCredentials, resetPassword} from '../../api/authApi';
+import "../../styles/form.css"
 import { useLocation } from 'react-router-dom';
-import ConfirmedWindow from './ConfirmedWindow';
+import ConfirmedWindow from '../ConfirmedWindow';
 export default function ResetPasswordForm() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);

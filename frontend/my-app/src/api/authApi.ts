@@ -19,7 +19,7 @@ export interface ResetPasswordCredentials {
 
 export async function login(loginCredentials: LoginCredentials) {
     try {
-        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/login', loginCredentials);
+        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/login', loginCredentials, { withCredentials: true });
         if (response.status === 200) {
             console.log(response.data);
             return response.data;
@@ -28,21 +28,13 @@ export async function login(loginCredentials: LoginCredentials) {
         }
         
     } catch (error: any) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.log(error)
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error during login:', errorMessage);
-            throw new Error(errorMessage);
-        } else {
-            console.error('Error during login:',);
-            throw new Error('An unexpected error occurred.');
-        }
+        handleError(error, "Error during login:");
     }
 }
 
 export async function register(registerCredentials: RegisterCredentials) {
     try {
-        const response : AxiosResponse = await axios.post('https://localhost:5295/api/user/register', registerCredentials);
+        const response : AxiosResponse = await axios.post('https://localhost:5295/api/user/register', registerCredentials,  { withCredentials: true });
         if (response.status === 200) {
             console.log(response.data);
             return response.data;
@@ -51,21 +43,13 @@ export async function register(registerCredentials: RegisterCredentials) {
         }
         
     } catch (error: any) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.log(error)
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error during register:', errorMessage);
-            throw new Error(errorMessage);
-        } else {
-            console.error('Error during register:',);
-            throw new Error('An unexpected error occurred.');
-        }
+        handleError(error, "Error during register:");
     }
 }
 
 export async function forgotPassword(email : string) {
     try {
-        const response : AxiosResponse = await axios.post("https://localhost:5295/api/user/forgot-password", { email : email}); 
+        const response : AxiosResponse = await axios.post("https://localhost:5295/api/user/password/forgot", { email : email}); 
         if (response.status === 200) {
             console.log(response.data);
             return response.data;
@@ -73,15 +57,7 @@ export async function forgotPassword(email : string) {
             throw new Error('Forgot password request failed.'); 
         }
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.log(error)
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error during asking for a token to reset password:', errorMessage);
-            throw new Error(errorMessage);
-        } else {
-            console.error('Error during asking for a token toreset password:',);
-            throw new Error('An unexpected error occurred.');
-        }
+        handleError(error, "Error during asking for a token toreset password:");
     }
 }
 
@@ -92,8 +68,8 @@ export async function resetPassword(resetPasswordCredentials : ResetPasswordCred
             throw new Error("Password are not the same");
         }
 
-        const response : AxiosResponse = await axios.post("https://localhost:5295/api/user/resetPassword", resetPasswordCredentials); 
-        if (response.status === 200) {
+        const response : AxiosResponse = await axios.patch("https://localhost:5295/api/user/password/reset", resetPasswordCredentials); 
+        if (response.status === 204) {
             console.log(response.data);
             return response.data;
         } else {
@@ -101,14 +77,18 @@ export async function resetPassword(resetPasswordCredentials : ResetPasswordCred
         }
 
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.log(error)
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error during asking to reset password:', errorMessage);
-            throw new Error(errorMessage);
-        } else {
-            console.error('Error during asking to reset password:',);
-            throw new Error('An unexpected error occurred.');
-        }
+        handleError(error, "Error during asking to reset password:");
+    }
+}
+
+function handleError(error : unknown, customMessage: string) {
+    if (axios.isAxiosError(error) && error.response) {
+        console.log(error)
+        const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
+        console.error(customMessage, errorMessage);
+        throw new Error(errorMessage);
+    } else {
+        console.error(customMessage);
+        throw new Error('An unexpected error occurred.');
     }
 }

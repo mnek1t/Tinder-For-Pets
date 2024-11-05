@@ -1,9 +1,7 @@
-import "../styles/form.css";
-import { getAnimalTypes, getBreeds, getSexes } from "../api/profileApi";
+import "../../styles/form.css";
+import { getAnimalTypes, getBreeds, getSexes, ProfileData} from "../../api/profileApi";
 import React, { useState, useEffect } from "react";
 import LocationSuggestion from "./LocationSuggestion"; 
-import {ProfileData} from "../api/profileApi";
-
 
 interface CreateProfileProps {
     createProfile : (event: React.FormEvent<HTMLFormElement>, data : ProfileData) => void
@@ -25,7 +23,6 @@ interface Sex {
 }
 
 export default function CreateProfileForm(props : CreateProfileProps) {
-    document.body.style.background = '#FEFAF6';
     const [animalTypes, setAnimalTypes] = useState<JSX.Element[]>([]);
     const [breeds, setBreeds] = useState<JSX.Element[]>([]);
     const [sexes, setSexes] = useState<JSX.Element[]>([]);
@@ -37,7 +34,7 @@ export default function CreateProfileForm(props : CreateProfileProps) {
         description: "",
         typeId: selectedAnimalType,
         breedId: selectedBreed,
-
+        // files: undefined,
         dateOfBirth: "",
         sexId: selectedSex,
         isVaccinated: true,
@@ -47,8 +44,6 @@ export default function CreateProfileForm(props : CreateProfileProps) {
         height: 0,
         weight: 0
     });
-
-    
    
     useEffect(() => {
         getAnimalTypes()
@@ -124,6 +119,16 @@ export default function CreateProfileForm(props : CreateProfileProps) {
         }
     }
 
+    function handleImageUpload(event : React.ChangeEvent<HTMLInputElement>) {
+        const {name, files} = event.target;
+        const image = files ? files[0]: null;
+        if(image) {
+            setProfileData(prevState => {
+                return({...prevState, [name]: image})
+            })
+        }
+    }
+
     function handleClick(event : React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         const {name, value} = event.target as HTMLButtonElement;
@@ -152,7 +157,7 @@ export default function CreateProfileForm(props : CreateProfileProps) {
             return {...prevState, [name]: checked}
         })
     };
-
+    console.log(profileData)
     return(
         <form className="create-profile-form" onSubmit={(e) => props.createProfile(e, profileData)}>
             <h1 className="create-profile__header">Create profile</h1>
@@ -160,10 +165,10 @@ export default function CreateProfileForm(props : CreateProfileProps) {
                 <div>
                     <div>
                         <label htmlFor="name-input">Name</label>
-                        <input value={profileData.name} id="name-input" placeholder="Pet name" name="name" onChange={handleInput} required></input>  
+                        <input value={profileData.name} id="name-input" placeholder="Pet name" name="name" onChange={handleInput}></input>  
                     </div>
                     <div>
-                        <label htmlFor="name-input">About pet</label>
+                        <label htmlFor="description-input">About pet</label>
                         <textarea id="description-input" name="description" value={profileData.description} placeholder="Tell about your pet" onChange={handleInput}></textarea>  
                     </div>
                     <div>
@@ -180,7 +185,7 @@ export default function CreateProfileForm(props : CreateProfileProps) {
                     </div>
                     <div>
                         <label htmlFor="photo-upload">Upload photo</label>
-                        <input type="file" accept="image/*" aria-label="Name" id="photo-upload" placeholder="Pet name" name="name" onChange={handleInput}></input>  
+                        <input type="file" accept="image/*" aria-label="Name" id="photo-upload" placeholder="Pet name" name="files" onChange={handleImageUpload}></input>  
                     </div>
 
                 </div>
@@ -213,23 +218,23 @@ export default function CreateProfileForm(props : CreateProfileProps) {
                     </div>
                    
                     <div className="size-input-group">
-                        <label htmlFor="date-of-birth-dropbox">Height</label>
+                        <label htmlFor="data-input">Height</label>
                         <div className="size-input-container">
                             <span className="unit-label">cm</span>
-                            <input id="date-of-birth-dropbox" className="height-input" min="30" step="0.5" name="height" type="number" value={profileData.height} onChange={handleInput}/>
+                            <input id="data-input" className="height-input" min="30" step="0.5" name="height" type="number" value={profileData.height} onChange={handleInput}/>
                         </div>
                     </div>
 
                     <div className="size-input-group">
-                        <label htmlFor="date-of-birth-dropbox">Weight</label>
+                        <label htmlFor="data-input">Weight</label>
                         <div className="size-input-container">
                             <span className="unit-label">kg</span>
-                            <input id="date-of-birth-dropbox" className="weight-input" min="0" step="0.2" name="weight" type="number" value={profileData.weight} onChange={handleInput}/>
+                            <input id="data-input" className="weight-input" min="0" step="0.2" name="weight" type="number" value={profileData.weight} onChange={handleInput}/>
                         </div>
                     </div>
 
                     <div>
-                        <button type="submit">Create</button>
+                        <button className="create-profile-btn" type="submit">Create</button>
                     </div>
                 </div>
             </div>

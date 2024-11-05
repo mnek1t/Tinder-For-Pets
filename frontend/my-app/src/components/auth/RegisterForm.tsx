@@ -1,8 +1,8 @@
-import '../styles/form.css';
+import '../../styles/form.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {register, RegisterCredentials} from "../api/authApi"
-import CloseFormButton from './CloseFormButton';
+import {register, RegisterCredentials} from "../../api/authApi"
+import CloseFormButton from '../CloseFormButton';
 
 interface RegisterProps {
     handleModalClose: (event: React.MouseEvent<HTMLButtonElement>) => void;

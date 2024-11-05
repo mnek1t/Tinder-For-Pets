@@ -1,11 +1,11 @@
 import axios, { AxiosResponse } from 'axios';
-import Cookies from 'js-cookie';
 
 export interface ProfileData {
     name: string,
     description: string,
     typeId: number,
     breedId: number,
+    // files?: File,
     dateOfBirth: string,
     sexId: number,
     isVaccinated: boolean,
@@ -18,92 +18,86 @@ export interface ProfileData {
 
 export async function getAnimalTypes() {
     try {
-        const response : AxiosResponse = await axios.get("https://localhost:5295/api/AnimalProfile/animal-types");
+        const response : AxiosResponse = await axios.get("https://localhost:5295/api/Animal/animal-types");
         if(response.status === 200) {
             return response.data;
         } else {
             throw new Error('Login failed.'); 
         }
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error when rectrieving animal types:', errorMessage);
-            throw new Error(errorMessage);
-        } else {
-            console.error('Error when rectrieving animal types:',);
-            throw new Error('An unexpected error occurred.');
-        }
+        handleError(error, "Error when rectrieving animal types:");
     }
 }
 
 export async function getBreeds(animalTypeId: number) {
     try {
-        const response : AxiosResponse = await axios.get(`https://localhost:5295/api/AnimalProfile/breeds/${animalTypeId}`,);
+        const response : AxiosResponse = await axios.get(`https://localhost:5295/api/Animal/breeds/${animalTypeId}`,);
         if(response.status === 200) {
             return response.data;
         } else {
             throw new Error('Get Brreds failed.'); 
         }
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.log(error)
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error when retrieving breeds:', errorMessage);
-            throw new Error(errorMessage);
-        } else {
-            console.error('Error when retrieving breeds:',);
-            throw new Error('An unexpected error occurred.');
-        }
+        handleError(error, "Error when retrieving breeds:");
     }
 }
 
 export async function getSexes() {
     try {
-        const response : AxiosResponse = await axios.get(`https://localhost:5295/api/AnimalProfile/sexes`,);
+        const response : AxiosResponse = await axios.get(`https://localhost:5295/api/Animal/sexes`,);
         if(response.status === 200) {
             return response.data;
         } else {
             throw new Error('Get Sexes failed.'); 
         }
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.log(error)
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error when retrieving sexes:', errorMessage);
-            throw new Error(errorMessage);
-        } else {
-            console.error('Error when retrieving sexes:',);
-            throw new Error('An unexpected error occurred.');
-        }
+        handleError(error, "Error when retrieving sexes:");
     }
 }
 
 export async function createPetProfile(profileData : ProfileData) {
     try {
-        const token = Cookies.get('AuthToken');
-        console.log('Token', token)
-        console.log('API CALL', profileData);
-        const response : AxiosResponse = await axios.post(`https://localhost:5295/api/AnimalProfile/animal/profile/create`, profileData, {
+        const response : AxiosResponse = await axios.post(`https://localhost:5295/api/Animal/animal/profile/create`, profileData, {
             withCredentials: true,
             headers: {
-                'Authorization': `Bearer ${token}`, // if your API requires it
-                'Content-Type': 'application/json',
+                "Content-Type": "multipart/form-data"
             }
         });
+
         if(response.status === 200) {
             return response.data;
         } else {
-            throw new Error('Get Sexes failed.'); 
+            throw new Error('Create Animla Profile failed.'); 
         }
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            console.log(error)
-            const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
-            console.error('Error when creating profile:', errorMessage);
-            throw new Error(errorMessage);
+        handleError(error, "Error when creating animal profile:");
+    }
+}
+
+export async function getProfileImage() {
+    try {
+        const response : AxiosResponse = await axios.get(`https://localhost:5295/api/Animal/animal/image`, {
+            withCredentials : true
+        });
+        if(response.status === 200) {
+            console.log(response.data);
+            return response.data;
         } else {
-            console.error('Error when creating profile:',);
-            throw new Error('An unexpected error occurred.');
+            throw new Error("Get animal image failed");
         }
+    } catch (error) {
+        handleError(error, "Error when receiving animal image");
+    }
+}
+
+function handleError(error : unknown, customMessage: string) {
+    if (axios.isAxiosError(error) && error.response) {
+        console.log(error)
+        const errorMessage = error.response.data.errors?.[0]?.description || 'An unexpected error occurred.';
+        console.error(customMessage, errorMessage);
+        throw new Error(errorMessage);
+    } else {
+        console.error(customMessage);
+        throw new Error('An unexpected error occurred.');
     }
 }

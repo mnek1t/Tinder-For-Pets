@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import lock from "../assets/lock.svg"
-import ConfirmedWindow from "./ConfirmedWindow";
-import "../styles/form.css"
-import {forgotPassword} from "../api/authApi"
+import lock from "../../assets/lock.svg"
+import ConfirmedWindow from "../ConfirmedWindow";
+import "../../styles/form.css"
+import {forgotPassword} from "../../api/authApi"
 
 export default function ForgotPasswordForm() {
     const [email, setEmail] = useState<string>("");

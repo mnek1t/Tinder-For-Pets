@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import '../styles/chatbot.css';
-import chatBotlogo from '../assets/chat-dots-svgrepo-com.svg'
-import robotlogo from '../assets/robot-svgrepo-com.svg'
-import arrowUp from '../assets/up-arrow-svgrepo-com.svg'
+import '../../styles/chatbot.css';
+import chatBotlogo from '../../assets/chat-dots-svgrepo-com.svg'
+import robotlogo from '../../assets/robot-svgrepo-com.svg'
+import arrowUp from '../../assets/up-arrow-svgrepo-com.svg'
 
 export default function ChatBot(){
     const [message, setMessage] = useState("");

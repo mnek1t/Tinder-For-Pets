@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import "../styles/form.css";
+import "../../styles/form.css";
 
 interface Suggestion {
     place_id: string;
@@ -24,7 +24,6 @@ export default function LocationSuggestion(props : LocationSuggestionProps) {
             const citySuggestions = data.filter((item: Suggestion) =>
                 ["city", "administrative"].includes(item.type)
             );
-            console.log(citySuggestions)
             const formattedSuggestions = citySuggestions.map((item) => {
                 const parts = item.display_name.split(', ');
                 const city = parts[0];
@@ -38,8 +37,6 @@ export default function LocationSuggestion(props : LocationSuggestionProps) {
             setSuggestions([]);
             setShowDropdown(false);
         }
-
-        // props.handleInput(e);
     };
 
     const handleSuggestionClick = (suggestion: Suggestion) => {

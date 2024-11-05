@@ -1,6 +1,6 @@
-import '../styles/chatbot.css';
-import chatBotlogo from '../assets/chat-dots-svgrepo-com.svg'
-import closeIcon from "../assets/close-icon.svg";
+import '../../styles/chatbot.css';
+import chatBotlogo from '../../assets/chat-dots-svgrepo-com.svg'
+import closeIcon from "../../assets/close-icon.svg";
 interface Chatbot {
     handleToogle : () => void
 }

@@ -1,8 +1,9 @@
-import CreateProfileForm from "../components/CreateProfileForm"
+import CreateProfileForm from "../components/profile/CreateProfileForm"
 import EmptyHeader from "../components/EmptyHeader";
 import {createPetProfile, ProfileData} from "../api/profileApi";
-import { useState } from "react";
+
 export default function CreateProfilePage() {
+    document.body.style.background = '#FEFAF6';
     function createProfile(event : React.FormEvent<HTMLFormElement>, data: ProfileData) {
         event.preventDefault();
         console.log(event)
@@ -11,8 +12,8 @@ export default function CreateProfilePage() {
 
     return(
         <>
-        <EmptyHeader/>
-        <CreateProfileForm createProfile={createProfile}/>
+            <EmptyHeader/>
+            <CreateProfileForm createProfile={createProfile}/>
         </>
     );
 }
