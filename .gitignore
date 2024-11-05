@@ -14,7 +14,9 @@ OutsideProjectCatJSONDataCreator/
 obj/Debug/net8.0
 
 /backend/TinderForPets_Back/.vs
-mycert.pfx
+/backend/TinderForPets_Back/TinderForPets.Data/mycert.pfx
 
-appsettings.json
-appsettings.Development.json
+/backend/TinderForPets_Back/TinderForPets.API/appsettings.json
+/backend/TinderForPets_Back/TinderForPets.API/appsettings.Development.json
+
+/backend/TinderForPets_Back/TinderForPets.Data/mycert.pfx
