@@ -25,6 +25,9 @@ namespace TinderForPets.Core
 
         public static readonly Error NotMatchPassword = new(
         "User.NotMatchPassword", "New Password and Confirm Password do not match");
-       
+
+        public static readonly Error NotAuthorized = new(
+        "User.NotAuthorized", "Authorization Header was not attached to request");
+
     }
 }

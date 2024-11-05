@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TinderForPets.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd2672984981c7cb7a0ae8967e0899a74608d35d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+134a8e51e977789cdd70ac98ac08a0ffa74ef8bb")]
 [assembly: System.Reflection.AssemblyProductAttribute("TinderForPets.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TinderForPets.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

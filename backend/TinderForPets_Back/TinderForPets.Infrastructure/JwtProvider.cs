@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SharedKernel;
 using System.IdentityModel.Tokens.Jwt;
@@ -29,9 +30,9 @@ namespace TinderForPets.Infrastructure
             };
         }
  
-        public string GenerateToken(User user)
+        public string GenerateToken(Guid userId)
         {
-            Claim[] claims = [new("userId", user.Id.ToString())];
+            Claim[] claims = [new("userId", userId.ToString())];
 
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(
@@ -96,10 +97,11 @@ namespace TinderForPets.Infrastructure
             }
         }
 
-        public Result<Guid> ValidateAuthTokenAndExtractUserId(string token) 
+        public Result<Guid> ValidateAuthTokenAndExtractUserId(HttpContext context) 
         {
             try
             {
+                var token = context.Request.Cookies["AuthToken"];
                 var claimPrincipal = _tokenHandler.ValidateToken(token, _validationParameters, out SecurityToken validatedToken);
                 if (claimPrincipal == null)
                 {
@@ -118,6 +120,6 @@ namespace TinderForPets.Infrastructure
             {
                 return Result.Failure<Guid>(JwtErrors.InvalidToken);
             }
-        } 
+        }
     }
 }

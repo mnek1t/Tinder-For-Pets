@@ -3,8 +3,8 @@ using TinderForPets.Data.Entities;
 
 namespace TinderForPets.Data.Interfaces
 {
-    public interface IAnimalImageRepository
+    public interface IAnimalImageRepository : IRepository<AnimalImage>
     {
-        Task<List<AnimalImage>> SaveAnimalMediaAsync(IEnumerable<AnimalImageModel> animalMedia);
+        Task<AnimalImage> GetAnimalImageAsync(Guid animalProfileId, CancellationToken cancellationToken);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel;
 using System.Text.Json;
 using TinderForPets.API.Contracts.Users;
 using TinderForPets.API.DTOs;
@@ -22,39 +21,33 @@ namespace TinderForPets.API.Controllers
             _emailSender = emailSender;
         }
 
-        // TODO: DELETE: For testing Autentification
-        [Authorize]
-        [HttpGet("protected")]
-        public IActionResult GetProtectedData()
-        {
-            return Ok("This is a protected endpoint");
-        }
-
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IResult> Register(
             [FromBody] RegisterUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.Register(request.UserName, request.Email, request.Password);
-            return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
+            var result = await _userService.Register(request.UserName, request.Email, request.Password, cancellationToken);
+            var jwtToken = result.Value;
+            SetAuthTokenInCookies(HttpContext, jwtToken);
+
+            return result.IsSuccess ? Results.Ok(jwtToken) : result.ToProblemDetails();
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IResult> Login(
             [FromBody] LoginUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.Login(request.Email, request.Password);
+            var result = await _userService.Login(request.Email, request.Password, cancellationToken);
             if (result.IsFailure)
             {
                 return result.ToProblemDetails();
             }
 
             var jwtToken = result.Value;
-
-            HttpContext.Response.Cookies.Append("AuthToken", jwtToken);
+            SetAuthTokenInCookies(HttpContext, jwtToken);
 
             return Results.Ok(jwtToken);
         }
@@ -69,31 +62,30 @@ namespace TinderForPets.API.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IResult> DeleteAccount(Guid id)
+        public async Task<IResult> DeleteAccount(Guid id, CancellationToken cancellationToken)
         {
             Logout();
-
-            var result = await _userService.DeleteUser(id);
+            var result = await _userService.DeleteUser(id, cancellationToken);
             return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
         }
 
-        [HttpPost("resetPassword")]
+        [HttpPatch("password/reset")]
         [AllowAnonymous]
         public async Task<IResult> ResetPassword(
             [FromBody] ResetPasswordUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.ResetPassword(request.NewPassword, request.ConfirmPassword, request.Token);
+            var result = await _userService.ResetPassword(request.NewPassword, request.ConfirmPassword, request.Token, cancellationToken);
             return result.IsSuccess ? Results.Ok(result.Value) : result.ToProblemDetails();
         }
 
-        [HttpPost("forgot-password")]
+        [HttpPost("password/forgot")]
         [AllowAnonymous]
         public async Task<IResult> ForgotPassword(
             [FromBody] ForgotPasswordUserRequest request,
-            CancellationToken token)
+            CancellationToken cancellationToken)
         {
-            var result = await _userService.FindUser(request.Email);
+            var result = await _userService.FindUser(request.Email, cancellationToken);
 
             if (result.IsFailure)
             {
@@ -102,7 +94,6 @@ namespace TinderForPets.API.Controllers
             var user = result.Value;
             var jwtToken = _userService.GenerateResetPasswordToken(request.Email).Value;
 
-            // TODO: here will be a link to frontend and then fronend will use this link below
             var emailData = new ResetPasswordEmailDto
             {
                 UserName = user.UserName,
@@ -115,5 +106,14 @@ namespace TinderForPets.API.Controllers
             return Results.Ok(jwtToken);
         }
 
+        private static void SetAuthTokenInCookies(HttpContext context, string jwtToken) 
+        {
+            context.Response.Cookies.Append("AuthToken", jwtToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+        }
     }
 }

@@ -3,8 +3,8 @@ import { useNavigate }from "react-router-dom";
 
 import Header from "../components/Header";
 
-import ChatBot from "../components/ChatBot";
-import ChatBotToggler from '../components/ChatBotToggler';
+import ChatBot from "../components/chatbot/ChatBot";
+import ChatBotToggler from '../components/chatbot/ChatBotToggler';
 
 function About() {
     const navigate = useNavigate();

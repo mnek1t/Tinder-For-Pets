@@ -11,7 +11,7 @@ namespace TinderForPets.API.Contracts.Profiles
         [Required] bool IsVaccinated,
         [Required] bool IsSterilized,
         [Required] int BreedId,
-        [Required] Guid OwnerId,// in the top of my head, we need to take this from cookie where jwt token is located. jwt token includes encrypted userId
+        IFormFile File,
         [Required] string Country,
         [Required] string City,
         decimal Height,

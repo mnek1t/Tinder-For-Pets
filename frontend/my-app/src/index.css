@@ -1,10 +1,10 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family: 'Karla', 'sans-serif';
-  background-color: #FEFAF6;
   background-image: url('./assets/portrait-collection-adorable-puppies.jpg');
   background-size: cover;
   background-attachment: fixed;

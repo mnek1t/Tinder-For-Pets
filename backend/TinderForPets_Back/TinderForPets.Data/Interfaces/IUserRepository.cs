@@ -1,13 +1,11 @@
-﻿using TinderForPets.Core.Models;
+﻿using TinderForPets.Data.Entities;
 
 namespace TinderForPets.Data.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<UserAccount>
     {
-        Task<Guid> Add(User user);
-        Task<string> Delete(Guid userId);
-        Task<User> GetByEmail(string email);
-        Task<string> ResetPassword(string email, string hashedPassword);
+        Task<UserAccount> GetByEmailAsync(string email, CancellationToken cancellationToken);
+        Task<string> ResetPassword(string email, string hashedPassword, CancellationToken cancellationToken);
 
     }
 }

@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
-import RegisterForm from '../components/RegisterForm';
+import { useState } from 'react';
+import RegisterForm from '../components/auth/RegisterForm';
 import { useNavigate } from 'react-router-dom';
 import FormPageWrapper from '../components/FormPageWrapper';
 
 function RegisterPage() {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const navigate = useNavigate();
-    function handleModalClose(event: React.MouseEvent<HTMLButtonElement>) {
-        event.preventDefault();
-        event.target = event.currentTarget;
-        console.log(event.currentTarget)
-        
+
+    function handleModalClose() {
+        setIsModalOpen(false);
         setTimeout(() => {
-            setIsModalOpen(true);
+            navigate("/about"); 
         }, 300);
-        navigate("/about");
     }
 
     return (

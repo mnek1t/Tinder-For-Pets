@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginForm from '../components/LoginForm';
+import LoginForm from '../components/auth/LoginForm';
 import FormPageWrapper from '../components/FormPageWrapper';
 
 function LoginPage() {

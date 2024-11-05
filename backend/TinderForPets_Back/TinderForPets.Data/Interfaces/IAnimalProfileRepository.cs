@@ -1,12 +1,10 @@
 ﻿using TinderForPets.Core.Models;
+using TinderForPets.Data.Entities;
 namespace TinderForPets.Data.Interfaces
 {
-    public interface IAnimalProfileRepository
+    public interface IAnimalProfileRepository : IRepository<AnimalProfile>
     {
-        Task<Guid> CreateAnimalAsync(AnimalModel animalModel);
-        Task<Guid> CreateProfileAsync(AnimalProfileModel animalProfile);
-        void DeleteProfile();
-        Task<int> UpdateAnimalAsync(AnimalModel animalModel);
-        Task<int> UpdateProfileAsync(AnimalProfileModel animalProfileModel);
+        Task<AnimalProfile> GetByAnimalIdAsync(Guid animalId, CancellationToken cancellationToken);
+        Task<Guid> GetAnimalProfileByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken);
     }
 }

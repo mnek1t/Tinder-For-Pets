@@ -1,82 +1,76 @@
 ﻿using TinderForPets.Data.Interfaces;
-using TinderForPets.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using TinderForPets.Data.Entities;
-using TinderForPets.Core;
-using AutoMapper;
 using TinderForPets.Data.Exceptions;
 
 namespace TinderForPets.Data.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : TinderForPetsRepository<UserAccount>, IUserRepository
     {
-        private readonly TinderForPetsDbContext _context;
-        private readonly IMapper _mapper;
+        public UserRepository(TinderForPetsDbContext context) : base(context) { }
 
-        public UserRepository(TinderForPetsDbContext context, IMapper mapper)
+        public async override Task<Guid> CreateAsync(UserAccount user, CancellationToken cancellationToken)
         {
-            _context = context;
-            _mapper = mapper;
+            await _context.AddAsync(user, cancellationToken);
+            await _context.SaveChangesAsync();
+            return user.Id;
         }
 
-        public async Task<Guid> Add(User user)
+        public async override Task  DeleteAsync(Guid id, CancellationToken cancellationToken) 
         {
-            if (user == null) 
+            var rowsDeleted = await _context.UserAccounts.Where(u => u.Id == id)
+                .ExecuteDeleteAsync(cancellationToken);
+            if (rowsDeleted == 0) 
             {
                 throw new UserNotFoundException();
             }
-
-            var userEntity = _mapper.Map<UserAccount>(user);
-
-            await _context.AddAsync(userEntity);
-            await _context.SaveChangesAsync();
-            return userEntity.Id;
         }
 
-        public async Task<string> Delete(Guid userId) 
-        {
-            var rowsDeleted = await _context.UserAccounts.Where(u => u.Id == userId)
-                .ExecuteDeleteAsync();
-
-            await _context.SaveChangesAsync();
-
-            return rowsDeleted == 0 ? throw new UserNotFoundException() : "Success. User Has been deleted and his pets as well";
-        }
-
-        public async Task<User> GetByEmail(string email)
+        public async override Task<UserAccount> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var userEntity = await _context.UserAccounts
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.EmailAddress == email);
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            if (userEntity == null)
+            {
+                throw new UserNotFoundException(id.ToString());
+            }
+
+            return userEntity;
+        }
+
+        public async Task<UserAccount> GetByEmailAsync(string email, CancellationToken cancellationToken)
+        {
+            var userEntity = await _context.UserAccounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.EmailAddress == email, cancellationToken);
             if (userEntity == null) 
             {
                 throw new UserNotFoundException(email);
             }
 
-            var user = _mapper.Map<User>(userEntity);
-
-            return user;
+            return userEntity;
         }
 
-        public async Task<List<User>> GetUsers()
-        {
-            // TODO: complete 
-            var userEntities = await _context.UserAccounts.AsNoTracking().ToListAsync();
-
-            // TODO: Create User type defined in Core from Entity. Use Mapper!   
-
-            throw new NotImplementedException();
-        }
-
-        public async Task<string> ResetPassword(string email, string hashedPassword)
+        public async Task<string> ResetPassword(string email, string hashedPassword, CancellationToken cancellationToken)
         {
             var rowsUpdated = await _context.UserAccounts
                .Where(u => u.EmailAddress == email)
                .ExecuteUpdateAsync(u => u
-                   .SetProperty(u => u.Password, hashedPassword));
-            await _context.SaveChangesAsync();
+                   .SetProperty(u => u.Password, hashedPassword), cancellationToken);
 
-            return rowsUpdated == 0 ? throw new UserNotFoundException(email) : "Password was reset";
+            if (rowsUpdated == 0) 
+            {
+                throw new UserNotFoundException(email);
+            }
+
+            return "Password was reset";
+        }
+
+        public override Task UpdateAsync(UserAccount account, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

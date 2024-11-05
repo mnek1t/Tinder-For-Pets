@@ -81,7 +81,7 @@
     color: #864c4c;
 }
 
-.login__button, .register__button, .reset-password__button {
+.login__button, .register__button, .reset-password__button, .create-profile-btn {
     cursor: pointer;
     border-radius: 20px;
     margin-right: 10px;
@@ -94,7 +94,7 @@
     font-size: 16px;
 }
 
-.login__button:hover, .register__button:hover, .reset-password__button:hover{
+.login__button:hover, .register__button:hover, .reset-password__button:hover, .create-profile-btn:hover{
     background-color: #864c4c;
 }
 
@@ -199,4 +199,166 @@
 .create-account-link {
     text-decoration: none;
     color: #864c4c;
+}
+
+.create-profile-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.create-profile__header {
+    text-transform: uppercase;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px
+}
+
+input, label {
+    display:block;
+}
+
+label {
+    margin: 5px;
+}
+
+#name-input {
+    border-radius: 5px;
+    height: 40px;
+    width: 300px;
+    margin-bottom: 20px;
+    text-indent: 7px;
+    font-family: 'Karla';
+    border: 3px solid #864c4c;
+}
+
+#name-input:focus {
+    outline: none;
+}
+
+#animal-type-dropbox, #breeds-dropbox, #date-of-birth-dropbox, #location-input, #data-input {
+    border-radius: 5px;
+    height: 40px;
+    width: 300px;
+    margin-bottom: 20px;
+    text-indent: 7px;
+    font-family: 'Karla';
+    border: 3px solid #864c4c;
+    cursor: pointer;
+}
+
+#description-input {
+    border: 3px solid #864c4c;
+    cursor: pointer;
+    text-indent: 7px;
+    border-radius: 5px;
+    width: 300px;
+    resize: vertical;
+    max-height: 200px;
+    min-height: 100px;
+}
+
+.gender-button {
+    cursor: pointer;
+    border-radius: 10px;
+    margin-right: 10px;
+    background-color: #ddd;
+    border-color: #888;
+    color: #222;
+    border: none;
+    padding: 10px;
+    width: 150px;
+    font-family: 'Karla';
+    font-size: 16px;
+}
+
+.gender-button.selected {
+    background-color: #A75D5D;
+    color: #FFFFFF;
+}
+.gender-button.selected:hover {
+    background-color: #A75D5D;
+}
+.gender-button:hover {
+    background-color:#b5b4b4;
+}
+
+.checkbox-inputs {
+    display: flex;
+    gap: 20px; 
+    margin-top: 20px;
+    margin-bottom: 21px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-group label {
+    margin-right: 8px; 
+}
+
+.location {
+    position: relative; 
+    width: 300px; 
+}
+
+.location-dropbox {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;  
+    z-index: 1;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.location-suggestion {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    float: left;
+    clear: left;
+    width: 100%;
+}
+
+.size-input-group {
+    margin-bottom: 16px;
+}
+
+.size-input-container {
+    position: relative; 
+    width: 100%; 
+}
+
+.unit-label {
+    position: absolute;
+    left: 75%; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background-color: white; 
+    padding: 0 4px; 
+    color: #333; 
+}
+
+.height-input,
+.weight-input {
+    width: 100%; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    height: 38px;
+    font-size: 16px;
+}
+
+.create-profile-btn {
+    margin-left: 150px;
 }
