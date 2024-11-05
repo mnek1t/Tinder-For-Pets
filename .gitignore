@@ -1,8 +1,6 @@
 # React-related files
 /frontend/my-app/node_modules
 OutsideProjectCatJSONDataCreator/
-
-/frontend/my-app/.env
 /ClientApp/build/
 /ClientApp/.env.local
 /ClientApp/.env.development.local

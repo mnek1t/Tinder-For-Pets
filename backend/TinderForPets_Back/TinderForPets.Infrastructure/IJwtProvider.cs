@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SharedKernel;
-using TinderForPets.Core.Models;
-
 namespace TinderForPets.Infrastructure
 {
     public interface IJwtProvider

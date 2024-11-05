@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\Auth\" />
-    <Folder Include="Interfaces\Repositories\" />
+    <Compile Remove="Interfaces\Auth\**" />
+    <Compile Remove="Interfaces\Repositories\**" />
+    <EmbeddedResource Remove="Interfaces\Auth\**" />
+    <EmbeddedResource Remove="Interfaces\Repositories\**" />
+    <None Remove="Interfaces\Auth\**" />
+    <None Remove="Interfaces\Repositories\**" />
   </ItemGroup>
 
   <ItemGroup>

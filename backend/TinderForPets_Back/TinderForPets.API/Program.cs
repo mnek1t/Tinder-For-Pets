@@ -63,11 +63,12 @@ builder.Services.AddScoped<IBreedRepository, BreedRepository>();
 builder.Services.AddScoped<ISexRepository, SexRepository>();
 builder.Services.AddScoped<IAnimalTypeRepository, AnimalTypeRepository>();
 builder.Services.AddScoped<IAnimalProfileRepository, AnimalProfileRepository>();
+builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IAnimalImageRepository, AnimalImageRepository>();
 
 // Services
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<AnimalProfileService>();
+builder.Services.AddScoped<AnimalService>();
 builder.Services.AddScoped<ImageHandlerService>();
 builder.Services.AddScoped<GeocodingService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
