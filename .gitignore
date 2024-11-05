@@ -15,3 +15,6 @@ obj/Debug/net8.0
 
 /backend/TinderForPets_Back/.vs
 mycert.pfx
+
+appsettings.json
+appsettings.Development.json
