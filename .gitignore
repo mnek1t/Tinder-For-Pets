@@ -2,7 +2,7 @@
 /frontend\my-app\node_modules
 node_modules/
 OutsideProjectCatJSONDataCreator/
-.vs\TinderForPets_Back
+
 /ClientApp/build/
 /ClientApp/.env.local
 /ClientApp/.env.development.local
@@ -13,4 +13,5 @@ OutsideProjectCatJSONDataCreator/
 
 obj/Debug/net8.0
 
+/backend/TinderForPets_Back/.vs
 mycert.pfx
