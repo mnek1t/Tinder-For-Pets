@@ -48,6 +48,22 @@ namespace TinderForPets.Infrastructure
             var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
             return tokenValue;
         }
+        public string GenerateConfirmAccountToken(string userId)
+        {
+            Claim[] claims = [new("userId", userId), new("purpose", "confirm-account")];
+            var signingCredentials = new SigningCredentials(
+               new SymmetricSecurityKey(
+                   Encoding.UTF8.GetBytes(_options.SecretKey)),
+                   SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                signingCredentials: signingCredentials,
+                expires: DateTime.UtcNow.AddMinutes(5)
+            );
+            var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
+            return tokenValue;
+        }
         public string GenerateResetPasswordToken(string email) 
         {
             Claim[] claims = [new("email", email), new("purpose", "reset-password")];
@@ -60,13 +76,39 @@ namespace TinderForPets.Infrastructure
             var token = new JwtSecurityToken(
                 claims: claims,
                 signingCredentials: signingCredentials,
-                expires: DateTime.UtcNow.AddMinutes(30)
+                expires: DateTime.UtcNow.AddMinutes(5)
             );
 
             var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
             return tokenValue;
         }
+        public Result<string> ValidateConfirmAccountToken(string token)
+        {
+            try
+            {
+                var claimPrincipal = _tokenHandler.ValidateToken(token, _validationParameters, out SecurityToken validatedToken);
+                if (claimPrincipal == null)
+                {
+                    return Result.Failure<string>(JwtErrors.JwtTokenExpired);
+                }
 
+                var purpose = claimPrincipal.FindFirst("purpose").Value;
+                if (purpose != "confirm-account")
+                {
+                    return Result.Failure<string>(JwtErrors.JwtTokenExpired);
+                }
+                var userId = claimPrincipal.FindFirst("userId").Value;
+                return Result.Success<string>(userId);
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                return Result.Failure<string>(JwtErrors.JwtTokenExpired);
+            }
+            catch (SecurityTokenException)
+            {
+                return Result.Failure<string>(JwtErrors.InvalidToken);
+            }
+        }
         public Result<string> ValidateResetPasswordToken(string token) 
         {
             try
@@ -121,5 +163,7 @@ namespace TinderForPets.Infrastructure
                 return Result.Failure<Guid>(JwtErrors.InvalidToken);
             }
         }
+
+        
     }
 }

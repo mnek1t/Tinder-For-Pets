@@ -28,10 +28,57 @@ namespace TinderForPets.API.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _userService.Register(request.UserName, request.Email, request.Password, cancellationToken);
-            var jwtToken = result.Value;
-            SetAuthTokenInCookies(HttpContext, jwtToken);
+            if (result.IsFailure) 
+            {
+                result.ToProblemDetails();
+            }
 
-            return result.IsSuccess ? Results.Ok(jwtToken) : result.ToProblemDetails();
+            var confirmAccountTokenResult = _userService.GenerateConfirmAccountToken(result.Value);
+            if (confirmAccountTokenResult.IsFailure) 
+            {
+                confirmAccountTokenResult.ToProblemDetails();
+            }
+            var confirmAccountToken = confirmAccountTokenResult.Value;
+            var emailData = new ConfirmAccountDto
+            {
+                EmailAddress = request.Email,
+                //TODO: replace by frontend link
+                ConfirmAccountLink = $"https://localhost:5295/accounts/confirm?token={confirmAccountToken}"
+            };
+            var message = JsonSerializer.Serialize(emailData);
+            try
+            {
+                await _emailSender.SendEmailAsync(request.Email, "Tinder For Pets Confirm Account", message);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(statusCode: 500, title: ex.Message);
+            }
+            
+            return result.IsSuccess ? Results.Ok() : result.ToProblemDetails();
+        }
+
+        [HttpPatch("account/confirm")]
+        [AllowAnonymous]
+        public async Task<IResult> ConfirmAccount(
+            [FromBody] ConfirmAccountRequest request,
+            CancellationToken cancellationToken)
+        {
+            var confirmAccountResult = await _userService.ConfirmAccount(request.Token, cancellationToken);
+            if (confirmAccountResult.IsFailure) 
+            {
+                confirmAccountResult.ToProblemDetails();
+            }
+            var userId = Guid.Parse(confirmAccountResult.Value);
+            var jwtTokenResult = _userService.GenerateAuthToken(userId);
+            if (jwtTokenResult.IsFailure)
+            {
+                return jwtTokenResult.ToProblemDetails();
+            }
+
+            var jwtToken = jwtTokenResult.Value;
+            SetAuthTokenInCookies(HttpContext, jwtToken);
+            return confirmAccountResult.IsSuccess ? Results.NoContent() : confirmAccountResult.ToProblemDetails();
         }
 
         [HttpPost("login")]
@@ -92,18 +139,18 @@ namespace TinderForPets.API.Controllers
                 return result.ToProblemDetails();
             }
             var user = result.Value;
-            var jwtToken = _userService.GenerateResetPasswordToken(request.Email).Value;
+            var resetPasswordToken = _userService.GenerateResetPasswordToken(request.Email).Value;
 
             var emailData = new ResetPasswordEmailDto
             {
                 UserName = user.UserName,
-                ResetLink = $"http://localhost:3000/accounts/password/reset?token={jwtToken}"
+                ResetLink = $"https://localhost:3000/accounts/password/reset?token={resetPasswordToken}"
             };
             var message = JsonSerializer.Serialize(emailData);
 
             await _emailSender.SendEmailAsync(request.Email, "Tinder For Pets Password Reset", message);
 
-            return Results.Ok(jwtToken);
+            return Results.Ok(resetPasswordToken);
         }
 
         private static void SetAuthTokenInCookies(HttpContext context, string jwtToken) 
