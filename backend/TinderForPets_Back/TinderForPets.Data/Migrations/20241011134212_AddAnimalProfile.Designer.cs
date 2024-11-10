@@ -35,7 +35,7 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("age");
 
-                    b.Property<int>("TypeId")
+                    b.Property<int>("AnimalTypeId")
                         .HasColumnType("integer")
                         .HasColumnName("type_id");
 
@@ -46,7 +46,7 @@ namespace TinderForPets.Data.Migrations
                     b.HasKey("Id")
                         .HasName("animal_pkey");
 
-                    b.HasIndex("TypeId");
+                    b.HasIndex("AnimalTypeId");
 
                     b.HasIndex("UserId");
 
@@ -241,7 +241,7 @@ namespace TinderForPets.Data.Migrations
                 {
                     b.HasOne("TinderForPets.Data.Entities.AnimalType", "Type")
                         .WithMany("Animals")
-                        .HasForeignKey("TypeId")
+                        .HasForeignKey("AnimalTypeId")
                         .IsRequired()
                         .HasConstraintName("animal_type_id_fkey");
 

@@ -4,7 +4,7 @@ namespace TinderForPets.API.Contracts.Profiles
 {
     public record CreateAnimalProfileRequest(
         [Required] string Name,
-        [Required] int TypeId,
+        [Required] int AnimalTypeId,
             string Description,
         [Required] DateOnly DateOfBirth, 
         [Required] int SexId,

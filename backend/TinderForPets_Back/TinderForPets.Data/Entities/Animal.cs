@@ -6,7 +6,7 @@ public class Animal : IEntity
 
     public Guid UserId { get; set; }
 
-    public int TypeId { get; set; }
+    public int AnimalTypeId { get; set; }
     public int BreedId { get; set; }
 
     public virtual AnimalType Type { get; set; } = null!;
