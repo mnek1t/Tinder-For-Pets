@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using TinderForPets.API;
 using TinderForPets.Application.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +72,10 @@ builder.Services.AddScoped<ImageHandlerService>();
 builder.Services.AddScoped<GeocodingService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
+//builder.Services.AddScoped<AnimalProfileFilterBuilder>();
+builder.Services.AddScoped<RecommendationService>();
+builder.Services.AddScoped<S2GeometryService>();
+
 
 // Infrastructure
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
