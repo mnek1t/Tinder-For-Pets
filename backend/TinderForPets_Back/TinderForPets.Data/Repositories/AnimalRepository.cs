@@ -22,7 +22,7 @@ namespace TinderForPets.Data.Repositories
             .Where(a => a.Id == animalEntity.Id && a.UserId == animalEntity.UserId)
             .ExecuteUpdateAsync(animal =>
                 animal
-                .SetProperty(a => a.TypeId, animalEntity.TypeId)
+                .SetProperty(a => a.AnimalTypeId, animalEntity.AnimalTypeId)
                 .SetProperty(a => a.BreedId, animalEntity.BreedId),
                 cancellationToken
             );

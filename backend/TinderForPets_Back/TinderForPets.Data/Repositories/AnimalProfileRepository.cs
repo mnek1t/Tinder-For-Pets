@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using TinderForPets.Core.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Threading;
 using TinderForPets.Data.Entities;
 using TinderForPets.Data.Exceptions;
 using TinderForPets.Data.Interfaces;
@@ -24,14 +24,23 @@ namespace TinderForPets.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<Guid> GetAnimalProfileByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken)
+        public async Task<AnimalProfile> GetAnimalProfileByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken)
         {
-            var animalProfileId = await _context.Animals
-                .Where(a => a.UserId == ownerId)
-                .Select(a => a.Profile.Id) 
-                .SingleOrDefaultAsync(cancellationToken);
+            var animalProfile = await _context.AnimalProfiles
+               .Include(ap => ap.Animal) // Load the related Animal entity
+               .Where(ap => ap.Animal.UserId == ownerId) // Assuming Animal has a UserId property
+               .SingleOrDefaultAsync(cancellationToken);
 
-            return animalProfileId;
+            return animalProfile;
+        }
+
+        public async Task<List<AnimalProfile>> GetAnimalProfilesAsync(Expression<Func<AnimalProfile, bool>> func, CancellationToken cancellationToken)
+        {
+            var animalProfiles = await _context.AnimalProfiles
+                .Where(func)
+                .ToListAsync(cancellationToken);
+
+            return animalProfiles;
         }
 
         public Task<AnimalProfile> GetByAnimalIdAsync(Guid animalId, CancellationToken cancellationToken)

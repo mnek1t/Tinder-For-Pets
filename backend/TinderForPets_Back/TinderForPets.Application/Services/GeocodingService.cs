@@ -17,13 +17,13 @@ namespace TinderForPets.Application.Services
             _httpClient = httpClient;
         }
 
-        public async Task<Result<(decimal latitude, decimal longitude)>> GetLocationCoordinates(string city, string country, CancellationToken cancellationToken) 
+        public async Task<Result<(double latitude, double longitude)>> GetLocationCoordinates(string city, string country, CancellationToken cancellationToken) 
         {
             try
             {
                 if (geocodingApiUrl.IsNullOrEmpty())
                 {
-                    return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.InvalidRequestUrl);
+                    return Result.Failure<(double latitude, double longitude)>(ApiErrors.InvalidRequestUrl);
                 }
 
                 _httpClient.BaseAddress = new Uri(geocodingApiUrl);
@@ -38,23 +38,23 @@ namespace TinderForPets.Application.Services
                     JArray json = JArray.Parse(jsonResponse);
                     if (json.Count > 0)
                     {
-                        decimal latitude = (decimal)json[0]["lat"];
-                        decimal longitude = (decimal)json[0]["lon"];
-                        return Result.Success<(decimal latitude, decimal longitude)>((latitude, longitude));
+                        double latitude = (double)json[0]["lat"];
+                        double longitude = (double)json[0]["lon"];
+                        return Result.Success<(double latitude, double longitude)>((latitude, longitude));
                     }
                     else
                     {
-                        return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.ResponseWereNotReadCorrect);
+                        return Result.Failure<(double latitude, double longitude)>(ApiErrors.ResponseWereNotReadCorrect);
                     }
                 }
                 else
                 {
-                    return Result.Failure<(decimal latitude, decimal longitude)>(ApiErrors.FailedResponse(response.StatusCode.ToString(), response.Content.ToString()));
+                    return Result.Failure<(double latitude, double longitude)>(ApiErrors.FailedResponse(response.StatusCode.ToString(), response.Content.ToString()));
                 }
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<(decimal latitude, decimal longitude)>(new Error("400", "Operation canceled"));
+                return Result.Failure<(double latitude, double longitude)>(new Error("400", "Operation canceled"));
             }
         }
     }

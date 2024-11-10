@@ -155,21 +155,22 @@ namespace TinderForPets.Application.Services
             return Result.Success<AnimalImageDto>(animalImageDto);
         }
 
-        public async Task<Result<Guid>> GetAnimalProfileId(Guid ownerId,CancellationToken cancellationToken)
+        public async Task<Result<AnimalProfileModel>> GetAnimalProfileId(Guid ownerId,CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                var animalProfileId = await _animalProfileRepository.GetAnimalProfileByOwnerIdAsync(ownerId, cancellationToken);
-                return Result.Success<Guid>(animalProfileId);
+                var animalProfile = await _animalProfileRepository.GetAnimalProfileByOwnerIdAsync(ownerId, cancellationToken);
+                var animalProfileModel = _mapper.Map<AnimalProfileModel>(animalProfile);
+                return Result.Success<AnimalProfileModel>(animalProfileModel);
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<Guid>(new Error("400", "Operation canceled"));
+                return Result.Failure<AnimalProfileModel>(new Error("400", "Operation canceled"));
             }
             catch (Exception ex)
             {
-                return Result.Failure<Guid>(new Error("400", ex.Message));
+                return Result.Failure<AnimalProfileModel>(new Error("400", ex.Message));
             }
         }
         #endregion
@@ -196,6 +197,7 @@ namespace TinderForPets.Application.Services
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 var animalProfileModel = AnimalProfileModel.Create(
                 Guid.NewGuid(),
                 animalProfileDto.AnimalId,
@@ -209,6 +211,7 @@ namespace TinderForPets.Application.Services
                 animalProfileDto.City,
                 animalProfileDto.Latitude,
                 animalProfileDto.Longitude,
+                animalProfileDto.S2CellId,
                 animalProfileDto.Height,
                 animalProfileDto.Weight);
 
@@ -263,6 +266,7 @@ namespace TinderForPets.Application.Services
                 animalProfileDto.City,
                 animalProfileDto.Latitude,
                 animalProfileDto.Longitude,
+                animalProfileDto.S2CellId,
                 animalProfileDto.Height,
                 animalProfileDto.Weight);
                 var animalProifleEntity = _mapper.Map<AnimalProfile>(animalProfileModel);
