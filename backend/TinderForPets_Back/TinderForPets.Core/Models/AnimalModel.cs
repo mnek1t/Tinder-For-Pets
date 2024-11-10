@@ -6,18 +6,18 @@
         {
             
         }
-        private AnimalModel(Guid id, Guid userId, int typeId, int breedId)
+        private AnimalModel(Guid id, Guid userId, int animalTypeId, int breedId)
         {
             Id = id;
             UserId = userId;
-            TypeId = typeId;
+            AnimalTypeId = animalTypeId;
             BreedId = breedId;
         }
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; }
 
-        public int TypeId { get; set; }
+        public int AnimalTypeId { get; set; }
         public int BreedId { get; set; }
 
 

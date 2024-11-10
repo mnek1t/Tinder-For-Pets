@@ -10,6 +10,7 @@ namespace TinderForPets.Data.Configurations
         public void Configure(EntityTypeBuilder<AnimalProfile> builder)
         {
             builder.HasKey(e => e.Id).HasName("animal_profile_pkey");
+            builder.HasIndex(ap => ap.S2CellId).HasDatabaseName("ix_s2_cell_id");
 
             builder.ToTable("animal_profile")
                 .HasCheckConstraint("chk_age_ge_than_1", "age >= 1")
@@ -31,6 +32,8 @@ namespace TinderForPets.Data.Configurations
             builder.Property(e => e.City).IsRequired().HasColumnName("city");
             builder.Property(e => e.Country).IsRequired().HasColumnName("country");
             builder.Property(e => e.DateOfBirth).IsRequired().HasColumnName("date_of_birth");
+            builder.Property(e => e.S2CellId).IsRequired().HasColumnName("s2_cell_id").HasColumnType("bigint");
+
 
             builder.HasMany(ap => ap.Images).WithOne(i => i.AnimalProfile)
                 .HasForeignKey(i => i.AnimalProfileId)
