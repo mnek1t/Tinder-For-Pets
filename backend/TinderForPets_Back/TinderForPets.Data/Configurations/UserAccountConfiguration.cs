@@ -19,6 +19,8 @@ namespace TinderForPets.Data.Configurations
             builder.Property(e => e.EmailAddress).HasColumnName("email_address");
             builder.Property(e => e.Password).HasColumnName("password");
             builder.Property(e => e.UserName).HasColumnName("user_name");
+            builder.Property(e => e.EmailConfirmed).HasColumnName("email_confirmed");
+
         }
     }
 }

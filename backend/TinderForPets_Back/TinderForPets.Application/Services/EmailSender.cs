@@ -21,17 +21,50 @@ namespace TinderForPets.Application.Services
 
         public AuthMessageSenderOptions Options { get; }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string message)
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
 
             if (string.IsNullOrEmpty(Options.SendGridKey))
             {
                 throw new Exception("Null SendGridKey");
             }
-            await Execute(Options.SendGridKey, subject, message, toEmail);
+
+            if (subject == "Tinder For Pets Confirm Account")
+            {
+                await SendConfirmAccountEmail(Options.SendGridKey, subject, htmlMessage, email);
+            }
+            else 
+            {
+                await SendResetPasswordEmail(Options.SendGridKey, subject, htmlMessage, email);
+            }
+            
+        }
+        public async Task SendConfirmAccountEmail(string apiKey, string subject, string message, string toEmail)
+        {
+            var client = new SendGridClient(apiKey);
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "confirm-account-template.html");
+            var htmlMessage = await File.ReadAllTextAsync(templatePath);
+            var emailData = JsonSerializer.Deserialize<ConfirmAccountDto>(message);
+            htmlMessage = htmlMessage.Replace("{{EmailAddress}}", emailData.EmailAddress);
+            htmlMessage = htmlMessage.Replace("{{ConfirmAccountLink}}", emailData.ConfirmAccountLink);
+
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress(Options.SendGridSenderEmail, Options.SendGridSenderName + " Account Confirmation"),
+                Subject = subject,
+                // TODO: add PlainTextContent property and pass just text 
+                HtmlContent = htmlMessage
+            };
+
+            msg.AddTo(new EmailAddress(toEmail));
+            msg.SetClickTracking(false, false);
+            var response = await client.SendEmailAsync(msg);
+            _logger.LogInformation(response.IsSuccessStatusCode
+                                   ? $"Email to {toEmail} queued successfully!"
+                                   : $"Failure Email to {toEmail}");
         }
 
-        public async Task Execute(string apiKey, string subject, string message, string toEmail)
+        public async Task SendResetPasswordEmail(string apiKey, string subject, string message, string toEmail)
         {
             var client = new SendGridClient(apiKey);
             var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "reset-password-template.html");

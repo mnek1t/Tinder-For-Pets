@@ -12,8 +12,8 @@ using TinderForPets.Data;
 namespace TinderForPets.Data.Migrations
 {
     [DbContext(typeof(TinderForPetsDbContext))]
-    [Migration("20241019132717_AddLocationProperties")]
-    partial class AddLocationProperties
+    [Migration("20241106181827_EmailConfirmed")]
+    partial class EmailConfirmed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,6 +117,10 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("country");
 
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date")
+                        .HasColumnName("date_of_birth");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text")
@@ -152,9 +156,9 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("sex_id");
 
-                    b.Property<decimal>("Width")
+                    b.Property<decimal>("Weight")
                         .HasColumnType("numeric")
-                        .HasColumnName("width");
+                        .HasColumnName("weight");
 
                     b.HasKey("Id")
                         .HasName("animal_profile_pkey");
@@ -166,11 +170,11 @@ namespace TinderForPets.Data.Migrations
 
                     b.ToTable("animal_profile", null, t =>
                         {
-                            t.HasCheckConstraint("chk_age_ge_than_0_3", "width >= 0.3");
-
                             t.HasCheckConstraint("chk_age_ge_than_1", "age >= 1");
 
-                            t.HasCheckConstraint("chk_height_ge_than_10", "height>=10");
+                            t.HasCheckConstraint("chk_height_ge_than_10", "height IS NULL OR height >= 10");
+
+                            t.HasCheckConstraint("chk_weight_ge_than_0_3", "weight IS NULL OR weight >= 0.3");
                         });
                 });
 
@@ -272,6 +276,10 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("email_address");
 
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("email_confirmed");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text")
@@ -317,12 +325,14 @@ namespace TinderForPets.Data.Migrations
                     b.HasOne("TinderForPets.Data.Entities.AnimalType", "Type")
                         .WithMany("Animals")
                         .HasForeignKey("AnimalTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("animal_type_id_fkey");
 
                     b.HasOne("TinderForPets.Data.Entities.UserAccount", "User")
                         .WithMany("Animals")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("animal_user_id_fkey");
 

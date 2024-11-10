@@ -16,9 +16,10 @@
             bool isVaccinated, 
             bool isSterilized, 
             string country, 
-            string city, 
-            decimal latitude, 
-            decimal longitude,
+            string city,
+            double latitude,
+            double longitude,
+            ulong s2cellId,
             decimal height,
             decimal weight
             )
@@ -35,6 +36,7 @@
             City = city;
             Latitude = latitude;
             Longitude = longitude;
+            S2CellId = s2cellId;
             Height = height;
             Weight = weight;  
         }
@@ -51,8 +53,9 @@
         public bool IsSterilized { get; private set; }
         public string Country { get; set; }
         public string City { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public ulong S2CellId { get; set; }
         public decimal Height { get; set; }
         public decimal Weight { get; set; }
         public DateOnly DateOfBirth { get; set; }
@@ -66,9 +69,10 @@
             bool isVaccinated, 
             bool isSterilized, 
             string country, 
-            string city, 
-            decimal latitude, 
-            decimal longitude,
+            string city,
+            double latitude,
+            double longitude,
+            ulong s2cellId,
             decimal height,
             decimal weight) 
         {
@@ -85,6 +89,7 @@
                 city, 
                 latitude, 
                 longitude,
+                s2cellId,
                 height,
                 weight
             );

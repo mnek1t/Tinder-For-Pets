@@ -16,12 +16,12 @@ namespace TinderForPets.Data.Configurations
             builder.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            builder.Property(e => e.TypeId).HasColumnName("type_id");
+            builder.Property(e => e.AnimalTypeId).HasColumnName("animal_type_id");
             builder.Property(e => e.UserId).HasColumnName("user_id");
             builder.Property(e => e.BreedId).HasColumnName("breed_id");
 
             builder.HasOne(d => d.Type).WithMany(p => p.Animals)
-                .HasForeignKey(d => d.TypeId)
+                .HasForeignKey(d => d.AnimalTypeId)
                 //.OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("animal_type_id_fkey");
 

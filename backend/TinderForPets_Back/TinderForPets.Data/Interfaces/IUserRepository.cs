@@ -6,6 +6,7 @@ namespace TinderForPets.Data.Interfaces
     {
         Task<UserAccount> GetByEmailAsync(string email, CancellationToken cancellationToken);
         Task<string> ResetPassword(string email, string hashedPassword, CancellationToken cancellationToken);
+        Task ConfirmAccount(Guid id, CancellationToken cancellationToken);
 
     }
 }

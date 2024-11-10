@@ -15,14 +15,21 @@ namespace TinderForPets.API.Controllers
         private readonly AnimalService _animalService;
         private readonly ImageHandlerService _imageResizerService;
         private readonly GeocodingService _geoCodingService;
+        private readonly S2GeometryService _s2GeometryService;
         private readonly IJwtProvider _jwtProvider;
 
-        public AnimalController(AnimalService profileService, ImageHandlerService imageResizerService, GeocodingService geoCodingService, IJwtProvider jwtProvider)
+        public AnimalController(
+            AnimalService profileService,
+            ImageHandlerService imageResizerService,
+            GeocodingService geoCodingService,
+            IJwtProvider jwtProvider,
+            S2GeometryService s2GeometryService)
         {
             _animalService = profileService;
             _imageResizerService = imageResizerService;
             _geoCodingService = geoCodingService;
             _jwtProvider = jwtProvider;
+            _s2GeometryService = s2GeometryService;
         }
 
         [Authorize]
@@ -42,7 +49,7 @@ namespace TinderForPets.API.Controllers
                 return validationTokenResult.ToProblemDetails();
             }
 
-            var result = await _animalService.GetAnimalImageAsync(animalProfileIdResult.Value, cancellationToken);
+            var result = await _animalService.GetAnimalImageAsync(animalProfileIdResult.Value.Id, cancellationToken);
             var animalImageDto = result.Value;
             return Results.Ok(File(animalImageDto.ImageData, animalImageDto.ImageFormat));
 
@@ -88,11 +95,14 @@ namespace TinderForPets.API.Controllers
                 return geoCodingResult.ToProblemDetails();
             }
 
+            // Calculate S2 Cell - prepare for S2Gometryibrary algorithm
+            var s2cellId = _s2GeometryService.GetS2CellId(geoCodingResult.Value.latitude, geoCodingResult.Value.longitude); 
+            
             // Create record in animal table
             var animalDto = new AnimalDto 
             { 
                 OwnerId = tokenResult.Value, 
-                AnimalTypeId = request.TypeId,
+                AnimalTypeId = request.AnimalTypeId,
                 BreedId = request.BreedId
             };
 
@@ -116,6 +126,7 @@ namespace TinderForPets.API.Controllers
                 City = request.City,
                 Latitude = geoCodingResult.Value.latitude,
                 Longitude = geoCodingResult.Value.longitude,
+                S2CellId = s2cellId,
                 Height = request.Height,
                 Weight = request.Weight
             };
@@ -151,6 +162,10 @@ namespace TinderForPets.API.Controllers
             {
                 return geoCodingResult.ToProblemDetails();
             }
+
+            // Calculate S2 Cell - prepare for S2Gometryibrary algorithm
+            var s2cellId = _s2GeometryService.GetS2CellId(geoCodingResult.Value.latitude, geoCodingResult.Value.longitude);
+
             var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
             if (validationTokenResult.IsFailure) 
             {
@@ -181,6 +196,7 @@ namespace TinderForPets.API.Controllers
                     City = request.City,
                     Latitude = geoCodingResult.Value.latitude,
                     Longitude = geoCodingResult.Value.longitude,
+                    S2CellId = s2cellId,
                     Height = request.Height,
                     Weight = request.Weight
                 };

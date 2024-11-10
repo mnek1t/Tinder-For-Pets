@@ -67,10 +67,31 @@ namespace TinderForPets.Data.Repositories
 
             return "Password was reset";
         }
-
-        public override Task UpdateAsync(UserAccount account, CancellationToken cancellationToken)
+        public async Task ConfirmAccount(Guid id, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var rowsUpdated = await _context.UserAccounts
+               .Where(u => u.Id == id)
+               .ExecuteUpdateAsync(u => u
+                   .SetProperty(u => u.EmailConfirmed, true), cancellationToken);
+
+            if (rowsUpdated == 0)
+            {
+                throw new UserNotFoundException();
+            }
+        }
+        public override async Task UpdateAsync(UserAccount user, CancellationToken cancellationToken)
+        {
+            var rowsUpdated = await _context.UserAccounts
+               .Where(u => u.Id == user.Id)
+               .ExecuteUpdateAsync(u => u
+                   .SetProperty(u => u.UserName, u => u.UserName == null ? u.UserName : user.UserName)
+                   .SetProperty(u => u.EmailAddress, u => u.EmailAddress == null ? u.EmailAddress : user.EmailAddress),
+                   cancellationToken); 
+
+            if (rowsUpdated == 0)
+            {
+                throw new UserNotFoundException(user.EmailAddress);
+            }
         }
     }
 }

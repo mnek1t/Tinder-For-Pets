@@ -12,8 +12,8 @@ using TinderForPets.Data;
 namespace TinderForPets.Data.Migrations
 {
     [DbContext(typeof(TinderForPetsDbContext))]
-    [Migration("20241019132717_AddLocationProperties")]
-    partial class AddLocationProperties
+    [Migration("20241109161030_AnimalTableColumnModification")]
+    partial class AnimalTableColumnModification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,13 +31,13 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<int>("AnimalTypeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("animal_type_id");
+
                     b.Property<int>("BreedId")
                         .HasColumnType("integer")
                         .HasColumnName("breed_id");
-
-                    b.Property<int>("AnimalTypeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("type_id");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -46,9 +46,9 @@ namespace TinderForPets.Data.Migrations
                     b.HasKey("Id")
                         .HasName("animal_pkey");
 
-                    b.HasIndex("BreedId");
-
                     b.HasIndex("AnimalTypeId");
+
+                    b.HasIndex("BreedId");
 
                     b.HasIndex("UserId");
 
@@ -117,6 +117,10 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("country");
 
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date")
+                        .HasColumnName("date_of_birth");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text")
@@ -134,12 +138,12 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_vaccinated");
 
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("numeric")
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision")
                         .HasColumnName("latitude");
 
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("numeric")
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision")
                         .HasColumnName("longitude");
 
                     b.Property<string>("Name")
@@ -147,14 +151,17 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<int?>("SexId")
-                        .IsRequired()
+                    b.Property<long>("S2CellId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("s2_cell_id");
+
+                    b.Property<int>("SexId")
                         .HasColumnType("integer")
                         .HasColumnName("sex_id");
 
-                    b.Property<decimal>("Width")
+                    b.Property<decimal>("Weight")
                         .HasColumnType("numeric")
-                        .HasColumnName("width");
+                        .HasColumnName("weight");
 
                     b.HasKey("Id")
                         .HasName("animal_profile_pkey");
@@ -162,15 +169,18 @@ namespace TinderForPets.Data.Migrations
                     b.HasIndex("AnimalId")
                         .IsUnique();
 
+                    b.HasIndex("S2CellId")
+                        .HasDatabaseName("ix_s2_cell_id");
+
                     b.HasIndex("SexId");
 
                     b.ToTable("animal_profile", null, t =>
                         {
-                            t.HasCheckConstraint("chk_age_ge_than_0_3", "width >= 0.3");
-
                             t.HasCheckConstraint("chk_age_ge_than_1", "age >= 1");
 
-                            t.HasCheckConstraint("chk_height_ge_than_10", "height>=10");
+                            t.HasCheckConstraint("chk_height_ge_than_10", "height IS NULL OR height >= 10");
+
+                            t.HasCheckConstraint("chk_weight_ge_than_0_3", "weight IS NULL OR weight >= 0.3");
                         });
                 });
 
@@ -272,6 +282,10 @@ namespace TinderForPets.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("email_address");
 
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("email_confirmed");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text")
@@ -307,6 +321,13 @@ namespace TinderForPets.Data.Migrations
 
             modelBuilder.Entity("TinderForPets.Data.Entities.Animal", b =>
                 {
+                    b.HasOne("TinderForPets.Data.Entities.AnimalType", "Type")
+                        .WithMany("Animals")
+                        .HasForeignKey("AnimalTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("animal_type_id_fkey");
+
                     b.HasOne("TinderForPets.Data.Entities.Breed", "Breed")
                         .WithMany()
                         .HasForeignKey("BreedId")
@@ -314,15 +335,10 @@ namespace TinderForPets.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("animal_breed_id_fkey");
 
-                    b.HasOne("TinderForPets.Data.Entities.AnimalType", "Type")
-                        .WithMany("Animals")
-                        .HasForeignKey("AnimalTypeId")
-                        .IsRequired()
-                        .HasConstraintName("animal_type_id_fkey");
-
                     b.HasOne("TinderForPets.Data.Entities.UserAccount", "User")
                         .WithMany("Animals")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("animal_user_id_fkey");
 
