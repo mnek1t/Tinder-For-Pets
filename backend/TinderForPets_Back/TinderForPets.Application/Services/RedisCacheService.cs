@@ -1,11 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using StackExchange.Redis;
 using System.Text.Json;
-using System.Threading.Tasks;
-using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Interfaces;
 
 namespace TinderForPets.Application.Services
@@ -13,10 +8,12 @@ namespace TinderForPets.Application.Services
     public class RedisCacheService : ICacheService
     {
         private readonly IDistributedCache _cache;
+        private readonly IConnectionMultiplexer _redis;
 
-        public RedisCacheService(IDistributedCache cache)
+        public RedisCacheService(IDistributedCache cache, IConnectionMultiplexer redis)
         {
             _cache = cache;
+            _redis = redis; 
         }
 
         public async Task<T> GetAsync<T>(string cacheKey)
@@ -42,8 +39,24 @@ namespace TinderForPets.Application.Services
             {
                 AbsoluteExpirationRelativeToNow = expirationTime,
             };
-
             await _cache.SetStringAsync(cacheKey, serializedData, cacheOptions);
+        }
+
+        public async Task<List<Guid>> GetByPatternAsync(string cacheKeyPattern) 
+        {
+            var listData = new List<Guid>();
+            var endpoints = _redis.GetEndPoints();
+            var server = _redis.GetServer(endpoints.First());
+            var keysByPattern = server.Keys(pattern: cacheKeyPattern);
+            foreach (var key in keysByPattern)
+            {
+                if (!string.IsNullOrEmpty(key)) 
+                {
+                    var swipedAnimalProfileId = key.ToString().Split(':').LastOrDefault();
+                    listData.Add(Guid.Parse(swipedAnimalProfileId));
+                }
+            }
+            return listData;
         }
     }
 }

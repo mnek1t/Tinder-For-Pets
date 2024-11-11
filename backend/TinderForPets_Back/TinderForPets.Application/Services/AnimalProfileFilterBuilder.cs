@@ -22,7 +22,7 @@ namespace TinderForPets.Application.Services
             }
 
             // Filter by Nearby S2 Cell IDs
-            if (filter.NearbyS2CellIds.Any())
+            if (filter.NearbyS2CellIds.Count != 0)
             {
                 var cellIdProperty = Expression.Property(parameter, nameof(AnimalProfile.S2CellId));
                 var cellIds = Expression.Constant(filter.NearbyS2CellIds);
@@ -32,10 +32,20 @@ namespace TinderForPets.Application.Services
                 expression = expression == null ? cellIdCondition : Expression.AndAlso(expression, cellIdCondition);
             }
 
+            // Exclude swiped profiles
+            if (filter.SwipedProfileIds.Count != 0)
+            {
+                var profileIdProperty = Expression.Property(parameter, nameof(AnimalProfile.Id));
+                var porifileIds = Expression.Constant(filter.SwipedProfileIds);
+                var containsMethod = typeof(List<Guid>).GetMethod("Contains", new[] { typeof(Guid) });
+                var containsCondition = Expression.Call(porifileIds, containsMethod!, profileIdProperty);
+                var notContainsCondition = Expression.Not(containsCondition);
+                expression = expression == null ? notContainsCondition : Expression.AndAlso(expression, notContainsCondition);
+            }
+
             // Filter by Breed
             if (filter.BreedId.HasValue)
             {
-                // Access the `Animal` navigation property first, then `BreedId`
                 var animalProperty = Expression.Property(parameter, nameof(AnimalProfile.Animal));
                 var breedProperty = Expression.Property(animalProperty, nameof(Animal.BreedId));
                 var breedValue = Expression.Constant(filter.BreedId);
@@ -47,7 +57,6 @@ namespace TinderForPets.Application.Services
             // Filter by Animal Type
             if (filter.AnimalTypeId.HasValue)
             {
-                // Access the `Animal` navigation property first, then `AnimalTypeId`
                 var animalProperty = Expression.Property(parameter, nameof(AnimalProfile.Animal));
                 var typeProperty = Expression.Property(animalProperty, nameof(Animal.AnimalTypeId));
                 var typeValue = Expression.Constant(filter.AnimalTypeId);
