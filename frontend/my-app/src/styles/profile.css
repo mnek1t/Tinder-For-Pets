@@ -2,6 +2,7 @@
   display: flex;
   width: 100%;
 }
+
 .border {
     border: 1px solid black;
     width: 100%;
@@ -168,3 +169,89 @@
   .animal-image {
     width:100%
   }
+
+  .medical-profile-data {
+    display: flex;
+    justify-content: center;
+  }
+
+  .profile-card__title {
+    text-transform: capitalize;
+  }
+
+  .modal {
+    width: 300px;
+    position: relative;
+    background-color: #FFE9DD;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 4px;
+    animation: scaleUpForm 0.3s ease-out forwards; 
+    padding: 0;
+  }
+
+  .modal_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 20px auto;
+  }
+
+  .modal_description {
+    text-align: center;
+    color: #858484;
+    margin: 10px 10px;
+  }
+
+  .modal_buttonCancel, .modal_buttonConfirm {
+    cursor: pointer;
+    border: none;
+    padding: 10px;
+    width: 200px;
+    font-family: 'Karla';
+    font-size: 16px;
+    margin-right: 10px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+  }
+  .modal_buttonConfirm{
+    background-color: #A75D5D;
+    color: #FFFFFF;
+  }
+
+  .modal_buttonConfirm:hover {
+    background-color: #864c4c;
+  }
+
+  .modal_buttonCancel {
+    background: none;
+  }
+
+  .modal_buttonCancel:hover {
+    background-color: #fcdece;
+  }
+
+  @keyframes scaleUpForm {
+    0% {
+      transform: scale(0); 
+      opacity: 0; 
+    }
+    100% {
+      transform: scale(1); 
+      opacity: 1; 
+    }
+}
+
+@keyframes scaleDownForm {
+    0% {
+      transform: scale(1); 
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0); 
+      opacity: 0; 
+    }
+}
