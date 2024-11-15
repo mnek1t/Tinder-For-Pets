@@ -6,6 +6,7 @@ using TinderForPets.API.Contracts.Users;
 using TinderForPets.API.DTOs;
 using TinderForPets.API.Extensions;
 using TinderForPets.Application.Services;
+using TinderForPets.Infrastructure;
 
 namespace TinderForPets.API.Controllers
 {
@@ -15,10 +16,12 @@ namespace TinderForPets.API.Controllers
     {
         private readonly UserService _userService;
         private readonly IEmailSender _emailSender;
-        public UserController(UserService userService, IEmailSender emailSender)
+        private readonly IJwtProvider _jwtProvider;
+        public UserController(UserService userService, IEmailSender emailSender, IJwtProvider jwtProvider)
         {
             _userService = userService;
             _emailSender = emailSender;
+            _jwtProvider = jwtProvider;
         }
 
         [HttpPost("register")]
@@ -108,12 +111,18 @@ namespace TinderForPets.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IResult> DeleteAccount(Guid id, CancellationToken cancellationToken)
+        [HttpDelete("delete")]
+        public async Task<IResult> DeleteAccount(CancellationToken cancellationToken)
         {
+            var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
+            if (validationTokenResult.IsFailure)
+            {
+                return validationTokenResult.ToProblemDetails();
+            }
+            var userId = validationTokenResult.Value;
             Logout();
-            var result = await _userService.DeleteUser(id, cancellationToken);
-            return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
+            var result = await _userService.DeleteUser(userId, cancellationToken);
+            return result.IsSuccess ? Results.NoContent() : result.ToProblemDetails();
         }
 
         [HttpPatch("password/reset")]
