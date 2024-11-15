@@ -1,6 +1,10 @@
 import "../styles/profile.css"
 import EmptyHeader from "./EmptyHeader";
-export default function Sidebar() {
+interface SideBarProps {
+    handleLogout :  (event: React.MouseEvent<HTMLButtonElement>) => void;
+    handleDeleteAccount:  (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+export default function Sidebar(props : SideBarProps) {
     return(
         <div className="sidebar">
             <EmptyHeader/>
@@ -36,8 +40,8 @@ export default function Sidebar() {
                 <a href="#Terms of Service">Terms of Service</a>
             </div>
             <br/>
-            <button className="preference-btn">Log out</button>
-            <button className="preference-btn">Delete Account</button>
+            <button className="preference-btn" onClick={props.handleLogout}>Log out</button>
+            <button className="preference-btn" onClick={props.handleDeleteAccount}>Delete Account</button>
         </div>
         );
 }

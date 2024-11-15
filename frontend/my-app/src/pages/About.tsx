@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate }from "react-router-dom";
-
 import Header from "../components/Header";
 
 import ChatBot from "../components/chatbot/ChatBot";
@@ -8,7 +7,6 @@ import ChatBotToggler from '../components/chatbot/ChatBotToggler';
 
 function About() {
     const navigate = useNavigate();
-
     function handleNavigate(event: React.MouseEvent<HTMLButtonElement>) {
         const {name} = event.target as HTMLButtonElement
         navigate(name);
