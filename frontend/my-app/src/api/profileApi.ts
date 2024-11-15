@@ -16,6 +16,25 @@ export interface ProfileData {
     weight: number
 }
 
+export interface ProfileDetailsData {
+    name: string,
+    description: string,
+    age: number,
+    type: string,
+    breed: string,
+    files: {
+        imageData: string,
+        imageFormat : string
+    },
+    sex: string,
+    isVaccinated: boolean,
+    isSterilized: boolean,
+    //country: string,
+    //city: string,
+    //height: number,
+    //weight: number
+}
+
 export async function getAnimalTypes() {
     try {
         const response : AxiosResponse = await axios.get("https://localhost:5295/api/Animal/animal-types");
@@ -45,6 +64,21 @@ export async function getBreeds(animalTypeId: number) {
 export async function getSexes() {
     try {
         const response : AxiosResponse = await axios.get(`https://localhost:5295/api/Animal/sexes`,);
+        if(response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error('Get Sexes failed.'); 
+        }
+    } catch (error) {
+        handleError(error, "Error when retrieving sexes:");
+    }
+}
+
+export async function getProfileDetails() {
+    try {
+        const response : AxiosResponse = await axios.get(`https://localhost:5295/api/Animal/animal/data`, {
+            withCredentials: true
+        });
         if(response.status === 200) {
             return response.data;
         } else {
