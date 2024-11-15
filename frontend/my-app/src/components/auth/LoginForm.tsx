@@ -1,35 +1,25 @@
 import '../../styles/form.css';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {login, LoginCredentials} from "../../api/authApi"
+import {LoginCredentials} from "../../api/authApi"
 import CloseFormButton from '../CloseFormButton';
 
 interface LoginProps {
     handleModalClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    handleLogin: (loginCredentials: LoginCredentials) => void;
     isOpen: boolean;
 };
 
 export default function Login(props: LoginProps) {
-    const [error, setError] = useState<string | null>(null);
+    
     const [loginCredentials, setLoginCredentials] = useState<LoginCredentials>({
         email: "",
         password: ""
     });
 
-    const navigate = useNavigate();
-
-    function makeLogin(event: React.FormEvent<HTMLFormElement>) {
+    function login(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         console.log("Loggining");
-        login(loginCredentials)
-        .then((token) => {
-            navigate("/about");
-            setError(null);
-        })
-        .catch(error => {
-            console.error('Login failed:', error);
-            setError(error.message);
-        });
+        props.handleLogin(loginCredentials);
     }
 
     function handleInput(event: React.ChangeEvent<HTMLInputElement>) {
@@ -40,7 +30,7 @@ export default function Login(props: LoginProps) {
     }
 
     return(
-        <form className={`login ${props.isOpen ? 'form-appear' : 'form-disappear closing'}`} onSubmit={(e) => makeLogin(e)}>
+        <form className={`login ${props.isOpen ? 'form-appear' : 'form-disappear closing'}`} onSubmit={(e) => login(e)}>
             <CloseFormButton handleClose={props.handleModalClose}/>
             <div className='login-container'>
                 <h1 className="login__header">Log In</h1>
