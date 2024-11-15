@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SharedKernel;
+using System.Collections.Generic;
 using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Interfaces;
 using TinderForPets.Core;
@@ -154,12 +155,54 @@ namespace TinderForPets.Application.Services
 
             return Result.Success<AnimalImageDto>(animalImageDto);
         }
+        public async Task<Result<AnimalDetailsDto>> GetAnimalProfileDetails(Guid ownerId, CancellationToken cancellationToken) 
+        {
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var animalProfileDetails = await _animalProfileRepository.GetAnimalProfileDetails(ownerId, cancellationToken);
+
+                var animalDetailsDto = new AnimalDetailsDto()
+                {
+                    Animal = new AnimalDto()
+                    {
+                        Breed = animalProfileDetails.Animal.Breed.BreedName,
+                        AnimalType = animalProfileDetails.Animal.Type.TypeName
+                    },
+                    Profile = new AnimalProfileDto
+                    {
+                        Name = animalProfileDetails.Name,
+                        Description = animalProfileDetails.Description,
+                        Age = animalProfileDetails.Age,
+                        Sex = animalProfileDetails.Sex.SexName,
+                        IsSterilized = animalProfileDetails.IsSterilized,
+                        IsVaccinated = animalProfileDetails.IsVaccinated
+                    },
+                    Images = animalProfileDetails.Images.Select(i => new AnimalImageDto
+                    {
+                        ImageData = i.ImageData,
+                        ImageFormat = i.ImageFormat
+                    }).ToList(),
+                };
+
+                if (animalDetailsDto != null)
+                {
+                    return Result.Success<AnimalDetailsDto>(animalDetailsDto);
+                }
+
+                return Result.Failure<AnimalDetailsDto>(AnimalProfileErrors.NotFound);
+            }
+            catch (OperationCanceledException)
+            {
+                return Result.Failure<AnimalDetailsDto>(new Error("400", "Operation canceled"));
+            }
+        }
 
         public async Task<Result<AnimalProfileModel>> GetAnimalProfileId(Guid ownerId,CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var animalProfile = await _animalProfileRepository.GetAnimalProfileByOwnerIdAsync(ownerId, cancellationToken);
                 var animalProfileModel = _mapper.Map<AnimalProfileModel>(animalProfile);
                 return Result.Success<AnimalProfileModel>(animalProfileModel);
@@ -167,10 +210,6 @@ namespace TinderForPets.Application.Services
             catch (OperationCanceledException)
             {
                 return Result.Failure<AnimalProfileModel>(new Error("400", "Operation canceled"));
-            }
-            catch (Exception ex)
-            {
-                return Result.Failure<AnimalProfileModel>(new Error("400", ex.Message));
             }
         }
         #endregion

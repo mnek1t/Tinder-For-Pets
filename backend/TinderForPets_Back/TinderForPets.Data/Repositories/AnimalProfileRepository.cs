@@ -34,6 +34,20 @@ namespace TinderForPets.Data.Repositories
             return animalProfile;
         }
 
+        public async Task<AnimalProfile> GetAnimalProfileDetails(Guid ownerId, CancellationToken cancellationToken)
+        {
+            var animalProfile = await _context.AnimalProfiles
+                .Include(ap => ap.Animal)
+                    .ThenInclude(a => a.Breed)
+                    .ThenInclude(a => a.AnimalType)
+                .Include(ap => ap.Images)
+                .Include(ap => ap.Sex)
+                .Where(ap => ap.Animal.UserId == ownerId)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            return animalProfile;
+        }
+
         public async Task<List<AnimalProfile>> GetAnimalProfilesAsync(Expression<Func<AnimalProfile, bool>> func, CancellationToken cancellationToken)
         {
             var animalProfiles = await _context.AnimalProfiles

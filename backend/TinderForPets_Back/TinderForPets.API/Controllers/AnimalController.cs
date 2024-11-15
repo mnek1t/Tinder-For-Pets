@@ -33,6 +33,26 @@ namespace TinderForPets.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("animal/data")]
+        public async Task<IResult> GetProfileData(CancellationToken cancellationToken) 
+        {
+            
+            var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
+            if (validationTokenResult.IsFailure)
+            {
+                return validationTokenResult.ToProblemDetails();
+            }
+
+            var animalProfileDetailsResult = await _animalService.GetAnimalProfileDetails(validationTokenResult.Value, cancellationToken);
+
+            if (animalProfileDetailsResult.IsFailure)
+            {
+                return animalProfileDetailsResult.ToProblemDetails();
+            }
+
+            return Results.Ok(animalProfileDetailsResult.Value);
+        }
+        [Authorize]
         [HttpGet("animal/image")]
         public async Task<IResult> GetProfileImage(CancellationToken cancellationToken)
         {
@@ -42,14 +62,14 @@ namespace TinderForPets.API.Controllers
                 return validationTokenResult.ToProblemDetails();
             }
 
-            var animalProfileIdResult = await _animalService.GetAnimalProfileId(validationTokenResult.Value, cancellationToken);
+            var animalProfileResult = await _animalService.GetAnimalProfileId(validationTokenResult.Value, cancellationToken);
 
-            if (animalProfileIdResult.IsFailure)
+            if (animalProfileResult.IsFailure)
             {
-                return validationTokenResult.ToProblemDetails();
+                return animalProfileResult.ToProblemDetails();
             }
 
-            var result = await _animalService.GetAnimalImageAsync(animalProfileIdResult.Value.Id, cancellationToken);
+            var result = await _animalService.GetAnimalImageAsync(animalProfileResult.Value.Id, cancellationToken);
             var animalImageDto = result.Value;
             return Results.Ok(File(animalImageDto.ImageData, animalImageDto.ImageFormat));
 
