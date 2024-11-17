@@ -28,7 +28,7 @@ namespace TinderForPets.API.Controllers
             {
                 return tokenResult.ToProblemDetails();
             }
-            var recommendationsResult = await _recommendationService.GetRecommendationsForUserAsync(tokenResult.Value, radiusKm,  cancellationToken);
+            var recommendationsResult = await _recommendationService.GetRecommendationsForUserAsync(tokenResult.Value, radiusKm, cancellationToken);
             if (recommendationsResult.IsFailure) 
             {
                 return recommendationsResult.ToProblemDetails();
