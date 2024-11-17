@@ -46,6 +46,7 @@ namespace TinderForPets.Application.Services
         {
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var cacheKey = "GET_ANIMAL_TYPES";
                 var cachedData = await _cacheService.GetAsync<List<AnimalTypeDto>>(cacheKey);
                 if (cachedData != null)
@@ -111,6 +112,7 @@ namespace TinderForPets.Application.Services
         {
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var cacheKey = "GET_SEXES";
                 var cachedData = await _cacheService.GetAsync<List<SexDto>>(cacheKey);
                 if (cachedData != null)
@@ -137,23 +139,31 @@ namespace TinderForPets.Application.Services
 
         public async Task<Result<AnimalImageDto>> GetAnimalImageAsync(Guid animalProfileId, CancellationToken cancellationToken)
         {
-            var cacheKey = $"GET_ANIMAL_IMAGE {animalProfileId}";
-            var cachedData = await _cacheService.GetAsync<AnimalImageDto>(cacheKey);
-            if (cachedData != null)
+            try
             {
-                return Result.Success(cachedData);
+                cancellationToken.ThrowIfCancellationRequested();
+                var cacheKey = $"GET_ANIMAL_IMAGE {animalProfileId}";
+                var cachedData = await _cacheService.GetAsync<AnimalImageDto>(cacheKey);
+                if (cachedData != null)
+                {
+                    return Result.Success(cachedData);
+                }
+
+                var animalImageEntity = await _animalImageRepository.GetAnimalImageAsync(animalProfileId, cancellationToken);
+                var animalImageDto = new AnimalImageDto()
+                {
+                    ImageData = animalImageEntity.ImageData,
+                    ImageFormat = animalImageEntity.ImageFormat
+                };
+
+                await _cacheService.SetAsync<AnimalImageDto>(cacheKey, animalImageDto, TimeSpan.FromMinutes(5));
+
+                return Result.Success<AnimalImageDto>(animalImageDto);
             }
-
-            var animalImageEntity = await _animalImageRepository.GetAnimalImageAsync(animalProfileId, cancellationToken);
-            var animalImageDto = new AnimalImageDto()
+            catch (OperationCanceledException)
             {
-                ImageData = animalImageEntity.ImageData,
-                ImageFormat = animalImageEntity.ImageFormat
-            };
-
-            await _cacheService.SetAsync<AnimalImageDto>(cacheKey, animalImageDto, TimeSpan.FromMinutes(5));
-
-            return Result.Success<AnimalImageDto>(animalImageDto);
+                return Result.Failure<AnimalImageDto>(new Error("400", "Operation canceled"));
+            }
         }
         public async Task<Result<AnimalDetailsDto>> GetAnimalProfileDetails(Guid ownerId, CancellationToken cancellationToken) 
         {
@@ -184,14 +194,8 @@ namespace TinderForPets.Application.Services
                         ImageFormat = i.ImageFormat
                     }).ToList(),
                 };
-
-                if (animalDetailsDto != null)
-                {
                     return Result.Success<AnimalDetailsDto>(animalDetailsDto);
-                }
 
-                return Result.Failure<AnimalDetailsDto>(AnimalProfileErrors.NotFound);
-            }
             catch (OperationCanceledException)
             {
                 return Result.Failure<AnimalDetailsDto>(new Error("400", "Operation canceled"));
@@ -236,7 +240,6 @@ namespace TinderForPets.Application.Services
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
                 var animalProfileModel = AnimalProfileModel.Create(
                 Guid.NewGuid(),
                 animalProfileDto.AnimalId,
