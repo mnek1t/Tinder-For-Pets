@@ -61,13 +61,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration["RedisCacheOptions:Configuration"];
     options.InstanceName = builder.Configuration["RedisCacheOptions:InstanceName"];
-    //options.ConnectionMultiplexerFactory = async () =>
-    //{
-    //    return await ConnectionMultiplexer.ConnectAsync(builder.Configuration["RedisCacheOptions:Configuration"]);
-    //};
 });
-
-
 
 // Mapping
 builder.Services.AddAutoMapper(typeof(TinderForPets.Infrastructure.AutoMapper));
@@ -80,6 +74,7 @@ builder.Services.AddScoped<IAnimalTypeRepository, AnimalTypeRepository>();
 builder.Services.AddScoped<IAnimalProfileRepository, AnimalProfileRepository>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IAnimalImageRepository, AnimalImageRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 
 // Services
 builder.Services.AddScoped<UserService>();
