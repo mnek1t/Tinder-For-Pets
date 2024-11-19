@@ -32,6 +32,20 @@ export async function login(loginCredentials: LoginCredentials) {
     }
 }
 
+export async function logout() {
+    try {
+        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/logout', {}, { withCredentials: true });
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error('Logout failed.'); 
+        }
+        
+    } catch (error: any) {
+        handleError(error, "Error during logout:");
+    }
+}
+
 export async function register(registerCredentials: RegisterCredentials) {
     try {
         const response : AxiosResponse = await axios.post('https://localhost:5295/api/user/register', registerCredentials,  { withCredentials: true });
@@ -44,6 +58,20 @@ export async function register(registerCredentials: RegisterCredentials) {
         
     } catch (error: any) {
         handleError(error, "Error during register:");
+    }
+}
+
+export async function deleteAccount() {
+    try {
+        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/delete', {}, { withCredentials: true });
+        if (response.status === 204) {
+            return response.data;
+        } else {
+            throw new Error('Delete Account failed.'); 
+        }
+        
+    } catch (error: any) {
+        handleError(error, "Error during delete Account:");
     }
 }
 

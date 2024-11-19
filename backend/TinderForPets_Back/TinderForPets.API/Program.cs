@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using TinderForPets.API;
 using TinderForPets.Application.Interfaces;
+using TinderForPets.API.Hubs;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// SignalR
+builder.Services.AddSignalR();
 
 // DataBase and data handling
 builder.Services.AddDbContext<TinderForPetsDbContext>(
@@ -46,6 +50,12 @@ builder.Services.AddDbContext<TinderForPetsDbContext>(
     });
 
 builder.Services.AddTransient<TinderForPetsDataSeeder>();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var redisConfiguration = builder.Configuration["RedisCacheOptions:Configuration"];
+    return ConnectionMultiplexer.Connect(redisConfiguration);
+});
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
@@ -64,6 +74,7 @@ builder.Services.AddScoped<IAnimalTypeRepository, AnimalTypeRepository>();
 builder.Services.AddScoped<IAnimalProfileRepository, AnimalProfileRepository>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IAnimalImageRepository, AnimalImageRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 
 // Services
 builder.Services.AddScoped<UserService>();
@@ -72,7 +83,7 @@ builder.Services.AddScoped<ImageHandlerService>();
 builder.Services.AddScoped<GeocodingService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
-//builder.Services.AddScoped<AnimalProfileFilterBuilder>();
+builder.Services.AddScoped<SwipeService>();
 builder.Services.AddScoped<RecommendationService>();
 builder.Services.AddScoped<S2GeometryService>();
 
@@ -119,4 +130,5 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
+app.MapHub<RecommendationHub>("/test-hub");
 app.Run();

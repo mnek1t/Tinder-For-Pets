@@ -20,6 +20,7 @@ public partial class TinderForPetsDbContext : DbContext
     public virtual DbSet<Role> Roles { get; set; }
     public virtual DbSet<UserRole> UserRoles { get; set; }
     public virtual DbSet<Breed> Breeds { get; set; }
+    public virtual DbSet<Match> Matches { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=localhost;Database=tinder_for_pets;Username=mykyta;Password=Tinder123!");
@@ -35,6 +36,7 @@ public partial class TinderForPetsDbContext : DbContext
         modelBuilder.ApplyConfiguration(new SexConfiguration());
         modelBuilder.ApplyConfiguration(new UserAccountConfiguration());
         modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+        modelBuilder.ApplyConfiguration(new MatchConfiguration());
 
         OnModelCreatingPartial(modelBuilder);
     }

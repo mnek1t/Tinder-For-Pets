@@ -140,3 +140,5 @@ D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\ba
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\SixLabors.ImageSharp.dll
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\StackExchange.Redis.dll
 D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\S2Geometry.dll
+D:\University\3 course\Fall semester\Adaptive Data Processing\Tinder For Pets\backend\TinderForPets_Back\TinderForPets.API\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll

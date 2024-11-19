@@ -8,6 +8,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import CreateProfilePage from "./pages/CreateProfilePage";
 import ProfilePage from "./pages/ProfilePage";
 import { BrowserRouter,Routes, Route } from "react-router-dom";
+import Recommendation from "./pages/RecommendationPage";
 function App() {
   return (
     <div className="App">
@@ -23,6 +24,7 @@ function App() {
         <Route path="/accounts/password/reset" element={<ResetPasswordPage/>}/>
         <Route path="/profile/create" element={<CreateProfilePage/>}/>
         <Route path="/app/profile" element={<ProfilePage/>}/>
+        <Route path="/app/recommendation" element={<Recommendation/>}/>
       </Routes>
       </BrowserRouter>
     </div>

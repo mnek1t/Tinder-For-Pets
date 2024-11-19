@@ -6,9 +6,10 @@ import Header from './Header';
 interface FormPageWrapperProps {
     children: ReactNode;
     title: string;
+    showHeader: boolean
 }
 
-function FormPageWrapper({ children, title }: FormPageWrapperProps) {
+function FormPageWrapper({ children, title, showHeader }: FormPageWrapperProps) {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ function FormPageWrapper({ children, title }: FormPageWrapperProps) {
 
     return (
         <div>
-            <Header handleNavigate={handleNavigate} />
+            {showHeader && <Header handleNavigate={handleNavigate} />}
             <Modal isOpen={isModalOpen} onClose={handleModalClose}>
                 {children}
             </Modal>

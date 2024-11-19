@@ -8,5 +8,6 @@ namespace TinderForPets.Data.Interfaces
         Task<AnimalProfile> GetByAnimalIdAsync(Guid animalId, CancellationToken cancellationToken);
         Task<AnimalProfile> GetAnimalProfileByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken);
         Task<List<AnimalProfile>> GetAnimalProfilesAsync(Expression<Func<AnimalProfile, bool>> func, CancellationToken cancellationToken);
+        Task<AnimalProfile> GetAnimalProfileDetails(Guid ownerId, CancellationToken cancellationToken);
     }
 }

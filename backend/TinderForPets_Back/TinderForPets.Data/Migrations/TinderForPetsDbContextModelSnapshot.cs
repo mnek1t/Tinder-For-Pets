@@ -229,6 +229,36 @@ namespace TinderForPets.Data.Migrations
                     b.ToTable("breed", (string)null);
                 });
 
+            modelBuilder.Entity("TinderForPets.Data.Entities.Match", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("FirstSwiperId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("first_swiper_id");
+
+                    b.Property<Guid>("SecondSwiperId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("second_swiper_id");
+
+                    b.HasKey("Id")
+                        .HasName("match_pkey");
+
+                    b.HasIndex("FirstSwiperId")
+                        .HasDatabaseName("ix_match_first_swiper_id");
+
+                    b.HasIndex("SecondSwiperId")
+                        .HasDatabaseName("ix_match_second_swiper_id");
+
+                    b.ToTable("match", (string)null);
+                });
+
             modelBuilder.Entity("TinderForPets.Data.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -391,6 +421,27 @@ namespace TinderForPets.Data.Migrations
                     b.Navigation("AnimalType");
                 });
 
+            modelBuilder.Entity("TinderForPets.Data.Entities.Match", b =>
+                {
+                    b.HasOne("TinderForPets.Data.Entities.AnimalProfile", "FirstSwiper")
+                        .WithMany("Matches")
+                        .HasForeignKey("FirstSwiperId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_match_first_swiper");
+
+                    b.HasOne("TinderForPets.Data.Entities.AnimalProfile", "SecondSwiper")
+                        .WithMany()
+                        .HasForeignKey("SecondSwiperId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_match_second_swiper");
+
+                    b.Navigation("FirstSwiper");
+
+                    b.Navigation("SecondSwiper");
+                });
+
             modelBuilder.Entity("TinderForPets.Data.Entities.UserRole", b =>
                 {
                     b.HasOne("TinderForPets.Data.Entities.Role", "Role")
@@ -421,6 +472,8 @@ namespace TinderForPets.Data.Migrations
             modelBuilder.Entity("TinderForPets.Data.Entities.AnimalProfile", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("Matches");
                 });
 
             modelBuilder.Entity("TinderForPets.Data.Entities.AnimalType", b =>

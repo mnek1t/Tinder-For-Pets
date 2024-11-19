@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,5 +31,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\TinderForPets.Application\TinderForPets.Application.csproj" />
 		<ProjectReference Include="..\TinderForPets.Data\TinderForPets.Data.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Contracts\Recommendation\" />
 	</ItemGroup>
 </Project>

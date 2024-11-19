@@ -11,5 +11,6 @@ namespace TinderForPets.Application.Interfaces
         Task<T> GetAsync<T>(string cacheKey);
         Task SetAsync<T>(string cacheKey, T value, TimeSpan expirationTime);
         Task RemoveAsync(string cacheKey);
+        Task<List<Guid>> GetByPatternAsync(string cacheKeyPattern);
     }
 }

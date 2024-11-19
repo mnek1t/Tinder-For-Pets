@@ -16,7 +16,7 @@ function RegisterPage() {
 
     return (
         <div>
-            <FormPageWrapper title='Create Account'>
+            <FormPageWrapper title='Create Account' showHeader={true}>
                 <RegisterForm handleModalClose={handleModalClose} isOpen={isModalOpen}/>
             </FormPageWrapper>
         </div>

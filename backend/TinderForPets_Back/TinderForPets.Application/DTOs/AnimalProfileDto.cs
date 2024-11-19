@@ -10,6 +10,8 @@
         public DateOnly DateOfBirth { get; set; }
 
         public int SexId { get; set; }
+        public string Sex { get; set; } = string.Empty;
+
         public bool IsVaccinated { get; set; }
         public bool IsSterilized { get; set; }
         public double Latitude { get; set; }

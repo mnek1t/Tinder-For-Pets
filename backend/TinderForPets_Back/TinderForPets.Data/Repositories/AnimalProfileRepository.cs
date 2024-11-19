@@ -28,8 +28,31 @@ namespace TinderForPets.Data.Repositories
         {
             var animalProfile = await _context.AnimalProfiles
                .Include(ap => ap.Animal) // Load the related Animal entity
-               .Where(ap => ap.Animal.UserId == ownerId) // Assuming Animal has a UserId property
+               .Where(ap => ap.Animal.UserId == ownerId)// Assuming Animal has a UserId property
                .SingleOrDefaultAsync(cancellationToken);
+
+            if (animalProfile == null)
+            {
+                throw new AnimalNotFoundException();
+            }
+            return animalProfile;
+        }
+
+        public async Task<AnimalProfile> GetAnimalProfileDetails(Guid ownerId, CancellationToken cancellationToken)
+        {
+            var animalProfile = await _context.AnimalProfiles
+                .Include(ap => ap.Animal)
+                    .ThenInclude(a => a.Breed)
+                    .ThenInclude(a => a.AnimalType)
+                .Include(ap => ap.Images)
+                .Include(ap => ap.Sex)
+                .Where(ap => ap.Animal.UserId == ownerId)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (animalProfile == null)
+            {
+                throw new AnimalNotFoundException();
+            }
 
             return animalProfile;
         }
@@ -37,7 +60,9 @@ namespace TinderForPets.Data.Repositories
         public async Task<List<AnimalProfile>> GetAnimalProfilesAsync(Expression<Func<AnimalProfile, bool>> func, CancellationToken cancellationToken)
         {
             var animalProfiles = await _context.AnimalProfiles
+                .Include(ap => ap.Images)
                 .Where(func)
+                .Where(ap => ap.Images != null && ap.Images.Any())
                 .ToListAsync(cancellationToken);
 
             return animalProfiles;
