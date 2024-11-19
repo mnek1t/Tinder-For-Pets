@@ -5,7 +5,6 @@ export interface ProfileData {
     description: string,
     typeId: number,
     breedId: number,
-    // files?: File,
     dateOfBirth: string,
     sexId: number,
     isVaccinated: boolean,
@@ -17,22 +16,62 @@ export interface ProfileData {
 }
 
 export interface ProfileDetailsData {
-    name: string,
-    description: string,
-    age: number,
-    type: string,
-    breed: string,
-    files: {
+    animal : {
+        type?: string,
+        breed?: string,
+    }
+    profile : {
+        id: string
+        name: string,
+        description?: string,
+        age: number,
+        sex?: string,
+        isVaccinated?: boolean,
+        isSterilized?: boolean,
+    }
+    images : {
         imageData: string,
         imageFormat : string
-    },
-    sex: string,
-    isVaccinated: boolean,
-    isSterilized: boolean,
-    //country: string,
-    //city: string,
-    //height: number,
-    //weight: number
+    }[]
+}
+
+export async function createSwipe(profileId: string, isLike: boolean) {
+    try {
+        const response : AxiosResponse = await axios.post("https://localhost:5295/api/swipe/save", {
+            petSwipedOnProfileId: profileId,
+            isLike: isLike
+        }, {
+            withCredentials : true,
+        });
+        if(response.status === 201) {
+            console.log(response.data)
+            return response.data;
+        } else {
+            throw new Error('Error when creating a swipe.'); 
+        }
+    } catch (error) {
+        handleError(error, "Error when creating a swipe.");
+    }
+}
+
+export async function getProfileRecommendations() : Promise<ProfileDetailsData[]> {
+    try {
+        const response : AxiosResponse<ProfileDetailsData[]> = await axios.get("https://localhost:5295/recommendations", {
+            withCredentials : true,
+            params : {
+                radiusKm : 12
+            }
+        });
+        if(response.status === 200) {
+            console.log(response.data)
+            return response.data;
+        } else {
+            throw new Error('Error when retrieving recommendations failed.'); 
+        }
+    } catch (error) {
+        handleError(error, "Error when retrieving recommendations:");
+        return [];
+    }
 }
 
 export async function getAnimalTypes() {
@@ -41,10 +80,10 @@ export async function getAnimalTypes() {
         if(response.status === 200) {
             return response.data;
         } else {
-            throw new Error('Login failed.'); 
+            throw new Error('Error when retrieving animal types failed.'); 
         }
     } catch (error) {
-        handleError(error, "Error when rectrieving animal types:");
+        handleError(error, "Error when retrieving animal types:");
     }
 }
 
