@@ -9,22 +9,35 @@ namespace TinderForPets.Application.Services
     {
         private readonly IDistributedCache _cache;
         private readonly IConnectionMultiplexer _redis;
+        private readonly JsonSerializerOptions _serializerOptions;
 
         public RedisCacheService(IDistributedCache cache, IConnectionMultiplexer redis)
         {
             _cache = cache;
-            _redis = redis; 
+            _redis = redis;
+            _serializerOptions = new JsonSerializerOptions
+            {
+                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
+                PropertyNameCaseInsensitive = true
+            };
         }
 
-        public async Task<T> GetAsync<T>(string cacheKey)
+        public async Task<T?> GetAsync<T>(string cacheKey)
         {
             var cachedData = await _cache.GetAsync(cacheKey);
             if (cachedData == null)
             {
-                return default(T);
+                return default;
             }
-
-            return JsonSerializer.Deserialize<T>(cachedData);
+            try
+            {
+                return JsonSerializer.Deserialize<T>(cachedData, _serializerOptions);
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidOperationException($"Failed to deserialize cache data for key {cacheKey}.", ex);
+            }
+            
         }
 
         public async Task RemoveAsync(string cacheKey)
@@ -34,7 +47,7 @@ namespace TinderForPets.Application.Services
 
         public async Task SetAsync<T>(string cacheKey, T value, TimeSpan expirationTime)
         {
-            var serializedData = JsonSerializer.Serialize(value);
+            var serializedData = JsonSerializer.Serialize(value, _serializerOptions);
             var cacheOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = expirationTime,
@@ -53,7 +66,10 @@ namespace TinderForPets.Application.Services
                 if (!string.IsNullOrEmpty(key)) 
                 {
                     var swipedAnimalProfileId = key.ToString().Split(':').LastOrDefault();
-                    listData.Add(Guid.Parse(swipedAnimalProfileId));
+                    if (Guid.TryParse(swipedAnimalProfileId, out var guid))
+                    {
+                        listData.Add(guid);
+                    }
                 }
             }
             return listData;

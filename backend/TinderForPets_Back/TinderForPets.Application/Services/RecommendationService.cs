@@ -35,12 +35,13 @@ namespace TinderForPets.Application.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
             var cacheKey = $"animal_details_of_owner{userId}";
+            //await _cacheService.RemoveAsync(cacheKey);
             var animalProfile = await _cacheService.GetAsync<AnimalProfile>(cacheKey);
             if (animalProfile == null)
             {
                 animalProfile = await _profileRepository.GetAnimalProfileByOwnerIdAsync(userId, cancellationToken);
-                // TODO: If I save all details, they can be updated, so I need to update the cache then 
-                await _cacheService.SetAsync<AnimalProfile> (cacheKey, animalProfile, TimeSpan.FromHours(24));
+            //TODO: If I save all details, they can be updated, so I need to update the cache then
+                await _cacheService.SetAsync<AnimalProfile>(cacheKey, animalProfile, TimeSpan.FromHours(24));
             }
 
             return animalProfile;
@@ -54,16 +55,16 @@ namespace TinderForPets.Application.Services
                 var animalProfile = await GetAnimalProfile(userId, cancellationToken);
                 var nearbyCells = _s2GeometryService.GetNearbyCellIds(animalProfile.Latitude, animalProfile.Longitude, radiusKm);
                 var swipedProfileIdsResult = await _swipeService.GetSwipedProfiles(animalProfile.Id);
-                if (swipedProfileIdsResult.IsFailure) 
+                if (swipedProfileIdsResult.IsFailure)
                 {
                     return Result.Failure<ImmutableList<AnimalDetailsDto>>(swipedProfileIdsResult.Error);
                 }
 
                 var swipedProfileIds = swipedProfileIdsResult.Value;
-                
+
                 var filter = new AnimalRecommendationFilter
                 {
-                    OppositeSexId = animalProfile.SexId == (int)Gender.Male ? (int)Gender.Female: (int)Gender.Male,
+                    OppositeSexId = animalProfile.SexId == (int)Gender.Male ? (int)Gender.Female : (int)Gender.Male,
                     NearbyS2CellIds = nearbyCells,
                     SwipedProfileIds = swipedProfileIds,
                     BreedId = animalProfile.Animal.BreedId,
@@ -74,7 +75,7 @@ namespace TinderForPets.Application.Services
 
                 var animalProfiles = await _profileRepository
                     .GetAnimalProfilesAsync(
-                        AnimalProfileFilterBuilder.BuildAnimalProfileFilter(filter), 
+                        AnimalProfileFilterBuilder.BuildAnimalProfileFilter(filter),
                         cancellationToken);
 
                 var animalDetailsDtos = animalProfiles.Select(a =>
@@ -101,6 +102,10 @@ namespace TinderForPets.Application.Services
             catch (OperationCanceledException)
             {
                 return Result.Failure<ImmutableList<AnimalDetailsDto>>(new Error("400", "Operation canceled"));
+            }
+            catch (Exception ex) 
+            {
+                return Result.Failure<ImmutableList<AnimalDetailsDto>>(new Error("400", ex.Message));
             }
         }
     }

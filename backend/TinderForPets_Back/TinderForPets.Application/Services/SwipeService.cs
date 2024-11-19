@@ -11,10 +11,16 @@ namespace TinderForPets.Application.Services
     {
         private readonly ICacheService _cacheService;
         private readonly IAnimalProfileRepository _animalProfileRepository;
-        public SwipeService(ICacheService cacheService, IAnimalProfileRepository animalProfileRepository)
+        private readonly IMatchRepository _matchRepository;
+
+        public SwipeService(
+            ICacheService cacheService, 
+            IAnimalProfileRepository animalProfileRepository,
+            IMatchRepository matchRepository)
         {
             _cacheService = cacheService;
             _animalProfileRepository = animalProfileRepository;
+            _matchRepository = matchRepository;
         }
 
         public async Task<Result<List<Guid>>> GetSwipedProfiles(Guid petSwiperProfileId) 
@@ -23,17 +29,17 @@ namespace TinderForPets.Application.Services
             return Result.Success<List<Guid>>(swipedProfileIds);
         }
 
-        public async Task<Result> SaveSwipeAsync(Guid swiperId, Guid petSwipedOnProfielId, bool isLike, CancellationToken cancellationToken) 
+        public async Task<Result> SaveSwipeAsync(Guid userId, Guid petSwipedOnProfielId, bool isLike, CancellationToken cancellationToken) 
         {
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var cacheKey = $"animal_details_of_owner{swiperId}";
+                var cacheKey = $"animal_details_of_owner{userId}";
                 var animalData = await _cacheService.GetAsync<AnimalProfile>(cacheKey);
                 if (animalData == null)
                 {
-                    animalData = await _animalProfileRepository.GetAnimalProfileDetails(swiperId, cancellationToken);
-                    // TODO: If I save all details, they can be updated, so I need to update the cache then 
+                    animalData = await _animalProfileRepository.GetAnimalProfileDetails(userId, cancellationToken);
+                    // TODO: If I save all details, they can be updated, so I need to update the cache then
                     await _cacheService.SetAsync<AnimalProfile>(cacheKey, animalData, TimeSpan.FromHours(24));
                 }
 
@@ -47,7 +53,15 @@ namespace TinderForPets.Application.Services
                     }
                     else if (oppositeSwipeKey == "like")
                     {
-                        // it is a match
+                        var match = new Match()
+                        {
+                            Id = Guid.NewGuid(),
+                            CreatedAt = DateTime.UtcNow,
+                            FirstSwiperId = petSwipedOnProfielId,
+                            SecondSwiperId = animalData.Id
+                        };
+                        var matchId = await _matchRepository.CreateAsync(match, cancellationToken);
+                        // TODO: Notification center queue WebSocket
                     }
                 }
 
