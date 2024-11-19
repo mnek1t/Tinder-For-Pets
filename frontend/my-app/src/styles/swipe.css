@@ -1,0 +1,135 @@
+.card-swipe {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar-container {
+    width: 20%;
+}
+
+.swiping-profiles {
+    display: grid;
+    place-items: center;
+    flex: 1;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.recs-img-wrapper, .match-img-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-end; /* Align text at the bottom of the image */
+    justify-content: center; /* Center the text horizontally */
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+}
+.match-img-wrapper:before {
+    content: '';
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+    position: absolute;
+    height: 50px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.recs-img-wrapper:before {
+    content: '';
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+    position: absolute;
+    height: 200px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.recommended-profile {
+    object-fit: cover;
+    height: 384px;
+    width: 288px;
+    border-radius: 8px;
+    grid-column: 1;
+    grid-row: 1;
+    pointer-events: none;
+    -ms-interpolation-mode: bicubic;
+}
+
+.match-info {
+    position: absolute;
+    z-index: 2;
+    left: 1px;
+    bottom:2px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile-info {
+    position: absolute;
+    z-index: 2;
+    left: 16px;
+    bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+.match-info__general {
+    position: absolute;
+    z-index: 2;
+    bottom: 5px;
+    left: 1px;
+    display: flex;
+    align-items: center; 
+    gap: 5px;
+}
+.profile-info__general{
+    position: absolute;
+    z-index: 2;
+    left: 4px;
+    bottom: 20px;
+    display: flex;
+    align-items: center; 
+    gap: 8px;
+}
+
+.hint {
+    position: absolute;
+    z-index: 2;
+    bottom: 20px;
+    left: 234px;
+    cursor: pointer;
+}
+.match-name, .match-age{
+    margin: 0; 
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7); }
+
+.profile-name, .profile-age, .info-button {
+    margin: 0; 
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7);
+}
+
+.recommended-profile:hover {
+    cursor: grab;
+}
+
+.recommended-profile:active {
+    cursor: grabbing
+}
+
+.info-button {
+    height: 20px;
+}

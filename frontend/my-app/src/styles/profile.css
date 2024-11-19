@@ -151,9 +151,18 @@
 
   .profile-card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    max-width: 300px;
+    width: 100%;                /* Allow the div to take up 100% of its parent width */
+    max-width: 400px;
     margin: auto;
     text-align: center;
+  }
+
+  .profile-card__name, .profile-card__title {
+    text-transform: capitalize;
+    width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    margin: 0; 
   }
 
   .profile {
@@ -173,10 +182,6 @@
   .medical-profile-data {
     display: flex;
     justify-content: center;
-  }
-
-  .profile-card__title {
-    text-transform: capitalize;
   }
 
   .modal {
@@ -234,6 +239,19 @@
     background-color: #fcdece;
   }
 
+  .edit-profile-btn {
+    cursor: pointer;
+    border-radius: 20px;
+    background-color: #A75D5D;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px;
+    width: 150px;
+    font-family: 'Karla';
+    font-size: 16px;
+    margin: 7px;
+}
+
   @keyframes scaleUpForm {
     0% {
       transform: scale(0); 
@@ -254,4 +272,19 @@
       transform: scale(0); 
       opacity: 0; 
     }
+}
+
+/* MATCH CARDS */
+.matches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.match-card {
+  height: 100px;
+  width: 100px;
+  margin: 2px;
+  border-radius: 5px;
 }
