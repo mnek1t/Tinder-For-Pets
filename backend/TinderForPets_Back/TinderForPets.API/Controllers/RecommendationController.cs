@@ -18,6 +18,11 @@ namespace TinderForPets.API.Controllers
             _recommendationService = recommendationService;
             _jwtProvider = jwtProvider;
         }
+        //[Authorize]
+        //[HttpGet("matches")]
+        //public async Task<IResult> GetMatches() { }
+
+
         [Authorize]
         [HttpGet("recommendations")]
         // TODO: Do not pass radiusKm as a query parameter! RadiusKm is a user preference so, it is neccessary to create additional column

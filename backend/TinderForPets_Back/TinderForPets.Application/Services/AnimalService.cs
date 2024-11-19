@@ -194,8 +194,8 @@ namespace TinderForPets.Application.Services
                         ImageFormat = i.ImageFormat
                     }).ToList(),
                 };
-                    return Result.Success<AnimalDetailsDto>(animalDetailsDto);
-
+                return Result.Success<AnimalDetailsDto>(animalDetailsDto);
+            }
             catch (OperationCanceledException)
             {
                 return Result.Failure<AnimalDetailsDto>(new Error("400", "Operation canceled"));
