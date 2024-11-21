@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  tinderforpets.api:
+    image: ${DOCKER_REGISTRY-}tinderforpetsapi
+    container_name: tinderforpets.api
+    build:
+      context: .
+      dockerfile: TinderForPets.API/Dockerfile
+    ports:
+       - "5294:5294"
+       - "5295:5295"
+    depends_on:
+        - "tinderforpets.db"
+        - "tinderforpets.cache"
+
+  tinderforpets.client:
+    image: ${DOCKER_REGISTRY-}tinderforpetsclient
+    container_name: tinderforpets.client
+    build:
+      context: ../../frontend/my-app/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    # volumes:
+    #   - ./containers/tinderforpets.client:/usr/src/app
+    depends_on:
+      - tinderforpets.api
+
+  tinderforpets.db:
+    image: postgres:latest
+    container_name: tinderforpets.db
+    ports:
+        - "5432:5432"
+    volumes:
+        - "./containers/tinderforpets.db:/var/lib/postgresql/data"  
+    environment:
+        POSTRGRES_DB: tinder_for_pets
+        POSTGRES_USER: mykyta
+        POSTGRES_PASSWORD: Tinder123!
+  
+  tinderforpets.cache:
+     image: redis:latest
+     restart: always
+     ports:
+        - "6379:6379"

@@ -20,3 +20,4 @@ obj/Debug/net8.0
 /backend/TinderForPets_Back/TinderForPets.Data/mycert.pfx
 
 /frontend/my-app/.env
+/frontend/my-app/ssl
