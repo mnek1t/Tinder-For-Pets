@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  tinderforpets.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5294
+      - ASPNETCORE_HTTPS_PORTS=5295
+    ports:
+      - "5294:5294"
+      - "5295:5295"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

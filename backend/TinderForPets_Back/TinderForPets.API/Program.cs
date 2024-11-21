@@ -108,6 +108,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseHsts();
+    app.ApplyMigrations();
 }
 
 app.UseCookiePolicy(new CookiePolicyOptions
