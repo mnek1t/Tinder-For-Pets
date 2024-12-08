@@ -4,6 +4,8 @@ import { Dispatch, SetStateAction } from 'react';
 import infoIcon  from "../assets/info-circle-svgrepo-com.svg"
 interface CardSwipeProps {
     id: string
+    name: string,
+    age: number,
     imageData: string, 
     imageFormat: string,
     cards: RecomendationCard[],
@@ -50,8 +52,8 @@ const RecommendationCardSwipe = (props : CardSwipeProps) => {
                     <img className='recommended-profile' src={`data:${props.imageFormat};base64,${props.imageData}`} alt="Recommended profile"/>
                     <div className='profile-info'>
                         <div className='profile-info__general'>
-                            <h1 className="profile-name">Rex</h1>
-                            <h1 className="profile-age">12</h1>
+                            <h1 className="profile-name">{props.name}</h1>
+                            <h1 className="profile-age">{props.age}</h1>
                         </div>
                         <div className="hint">
                             <img className='info-button' src={infoIcon} alt="info-icon"/>
