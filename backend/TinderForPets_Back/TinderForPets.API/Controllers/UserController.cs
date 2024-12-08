@@ -33,13 +33,13 @@ namespace TinderForPets.API.Controllers
             var result = await _userService.Register(request.UserName, request.Email, request.Password, cancellationToken);
             if (result.IsFailure) 
             {
-                result.ToProblemDetails();
+                return result.ToProblemDetails();
             }
 
             var confirmAccountTokenResult = _userService.GenerateConfirmAccountToken(result.Value);
             if (confirmAccountTokenResult.IsFailure) 
             {
-                confirmAccountTokenResult.ToProblemDetails();
+                return confirmAccountTokenResult.ToProblemDetails();
             }
             var confirmAccountToken = confirmAccountTokenResult.Value;
             var emailData = new ConfirmAccountDto
@@ -70,7 +70,7 @@ namespace TinderForPets.API.Controllers
             var confirmAccountResult = await _userService.ConfirmAccount(request.Token, cancellationToken);
             if (confirmAccountResult.IsFailure) 
             {
-                confirmAccountResult.ToProblemDetails();
+                return confirmAccountResult.ToProblemDetails();
             }
             var userId = Guid.Parse(confirmAccountResult.Value);
             var jwtTokenResult = _userService.GenerateAuthToken(userId);
