@@ -1,0 +1,1 @@
+export const IS_VALID_EMAIL = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
