@@ -2,6 +2,7 @@ import "../styles/profile.css"
 import EmptyHeader from "./EmptyHeader";
 import UserPreferences, { UserPreferencesProps } from "./UserPreferences"
 import TabSelection from "./TabSelection";
+import Navigation from "./Navigation";
 interface SidebarProps extends Partial<UserPreferencesProps> { // partial means optional props
     isUserPreferences: boolean
 } 
@@ -21,6 +22,7 @@ export default function Sidebar({
     return(
         <div className="sidebar">
             <EmptyHeader/>
+            <Navigation profileName="Nikita" image="image src"/>
             { isUserPreferences ? <UserPreferences 
                 distance = {distance!}
                 onDistanceChange = {onDistanceChange!}
