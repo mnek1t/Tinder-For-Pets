@@ -35,6 +35,35 @@ export interface ProfileDetailsData {
     }[]
 }
 
+export type MatchCardProfileData =  {
+    profile: {
+        id: string,
+        name: string,
+    }
+    
+    images : {
+        imageData: string,
+        imageFormat : string
+    }[]
+}
+
+export async function getMatches() {
+    try {
+        const response : AxiosResponse<MatchCardProfileData[]> = await axios.get(`https://localhost:5295/Match`, {
+            withCredentials : true
+        });
+        if(response.status === 200) {
+            console.log(response.data)
+            return response.data;
+        } else {
+            throw new Error('Error when retrieving matches failed.'); 
+        }
+    } catch (error) {
+        handleError(error, "Error when retrieving matches:");
+        return [];
+    }
+}
+
 export async function createSwipe(profileId: string, isLike: boolean) {
     try {
         const response : AxiosResponse = await axios.post("https://localhost:5295/api/swipe/save", {
