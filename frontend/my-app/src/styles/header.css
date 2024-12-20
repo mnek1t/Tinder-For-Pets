@@ -90,3 +90,17 @@ li a:hover {
     font-size: 4vw;
     color: #FFFFFF;
 }
+
+
+/* Make the page a flex container */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure full viewport height */
+    
+}
+/* Main content grows to fill available space */
+.content-container {
+    flex: 1; /* Grow and fill remaining space */
+    padding-bottom: 80px;
+}
