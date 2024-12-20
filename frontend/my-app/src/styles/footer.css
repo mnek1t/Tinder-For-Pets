@@ -1,0 +1,15 @@
+.main-footer {
+    display: flex;
+    justify-content: space-around;
+    background: linear-gradient(#A75D5D, #D3756B, #F0997D);
+    padding: 20px;
+    z-index: 10;
+    position: relative;
+    margin-top: 10px;
+}
+.footer-link {
+    color: black;
+}
+.footer-link:hover {
+    color: white;
+}
