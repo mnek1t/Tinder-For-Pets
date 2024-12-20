@@ -7,6 +7,7 @@ EXPOSE 5294
 EXPOSE 5295
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ENV DOTNET_USE_POLLING_FILE_WATCHER 1
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["TinderForPets.API/TinderForPets.API.csproj", "TinderForPets.API/"]
