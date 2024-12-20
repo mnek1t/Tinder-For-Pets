@@ -3,12 +3,13 @@ import { useState } from 'react';
 import {RegisterCredentials} from "../../api/authApi"
 import CloseFormButton from '../CloseFormButton';
 import Error from '../profile/Error';
-
+import LoadButton from '../LoadButton';
 interface RegisterProps {
     handleRegister: (loginCredentials: RegisterCredentials) => void;
     handleModalClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
     isOpen: boolean;
     error?: Error | null;
+    loading: boolean
 };
 
 export default function RegisterForm(props:  RegisterProps) {
@@ -39,7 +40,7 @@ export default function RegisterForm(props:  RegisterProps) {
                 <input className="register__input" placeholder="Username" value={registerCredentials.username} name="username" onChange={(e) => handleInput(e)} required></input>
                 <input className="register__input" placeholder="Email" value={registerCredentials.email}  name="email" onChange={(e) => handleInput(e)} required></input>
                 <input className="register__input" type="password" value={registerCredentials.password}  name="password" onChange={(e) => handleInput(e)} placeholder="Password" required></input>
-                <button className="register__button" type='submit'>Register</button>
+                <LoadButton innertText='Register' loading={props.loading}/>
             </div>
         </form>
     );

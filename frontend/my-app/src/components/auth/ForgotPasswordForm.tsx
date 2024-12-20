@@ -2,12 +2,13 @@ import React, {useState} from "react";
 import lock from "../../assets/lock.svg"
 import "../../styles/form.css";
 import Error from "../profile/Error";
-
+import LoadButton from "../LoadButton";
 interface ForgotPasswordProps {
     handleForgotPassword: (error: string) => void;
     handleModalClose: (event: React.MouseEvent<HTMLButtonElement>) => void;
     isOpen: boolean;
     error?: Error | null;
+    loading: boolean;
 };
 
 export default function ForgotPasswordForm(props : ForgotPasswordProps) {
@@ -40,7 +41,7 @@ export default function ForgotPasswordForm(props : ForgotPasswordProps) {
                         required
                     />
                     {props.error && <Error error={props.error}/>}
-                    <button className="reset-password__button" type='submit'>Send login link</button>
+                    <LoadButton innertText='Send login link' loading={props.loading}/>
                     <br />
                     <div className="or-alt">
                         <div className="line"></div>
