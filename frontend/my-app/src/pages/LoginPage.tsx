@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/auth/LoginForm';
 import FormPageWrapper from '../components/FormPageWrapper';
-import {login, LoginCredentials} from "../api/authApi"
+import { login, LoginCredentials} from "../api/authApi"
 import { IS_VALID_EMAIL } from '../utils/TinderConstants';
 import { InvalidFormatError } from '../utils/CustomErrors';
 function LoginPage() {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     function handleModalClose(event:  React.MouseEvent<HTMLButtonElement>) {
@@ -23,7 +24,7 @@ function LoginPage() {
             setError(new InvalidFormatError("Incorrect email format"));
             return;
         }
-
+        setLoading(true);
         login(loginCredentials)
         .then(() => {
             navigate("/app/profile");
@@ -31,12 +32,16 @@ function LoginPage() {
         })
         .catch((error: Error) => {
            setError(error);
-        });
+        })
+        .finally(() => {
+            setLoading(false);
+        })
+        ;
     }
     return (
         <div>
             <FormPageWrapper title="login" showHeader={true}>
-                <LoginForm handleLogin={handleLogin} handleModalClose={handleModalClose} isOpen={isModalOpen} error={error}/>
+                <LoginForm handleLogin={handleLogin} handleModalClose={handleModalClose} isOpen={isModalOpen} error={error} loading={loading}/>
             </FormPageWrapper>
         </div>
     );

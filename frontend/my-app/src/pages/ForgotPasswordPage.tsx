@@ -9,6 +9,7 @@ import { forgotPassword } from "../api/authApi";
 
 function ForgotPasswordPage() {
     const [error, setError] = useState<Error | null>(null);
+    const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [isEmailSent, setIsEmailsent] = useState<boolean>(false);
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ function ForgotPasswordPage() {
             setError(new InvalidFormatError("Incorrect email format"));
             return;
         }
-
+        setLoading(true);
         forgotPassword(email)
         .then(() => {
             setIsEmailsent(true);
@@ -35,6 +36,9 @@ function ForgotPasswordPage() {
         .catch(error => {
             console.error('Forgot Password request failed:', error);
             setError(error);
+        })
+        .finally(() => {
+            setLoading(false);
         });
     }
 
@@ -44,7 +48,7 @@ function ForgotPasswordPage() {
                 {isEmailSent ? (
                     <ConfirmedWindow title="Your reset link has been sent!" message="Go to your email and follow the instructions!"/> 
                 ) : (
-                        <ForgotPasswordForm handleForgotPassword={handleForgotPassword} handleModalClose={handleModalClose} isOpen={isModalOpen} error={error}/>
+                        <ForgotPasswordForm handleForgotPassword={handleForgotPassword} handleModalClose={handleModalClose} isOpen={isModalOpen} error={error} loading={loading}/>
                 )}
             </FormPageWrapper>
         </>
