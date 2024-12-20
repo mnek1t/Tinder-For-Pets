@@ -46,7 +46,7 @@ namespace TinderForPets.API.Controllers
             {
                 EmailAddress = request.Email,
                 //TODO: replace by frontend link
-                ConfirmAccountLink = $"https://localhost:5295/accounts/confirm?token={confirmAccountToken}"
+                ConfirmAccountLink = $"https://localhost:3000/accounts/confirm?token={confirmAccountToken}"
             };
             var message = JsonSerializer.Serialize(emailData);
             try
