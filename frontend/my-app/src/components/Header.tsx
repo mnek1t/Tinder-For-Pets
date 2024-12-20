@@ -13,9 +13,9 @@ const Header: React.FC<HeaderProps> = ({ handleNavigate }) => {
                 <h1 className="header__title">Tinder For Pets</h1>
                 <div className='header__options'>
                     <ul className='header__options_list'>
-                        <li><a href='#Products'>Products</a></li>
-                        <li><a href='#About Us'>About Us</a></li>
-                        <li><a href='#Authors'>Authors</a></li>
+                        <li><a href='/products'>Products</a></li>
+                        <li><a href='/about'>About Us</a></li>
+                        <li><a href='/authors'>Authors</a></li>
                     </ul>
                 </div>
             </div>
