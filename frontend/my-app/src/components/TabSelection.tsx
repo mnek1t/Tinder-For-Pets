@@ -5,6 +5,7 @@ import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography";
 import MatchCard from "./MatchCard";
 import { getMatches, MatchCardProfileData } from "../api/profileApi";
+import { CircularProgress } from "@mui/material";
 export type MatchCardInterface =  {
     id: string
     name: string,
@@ -14,11 +15,13 @@ export type MatchCardInterface =  {
 export default function TabSelection() {
     const [matchCards, setMatchCards] = useState<MatchCardInterface[]>([])
     const [activeTab, setActiveTab] = useState(0);
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         document.body.style.background = '#FEFAF6';
-        
+        setLoading(true);
         // api request to get all matches
-        getMatches().then((data) => {
+        getMatches()
+        .then((data) => {
             const transformedCards = data.map(card => {
                 return {
                     id: card.profile.id,
@@ -32,8 +35,10 @@ export default function TabSelection() {
         })
         .catch(error => {
             console.error(error)
+        })
+        .finally(() => {
+            setLoading(false);
         });
-        // setMatchCards(cards)
     }, [])
     const handleTabChange = (event : React.SyntheticEvent, value : number) => {
         setActiveTab(value);
@@ -44,50 +49,60 @@ export default function TabSelection() {
     }
     return(
         <>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs 
-                value={activeTab} 
-                onChange={handleTabChange} 
-                aria-label="basic tabs example" 
-                sx={{
-                    '& .MuiTabs-indicator': {
-                        display: 'flex',
-                        justifyContent: 'center',
-                        backgroundColor: '#FEFAF6',
-                    }}} >
-                <Tab
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs 
+                    value={activeTab} 
+                    onChange={handleTabChange} 
+                    aria-label="basic tabs example" 
                     sx={{
-                        color:"#000",
-                        '&.Mui-selected': {
-                            color: '#FEFAF6'
-                        }
-                    }} 
-                    label="Matches"/>
-                <Tab 
-                    sx={{
-                        color:"#000", 
-                        '&.Mui-selected': {
-                            color: '#FEFAF6'
-                        }
-                    }} 
-                    label="Messages"/>
-            </Tabs>
-        </Box>
+                        '& .MuiTabs-indicator': {
+                            display: 'flex',
+                            justifyContent: 'center',
+                            backgroundColor: '#FEFAF6',
+                        }}} >
+                    <Tab
+                        sx={{
+                            color:"#000",
+                            '&.Mui-selected': {
+                                color: '#FEFAF6'
+                            }
+                        }} 
+                        label="Matches"/>
+                    <Tab 
+                        sx={{
+                            color:"#000", 
+                            '&.Mui-selected': {
+                                color: '#FEFAF6'
+                            }
+                        }} 
+                        label="Messages"/>
+                </Tabs>
+            </Box>
 
-        <Box sx={{ p: 2 }}>
+            <Box sx={{ p: 2 }}>
                 {activeTab === 0 && (
+                    loading ? (
+                    <CircularProgress sx={{ color: "#864c4c", marginTop:'50px' }} size={48} />
+                    ) : (
                     <Typography>
-                        {matchCards && <div className="matches">
-                            {matchCards.map((card) => {
-                                return <MatchCard key={card.id} {...card} cards={matchCards} setCards={setMatchCards} handleMatchSelect={handleMatchSelect}/>
-                            })}
-                        </div>}
+                        {matchCards && (
+                        <div className="matches">
+                            {matchCards.map((card) => (
+                            <MatchCard
+                                key={card.id}
+                                {...card}
+                                cards={matchCards}
+                                setCards={setMatchCards}
+                                handleMatchSelect={handleMatchSelect}
+                            />
+                            ))}
+                        </div>
+                        )}
                     </Typography>
+                    )
                 )}
                 {activeTab === 1 && (
-                    <Typography>
-                        Here are your messages!
-                    </Typography>
+                    <Typography>Here are your messages!</Typography>
                 )}
             </Box>
         </>

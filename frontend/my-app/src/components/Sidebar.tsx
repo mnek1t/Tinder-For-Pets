@@ -22,7 +22,7 @@ export default function Sidebar({
     return(
         <div className="sidebar">
             <EmptyHeader/>
-            <Navigation profileName="Nikita" image="image src"/>
+            <Navigation profileName="Profile"/>
             { isUserPreferences ? <UserPreferences 
                 distance = {distance!}
                 onDistanceChange = {onDistanceChange!}
