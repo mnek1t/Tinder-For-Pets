@@ -60,6 +60,7 @@ export default function LocationSuggestion(props : LocationSuggestionProps) {
                 value={query}
                 onChange={handleInputChange}
                 placeholder="Search location"
+                required
             />
             {showDropdown && suggestions.length > 0 && (
                 <ul className="location-dropbox">
