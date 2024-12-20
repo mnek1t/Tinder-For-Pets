@@ -36,9 +36,9 @@ namespace TinderForPets.Application.Services
             if (filter.SwipedProfileIds.Count != 0)
             {
                 var profileIdProperty = Expression.Property(parameter, nameof(AnimalProfile.Id));
-                var porifileIds = Expression.Constant(filter.SwipedProfileIds);
+                var profileIds = Expression.Constant(filter.SwipedProfileIds);
                 var containsMethod = typeof(List<Guid>).GetMethod("Contains", new[] { typeof(Guid) });
-                var containsCondition = Expression.Call(porifileIds, containsMethod!, profileIdProperty);
+                var containsCondition = Expression.Call(profileIds, containsMethod!, profileIdProperty);
                 var notContainsCondition = Expression.Not(containsCondition);
                 expression = expression == null ? notContainsCondition : Expression.AndAlso(expression, notContainsCondition);
             }
@@ -64,6 +64,18 @@ namespace TinderForPets.Application.Services
 
                 expression = expression == null ? typeCondition : Expression.AndAlso(expression, typeCondition);
             }
+
+            // exclude those profile who are already in matches
+            if (filter.MatchesIds.Count != 0) 
+            {
+                var profileIdProperty = Expression.Property(parameter, nameof(AnimalProfile.Id));
+                var matchProfileIds = Expression.Constant(filter.MatchesIds);
+                var containsMethod = typeof(List<Guid>).GetMethod("Contains", new[] { typeof(Guid) });
+                var containsCondition = Expression.Call(matchProfileIds, containsMethod!, profileIdProperty);
+                var notContainsCondition = Expression.Not(containsCondition);
+                expression = expression == null ? notContainsCondition : Expression.AndAlso(expression, notContainsCondition);
+            }
+
             var lambda = Expression.Lambda<Func<AnimalProfile, bool>>(expression, parameter);
             return lambda;
         }
