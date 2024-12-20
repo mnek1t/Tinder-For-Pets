@@ -1,5 +1,5 @@
 version: '3.4'
-
+name: tinder_for_pets
 services:
   tinderforpets.api:
     image: ${DOCKER_REGISTRY-}tinderforpetsapi
@@ -7,6 +7,13 @@ services:
     build:
       context: .
       dockerfile: TinderForPets.API/Dockerfile
+    volumes:
+      - ./TinderForPets.API:/app/TinderForPets.API:cached
+      - ./TinderForPets.Application:/app/TinderForPets.Application:cached
+      - ./TinderForPets.Data:/app/TinderForPets.Data:cached
+      - ./TinderForPets.Core:/app/TinderForPets.Core:cached
+      - ./SharedKernel:/app/SharedKernel:cached
+      - ./TinderForPets.Infrastructure:/app/TinderForPets.Infrastructure:cached
     ports:
        - "5294:5294"
        - "5295:5295"
@@ -15,17 +22,21 @@ services:
         - "tinderforpets.cache"
 
   tinderforpets.client:
-    image: ${DOCKER_REGISTRY-}tinderforpetsclient
-    container_name: tinderforpets.client
-    build:
-      context: ../../frontend/my-app/
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    # volumes:
-    #   - ./containers/tinderforpets.client:/usr/src/app
-    depends_on:
-      - tinderforpets.api
+   image: ${DOCKER_REGISTRY-}tinderforpetsclient
+   container_name: tinderforpets.client
+   build:
+     context: ../../frontend/my-app/
+     dockerfile: Dockerfile
+   ports:
+    - "3000:3000"
+   volumes:
+    - ../../frontend/my-app/:/react-app
+    - /react-app/node_modules
+   environment:
+    - WATCHPACK_POLLING=true
+   depends_on:
+    - tinderforpets.api
+
 
   tinderforpets.db:
     image: postgres:latest

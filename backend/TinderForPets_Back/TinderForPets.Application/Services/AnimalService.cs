@@ -184,6 +184,7 @@ namespace TinderForPets.Application.Services
                         Name = animalProfileDetails.Name,
                         Description = animalProfileDetails.Description,
                         Age = animalProfileDetails.Age,
+                        DateOfBirth = animalProfileDetails.DateOfBirth,
                         Sex = animalProfileDetails.Sex.SexName,
                         IsSterilized = animalProfileDetails.IsSterilized,
                         IsVaccinated = animalProfileDetails.IsVaccinated

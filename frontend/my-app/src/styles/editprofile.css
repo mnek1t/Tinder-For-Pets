@@ -1,0 +1,12 @@
+.edit-profile-form__name {
+    border: 0;
+    outline: 0;
+    text-transform: capitalize;
+    width: 100%;
+    word-wrap: break-word;
+    margin: 0; 
+}
+
+.edit-profile-card__name {
+    width: 50%;
+}

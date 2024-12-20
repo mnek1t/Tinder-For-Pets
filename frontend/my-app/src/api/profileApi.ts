@@ -11,6 +11,7 @@ export interface ProfileData {
     isSterilized: boolean,
     country: string,
     city: string,
+    file: File | null,
     height: number,
     weight: number
 }
@@ -26,6 +27,7 @@ export interface ProfileDetailsData {
         description?: string,
         age: number,
         sex?: string,
+        dateOfBirth?:string,
         isVaccinated?: boolean,
         isSterilized?: boolean,
     }
@@ -33,6 +35,35 @@ export interface ProfileDetailsData {
         imageData: string,
         imageFormat : string
     }[]
+}
+
+export type MatchCardProfileData =  {
+    profile: {
+        id: string,
+        name: string,
+    }
+    
+    images : {
+        imageData: string,
+        imageFormat : string
+    }[]
+}
+
+export async function getMatches() {
+    try {
+        const response : AxiosResponse<MatchCardProfileData[]> = await axios.get(`https://localhost:5295/Match`, {
+            withCredentials : true
+        });
+        if(response.status === 200) {
+            console.log(response.data)
+            return response.data;
+        } else {
+            throw new Error('Error when retrieving matches failed.'); 
+        }
+    } catch (error) {
+        handleError(error, "Error when retrieving matches:");
+        return [];
+    }
 }
 
 export async function createSwipe(profileId: string, isLike: boolean) {
@@ -129,8 +160,27 @@ export async function getProfileDetails() {
 }
 
 export async function createPetProfile(profileData : ProfileData) {
+    console.log('profileData: ', profileData)
     try {
-        const response : AxiosResponse = await axios.post(`https://localhost:5295/api/Animal/animal/profile/create`, profileData, {
+        const formData = new FormData();
+        formData.append("Name", profileData.name);
+        formData.append("Description", profileData.description);
+        formData.append("AnimalTypeId", String(profileData.typeId));
+        formData.append("BreedId", String(profileData.breedId));
+        formData.append("DateOfBirth", profileData.dateOfBirth);
+        formData.append("SexId", String(profileData.sexId));
+        formData.append("IsVaccinated", String(profileData.isVaccinated));
+        formData.append("IsSterilized", String(profileData.isSterilized));
+        formData.append("Country", profileData.country);
+        formData.append("City", profileData.city);
+        formData.append("Height", String(profileData.height));
+        formData.append("Weight",  String(profileData.weight));
+
+        if (profileData.file) {
+            formData.append("File", profileData.file);
+        }
+        console.log(formData.get("AnimalTypeId"))
+        const response : AxiosResponse = await axios.post(`https://localhost:5295/api/Animal/animal/profile/create`, formData, {
             withCredentials: true,
             headers: {
                 "Content-Type": "multipart/form-data"
@@ -140,7 +190,7 @@ export async function createPetProfile(profileData : ProfileData) {
         if(response.status === 200) {
             return response.data;
         } else {
-            throw new Error('Create Animla Profile failed.'); 
+            throw new Error('Create Animal Profile failed.'); 
         }
     } catch (error) {
         handleError(error, "Error when creating animal profile:");

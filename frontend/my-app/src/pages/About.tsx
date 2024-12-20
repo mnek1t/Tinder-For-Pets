@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate }from "react-router-dom";
 import Header from "../components/Header";
-
+import Footer from "../components/Footer";
 import ChatBot from "../components/chatbot/ChatBot";
 import ChatBotToggler from '../components/chatbot/ChatBotToggler';
 
@@ -18,15 +18,20 @@ function About() {
     }
 
     return(
-    <div>
-        <Header handleNavigate={handleNavigate}/>
-        <div className="intro">
-            <h1 className="intro__title">Tinder for pets®</h1>
-            <h3 className="intro__description">We believe every pet deserves a buddy!</h3>
+    <>
+        <div className="page-container">
+            <Header handleNavigate={handleNavigate} />
+            <main className="content-container">
+                <div className="intro">
+                    <h1 className="intro__title">Tinder for pets®</h1>
+                    <h3 className="intro__description">We believe every pet deserves a buddy!</h3>
+                </div>
+                <ChatBot />
+                <ChatBotToggler handleToogle={handleToggle} />
+            </main>
+            <Footer />
         </div>
-        <ChatBot/>
-        <ChatBotToggler handleToogle={handleToggle}/>
-    </div>
+    </>
     );
 }
 

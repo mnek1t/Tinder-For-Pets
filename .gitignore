@@ -1,6 +1,7 @@
 # React-related files
 /frontend/my-app/node_modules
-OutsideProjectCatJSONDataCreator/
+/frontend/my-app/.env
+/frontend/my-app/ssl
 /ClientApp/build/
 /ClientApp/.env.local
 /ClientApp/.env.development.local
@@ -13,11 +14,9 @@ obj/Debug/net8.0
 
 /backend/TinderForPets_Back/.vs
 /backend/TinderForPets_Back/TinderForPets.Data/mycert.pfx
-
+/backend/TinderForPets_Back/OutsideProjectCatJSONDataCreator/
 /backend/TinderForPets_Back/TinderForPets.API/appsettings.json
 /backend/TinderForPets_Back/TinderForPets.API/appsettings.Development.json
 
 /backend/TinderForPets_Back/TinderForPets.Data/mycert.pfx
-
-/frontend/my-app/.env
-/frontend/my-app/ssl
+/backend/TinderForPets_Back/containers

@@ -1,5 +1,7 @@
-import "../styles/profile.css"
-import "../styles/profile.css"
+import "../styles/profile.css";
+import CustomSwitch from "../CustomSwitch";
+import { FormControlLabel, Typography } from "@mui/material";
+import CustomSlider from "./CustomSlider";
 export interface UserPreferencesProps {
     distance: number;
     onDistanceChange: (value: number) => void;
@@ -18,18 +20,33 @@ export default function UserPreferences(props : UserPreferencesProps) {
             <button className="preference-btn">Manage Payment Account</button>
             <h3 className="sidebar-title">DISCOVERY SETTINGS</h3>
             <div>
-                <div className="distance-info">
-                    <label htmlFor="distance-slider">Distance Preference</label>
-                    <label htmlFor="distance-slider">13km {props.distance}</label>
-                </div>
-                <input id="distance-slider" type="range" min="1" max="100" value="50" onChange={(e) => props.onDistanceChange(Number(e.target.value))}/>
+                <Typography gutterBottom 
+                    sx={{
+                        fontFamily: "'Karla', sans-serif", 
+                        fontSize: "14px",                  
+                        ".MuiFormControlLabel-label": {
+                        fontFamily: "'Karla', sans-serif", 
+                        },
+                    }}>
+                        Distance Preference {props.distance}km
+                </Typography>
+                <CustomSlider aria-label="ios slider" value={props.distance}  valueLabelDisplay="on" onChange={(e, value) => props.onDistanceChange(value as number)}/>
 
                 <div className="toggler-preference">
-                    <label htmlFor="toggler">Only show pets in this range</label>
-                    <label className="switch">
-                        <input className="toggler" type="checkbox" id="toggler" checked={props.showPetsInRange} onChange={props.onToggleShowPets}/>
-                        <span className="slider round"></span>
-                    </label>
+                        <FormControlLabel
+                            control={
+                                <CustomSwitch name="isSterilized" checked={props.showPetsInRange} onChange={props.onToggleShowPets}/>
+                            }
+                            label="Only show pets in this range"
+                            labelPlacement="start"
+                            sx={{
+                                fontFamily: "'Karla', sans-serif", 
+                                fontSize: "14px",                  
+                                ".MuiFormControlLabel-label": {
+                                    fontFamily: "'Karla', sans-serif", 
+                                },
+                            }}
+                        />
                 </div>    
             </div>
             

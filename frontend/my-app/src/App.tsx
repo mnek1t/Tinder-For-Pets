@@ -9,6 +9,9 @@ import CreateProfilePage from "./pages/CreateProfilePage";
 import ProfilePage from "./pages/ProfilePage";
 import { BrowserRouter,Routes, Route } from "react-router-dom";
 import Recommendation from "./pages/RecommendationPage";
+import ProductPage from "./pages/ProductPage";
+import AuthorsPage from "./pages/AuthorsPage";
+import ConfirmedAccountPage from "./pages/ConfirmedAccountPage";
 function App() {
   return (
     <div className="App">
@@ -16,6 +19,8 @@ function App() {
       <Routes>
         <Route path="/" element={<About/>}/>
         <Route path="/about" element={<About/>}/>
+        <Route path="/products" element={<ProductPage/>}/>
+        <Route path="/authors" element={<AuthorsPage/>}/>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={<Home/>}/>
@@ -25,6 +30,8 @@ function App() {
         <Route path="/profile/create" element={<CreateProfilePage/>}/>
         <Route path="/app/profile" element={<ProfilePage/>}/>
         <Route path="/app/recommendation" element={<Recommendation/>}/>
+        <Route path="/accounts/confirm" element={<ConfirmedAccountPage/>}/>
+
       </Routes>
       </BrowserRouter>
     </div>

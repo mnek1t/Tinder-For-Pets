@@ -9,6 +9,7 @@ namespace TinderForPets.Application.DTOs
         public List<Guid> SwipedProfileIds { get; set; } = new List<Guid>();
 
         public int? BreedId { get; set; }
-        public int? AnimalTypeId { get; set; } 
+        public int? AnimalTypeId { get; set; }
+        public List<Guid> MatchesIds { get; set; } = new List<Guid>();
     }
 }

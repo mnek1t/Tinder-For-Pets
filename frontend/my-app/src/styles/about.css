@@ -1,0 +1,66 @@
+.products-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+ 
+/* Subscription card */
+.subscription-card-wrapper, .description-container {
+    background-color: #F0997D;
+    width: 15%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 10%;
+    border-radius: 12px;
+}
+
+.description-container {
+    width: 90%;
+    padding: 5px;
+    margin: 45px auto auto
+}
+
+.subscription-card-wrapper:hover {
+    cursor:pointer;
+    transform: scale(1.1);
+}
+
+.subscription-card-wrapper h3 {
+    text-align: center;
+}
+
+.benefits-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Author card */
+.authors-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.author-card-wrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #F0997D;
+    width: 15%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 10%;
+    border-radius: 12px
+}
+
+.author-card-wrapper h3 {
+    text-align: center;
+}
+
+.authors-container img {
+    width: 100%;
+    object-fit: cover;
+    height: 65%
+}
+
+.author-card-wrapper p {
+    text-align: center;
+}

@@ -18,18 +18,22 @@ namespace TinderForPets.Application.Services
         private readonly ICacheService _cacheService;
         private readonly SwipeService _swipeService;
         private readonly S2GeometryService _s2GeometryService;
+        private readonly MatchService _matchService;
+        public RecommendationService() { }
         public RecommendationService(
             IAnimalProfileRepository animalProfileRepository,
             ICacheService cacheService,
             S2GeometryService s2GeometryService,
             SwipeService swipeService,
-            IMapper mapper)
+            IMapper mapper,
+            MatchService matchService)
         {
             _profileRepository = animalProfileRepository;
             _cacheService = cacheService;
             _s2GeometryService = s2GeometryService;
             _swipeService = swipeService;
             _mapper = mapper;
+            _matchService = matchService;
         }
         private async Task<AnimalProfile> GetAnimalProfile(Guid userId, CancellationToken cancellationToken) 
         {
@@ -55,6 +59,7 @@ namespace TinderForPets.Application.Services
                 var animalProfile = await GetAnimalProfile(userId, cancellationToken);
                 var nearbyCells = _s2GeometryService.GetNearbyCellIds(animalProfile.Latitude, animalProfile.Longitude, radiusKm);
                 var swipedProfileIdsResult = await _swipeService.GetSwipedProfiles(animalProfile.Id);
+                var matchesResult = await _matchService.GetMatchesByProfileId(animalProfile.Id, cancellationToken);
                 if (swipedProfileIdsResult.IsFailure)
                 {
                     return Result.Failure<ImmutableList<AnimalDetailsDto>>(swipedProfileIdsResult.Error);
@@ -68,7 +73,8 @@ namespace TinderForPets.Application.Services
                     NearbyS2CellIds = nearbyCells,
                     SwipedProfileIds = swipedProfileIds,
                     BreedId = animalProfile.Animal.BreedId,
-                    AnimalTypeId = animalProfile.Animal.AnimalTypeId
+                    AnimalTypeId = animalProfile.Animal.AnimalTypeId,
+                    MatchesIds = matchesResult.Value
                 };
 
                 filter.NearbyS2CellIds.Add(animalProfile.S2CellId); // profile s2 cell is included in search

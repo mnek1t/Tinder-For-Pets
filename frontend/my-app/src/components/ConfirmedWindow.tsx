@@ -10,7 +10,7 @@ export default function ConfirmedWindow(props : ConfirmedWindowOptions) {
         <div className='email-sent-container'>
             <img className="form-image" src={confirmLogo} alt="confirm logo" />
         </div>
-        <h2>{props.title}</h2>
+        <h2 style={{textAlign:'center'}}>{props.title}</h2>
         <p className="forgot-password-hint">{props.message}</p>
     </div> );
 }

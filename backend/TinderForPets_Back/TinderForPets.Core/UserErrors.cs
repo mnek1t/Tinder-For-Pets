@@ -7,9 +7,9 @@ namespace TinderForPets.Core
         public static Error NotFound(Guid userId) => new(
             "Users.NotFound", $"The user with the Id = {userId} was not found");
         public static Error NotFoundByEmail(string email) => new(
-            "Users.NotFoundByEmail", $"The user with the Email = {email} was not found");
+            "Users.NotFoundByEmail", $"The user does not exist");
         public static Error DuplicateUser(string email) => new(
-            "Users.DuplicateUser", $"The user with the Email = {email} already exists");
+            "Users.DuplicateUser", $"The user with {email} email already exists");
 
         public static readonly Error EmailNotUnique = new(
         "Users.EmailNotUnique", "The provided email is not unique");

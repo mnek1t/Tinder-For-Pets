@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction } from 'react';
-import { MatchCardinterface } from './TabSelection';
+import { MatchCardInterface } from './TabSelection';
 import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
 
 interface MatchCardProps {
     id: string
+    name: string,
     imageData: string, 
     imageFormat: string,
-    cards: MatchCardinterface[],
-    setCards: Dispatch<SetStateAction<MatchCardinterface[]>>
+    cards: MatchCardInterface[],
+    setCards: Dispatch<SetStateAction<MatchCardInterface[]>>
     handleMatchSelect : (id: string) => void
 }
 
@@ -28,8 +28,7 @@ export default function MatchCard(props: MatchCardProps) {
                     <img className='match-card' src={`data:${props.imageFormat};base64,${props.imageData}`} alt="Matched profile"/>
                     <div className='match-info'>
                         <div className='match-info__general'>
-                            <h1 className="match-name">Rex</h1>
-                            <h1 className="match-age">12</h1>
+                            <h1 className="match-name">{props.name}</h1>
                         </div>
                     </div>
                 </div>

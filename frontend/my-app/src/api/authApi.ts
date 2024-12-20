@@ -17,16 +17,18 @@ export interface ResetPasswordCredentials {
     token: string;
 }
 
+export interface ConfirmAccountRequest {
+    token: string;
+}
+
 export async function login(loginCredentials: LoginCredentials) {
     try {
         const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/login', loginCredentials, { withCredentials: true });
         if (response.status === 200) {
-            console.log(response.data);
             return response.data;
         } else {
-            throw new Error('Login failed.'); 
+            throw new Error('Login failed.');
         }
-        
     } catch (error: any) {
         handleError(error, "Error during login:");
     }
@@ -79,7 +81,6 @@ export async function forgotPassword(email : string) {
     try {
         const response : AxiosResponse = await axios.post("https://localhost:5295/api/user/password/forgot", { email : email}); 
         if (response.status === 200) {
-            console.log(response.data);
             return response.data;
         } else {
             throw new Error('Forgot password request failed.'); 
@@ -108,6 +109,25 @@ export async function resetPassword(resetPasswordCredentials : ResetPasswordCred
         handleError(error, "Error during asking to reset password:");
     }
 }
+
+export async function confirmAccount(confirmAccountRequest: ConfirmAccountRequest) {
+    try {
+        const response: AxiosResponse = await axios.patch(
+            "https://localhost:5295/api/user/account/confirm",
+            confirmAccountRequest
+        );
+        if (response.status === 204) {
+            console.log("Account confirmed");
+            return response.data;
+        } else {
+            throw new Error("Confirm Account request failed.");
+        }
+    } catch (error) {
+        console.error("Error during account confirmation:", error);
+        throw error;
+    }
+}
+
 
 function handleError(error : unknown, customMessage: string) {
     if (axios.isAxiosError(error) && error.response) {

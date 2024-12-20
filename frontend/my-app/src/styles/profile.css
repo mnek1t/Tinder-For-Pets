@@ -4,11 +4,11 @@
 }
 
 .border {
-    border: 1px solid black;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 0;
+  border: 1px solid black;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0;
 }
 
 .sidebar-container {
@@ -124,6 +124,7 @@
     height: 40px;
     background: none;
     border: none;
+    font-family: 'Karla', 'sans-serif';
   }
 
   .preference-btn:hover {
@@ -135,11 +136,13 @@
     flex-direction: column;
     align-items: center;
   }
-  a {
+
+  .legal-section a {
     text-decoration: none;
     color: black;
   }
-  a:hover {
+
+  .legal-section a:hover {
     text-decoration: underline;
     color: #A75D5D;
   }
@@ -151,7 +154,7 @@
 
   .profile-card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    width: 100%;                /* Allow the div to take up 100% of its parent width */
+    width: 100%;                
     max-width: 400px;
     margin: auto;
     text-align: center;
@@ -160,7 +163,6 @@
   .profile-card__name, .profile-card__title {
     text-transform: capitalize;
     width: 100%;
-    overflow-wrap: break-word;
     word-wrap: break-word;
     margin: 0; 
   }
@@ -170,7 +172,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 15%;
+    margin-top: 5%;
     margin-left: auto;
     margin-right: auto;
   }
@@ -203,6 +205,9 @@
     align-items: center;
     flex-direction: column;
     margin: 20px auto;
+  }
+  .modal_container h3 {
+    text-align: center;
   }
 
   .modal_description {
@@ -250,7 +255,10 @@
     font-family: 'Karla';
     font-size: 16px;
     margin: 7px;
-}
+  }
+  .edit-profile-btn:hover {
+    background-color: #864c4c;
+  }
 
   @keyframes scaleUpForm {
     0% {
