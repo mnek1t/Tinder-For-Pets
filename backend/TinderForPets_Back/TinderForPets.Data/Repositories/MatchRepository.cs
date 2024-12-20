@@ -33,8 +33,21 @@ namespace TinderForPets.Data.Repositories
 
         public async Task<List<Match>> GetMatches(Guid firstSwiperId, CancellationToken cancellationToken)
         {
-            var matches = await _context.Matches.Where(m => m.FirstSwiperId == firstSwiperId).ToListAsync(cancellationToken);
+            var matches = await _context.Matches
+                .Where(m => m.FirstSwiperId == firstSwiperId || m.SecondSwiperId == firstSwiperId)
+                .ToListAsync(cancellationToken);
             return matches;
+        }
+
+        public async Task<List<Guid>> GetMatchesProfilesId(Guid profileId, CancellationToken cancellationToken)
+        {
+            var profileIds = await _context.Matches
+                .Where(m => m.FirstSwiperId == profileId || m.SecondSwiperId == profileId)
+                .Select(m => m.FirstSwiperId == profileId ? m.SecondSwiperId : m.FirstSwiperId)
+                .Distinct()
+                .ToListAsync(cancellationToken);
+
+            return profileIds;
         }
 
         public async override Task UpdateAsync(Match entity, CancellationToken cancellationToken)

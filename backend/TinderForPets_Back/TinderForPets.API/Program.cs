@@ -86,6 +86,7 @@ builder.Services.AddScoped<ICacheService, RedisCacheService>();
 builder.Services.AddScoped<SwipeService>();
 builder.Services.AddScoped<RecommendationService>();
 builder.Services.AddScoped<S2GeometryService>();
+builder.Services.AddScoped<MatchService>();
 
 
 // Infrastructure
