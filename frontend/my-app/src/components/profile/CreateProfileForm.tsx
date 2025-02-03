@@ -5,7 +5,7 @@ import { ProfileData } from "../../api/profileApi";
 import Error from "./Error";
 import LoadButton from "../LoadButton";
 import { FormGroup, FormControlLabel } from "@mui/material";
-import CustomSwitch from "../../CustomSwitch";
+import CustomSwitch from "../CustomSwitch";
 import FileUploader from "../FileUploader";
 import { DEFAULT_SEX_ID, DEFAULT_ANIMAL_TYPE_ID, DEFAULT_BREED_ID } from "../../utils/TinderConstants";
 interface CreateProfileProps {

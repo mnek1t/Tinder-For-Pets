@@ -1,7 +1,7 @@
-import { getProfileDetails, ProfileDetailsData } from "../../api/profileApi";
+import { ProfileDetailsData } from "../../api/profileApi";
 import React, { useState, useEffect } from "react";
 import { CircularProgress, FormControlLabel } from '@mui/material';
-import CustomSwitch from "../../CustomSwitch";
+import CustomSwitch from "../CustomSwitch";
 interface ProfileCardProps {
   handleClickEditProfileCard : (event: React.MouseEvent<HTMLButtonElement>) => void;
   profileDetails : ProfileDetailsData | null;
