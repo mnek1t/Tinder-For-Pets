@@ -10,8 +10,5 @@ namespace TinderForPets.Data.Exceptions
     {
         public AnimalNotFoundException()
         : base($"Animal was not found. (null)") { }
-
-        public AnimalNotFoundException(Guid animalId)
-        : base($"Animal with id '{animalId}' was not found.") { }
     }
 }
