@@ -217,27 +217,33 @@ namespace TinderForPets.API.Controllers
                     Latitude = geoCodingResult.Value.latitude,
                     Longitude = geoCodingResult.Value.longitude,
                     S2CellId = s2cellId,
-                    Height = request.Height,
-                    Weight = request.Weight
+                    //Height = request.Height,
+                    //Weight = request.Weight
                 };
 
                 result = await _animalService.UpdatePetProfile(animalProfileDto, cancellationToken);
             }
 
-            return result.IsSuccess ? Results.Ok(result) : result.ToProblemDetails();
+            return result.IsSuccess ? Results.NoContent() : result.ToProblemDetails();
         }
 
         [HttpPost("animal/image/upload")]
         public async Task<IResult> UploadAnimalMedia([FromForm] AnimalMediaUploadRequest request, CancellationToken cancellationToken) 
         {
-            var resizedImagesResult = await _imageResizerService.ResizeImages(request.File, request.AnimalProfileId, cancellationToken, request.Description);
+            var tokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
+            if (tokenResult.IsFailure)
+            {
+                return tokenResult.ToProblemDetails();
+            }
+            var animalProfileIdResult = await _animalService.GetAnimalProfileId(tokenResult.Value, cancellationToken);
+            var resizedImagesResult = await _imageResizerService.ResizeImages(request.File, animalProfileIdResult.Value.Id, cancellationToken, request.Description);
             if (resizedImagesResult.IsFailure) 
             {
                 return resizedImagesResult.ToProblemDetails();
             }
 
             var uploadImageResult = await _imageResizerService.SaveImages(resizedImagesResult.Value, cancellationToken);
-            return uploadImageResult.IsSuccess ? Results.Ok(uploadImageResult) : uploadImageResult.ToProblemDetails();
+            return uploadImageResult.IsSuccess ? Results.NoContent() : uploadImageResult.ToProblemDetails();
         }
     }
 }
