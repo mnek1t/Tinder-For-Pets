@@ -16,7 +16,7 @@ namespace TinderForPets.Data.Repositories
             return user.Id;
         }
 
-        public async override Task  DeleteAsync(Guid id, CancellationToken cancellationToken) 
+        public async override Task DeleteAsync(Guid id, CancellationToken cancellationToken) 
         {
             var rowsDeleted = await _context.UserAccounts.Where(u => u.Id == id)
                 .ExecuteDeleteAsync(cancellationToken);
@@ -34,7 +34,7 @@ namespace TinderForPets.Data.Repositories
 
             if (userEntity == null)
             {
-                throw new UserNotFoundException(id.ToString());
+                throw new UserNotFoundException();
             }
 
             return userEntity;
@@ -47,13 +47,13 @@ namespace TinderForPets.Data.Repositories
                 .FirstOrDefaultAsync(u => u.EmailAddress == email, cancellationToken);
             if (userEntity == null) 
             {
-                throw new UserNotFoundException(email);
+                throw new UserNotFoundException();
             }
 
             return userEntity;
         }
 
-        public async Task<string> ResetPassword(string email, string hashedPassword, CancellationToken cancellationToken)
+        public async Task ResetPassword(string email, string hashedPassword, CancellationToken cancellationToken)
         {
             var rowsUpdated = await _context.UserAccounts
                .Where(u => u.EmailAddress == email)
@@ -62,10 +62,8 @@ namespace TinderForPets.Data.Repositories
 
             if (rowsUpdated == 0) 
             {
-                throw new UserNotFoundException(email);
+                throw new UserNotFoundException();
             }
-
-            return "Password was reset";
         }
         public async Task ConfirmAccount(Guid id, CancellationToken cancellationToken)
         {
@@ -90,7 +88,7 @@ namespace TinderForPets.Data.Repositories
 
             if (rowsUpdated == 0)
             {
-                throw new UserNotFoundException(user.EmailAddress);
+                throw new UserNotFoundException();
             }
         }
     }
