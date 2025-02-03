@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using TinderForPets.Data.Entities;
+using TinderForPets.Data.Exceptions;
 using TinderForPets.Data.Interfaces;
 
 namespace TinderForPets.Data.Repositories
@@ -16,7 +17,7 @@ namespace TinderForPets.Data.Repositories
                 .Select(a => new AnimalImage() { ImageData = a.ImageData, ImageFormat = a.ImageFormat})
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return image;
+            return image is not null ? image : throw new AnimalNotFoundException();
         }
 
         public async override Task<Guid> CreateAsync(AnimalImage animalImage, CancellationToken cancellationToken)
