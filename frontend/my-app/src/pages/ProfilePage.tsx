@@ -7,7 +7,7 @@ import FormPageWrapper from '../components/FormPageWrapper';
 import ConfirmationPopup from "../components/ConfirmationPopup";
 import ProfileEditForm from "../components/ProfileEditForm";
 import { logout, deleteAccount } from "../api/authApi";
-import { getProfileDetails, ProfileDetailsData, getAnimalTypes, getBreeds } from "../api/profileApi";
+import { getProfileDetails, uploadProfileImage, updatePetProfile, ProfileDetailsData, getAnimalTypes, getBreeds, UpdateAnimalProfileRequest } from "../api/profileApi";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { DEFAULT_ANIMAL_TYPE_ID } from "../utils/TinderConstants";
@@ -18,7 +18,6 @@ export default function ProfilePage() {
     const [animalTypes, setAnimalTypes] = useState([]);
     const [breeds, setBreeds] = useState([]);
     const [distance, setDistance] = useState(50);
-    const [showPetsInRange, setShowPetsInRange] = useState(true);
     const [showConfirmationWindow, setShowConfirmationWindow ] = useState<boolean>(false);
     const [profileDetails, setProfileDetails] = useState<ProfileDetailsData | null>(null);
     const [loading, setLoading] = useState(false);
@@ -45,17 +44,21 @@ export default function ProfilePage() {
             .then(({ profile, animal, images }) => {
             setProfileDetails({
                     animal: {
-                    type: animal?.animalType || "", 
-                    breed: animal?.breed || "", 
+                        id: animal?.id,
+                        type: animal?.animalType || "", 
+                        breed: animal?.breed || "", 
                     },
                     profile: {
-                    id: profile?.id || "", 
-                    name: profile?.name || "",
-                    description: profile?.description || "",
-                    age: profile?.age || 0,
-                    sex: profile?.sex || "",
-                    isVaccinated: profile?.isVaccinated || false,
-                    isSterilized: profile?.isSterilized || false,
+                        id: profile?.id || "", 
+                        name: profile?.name || "",
+                        description: profile?.description || "",
+                        age: profile?.age || 0,
+                        sex: profile?.sex || "",
+                        dateOfBirth: profile?.dateOfBirth || "",
+                        isVaccinated: profile?.isVaccinated || false,
+                        isSterilized: profile?.isSterilized || false,
+                        city: profile?.city,
+                        country: profile?.country
                     },
                     images: [
                     {
@@ -75,7 +78,7 @@ export default function ProfilePage() {
             document.body.style.backgroundImage = "";
             document.body.style.backgroundSize = '';
         };
-    }, []);
+    }, [isEditing]);
     
     function handleLogout(event : React.MouseEvent<HTMLButtonElement>) {
         setLoading(true);
@@ -94,33 +97,74 @@ export default function ProfilePage() {
         setShowConfirmationWindow(true);
     }
 
-    function toggleShowPets() {
-        setShowPetsInRange((prev) => !prev);
-    }
-
-    function enableLightMode() {
-        console.log("Light mode activated");
-    }
-
-    function enableDarkMode() {
-        console.log("Dark mode activated");
-      }
-
     function handleDeleteAccount(event : React.MouseEvent<HTMLButtonElement>) {
         const {name} = event.target as HTMLButtonElement;
         if(name === 'cancel') 
         {
             setShowConfirmationWindow(false);
         } else if(name === 'confirm'){
-            deleteAccount();
-            navigate("/about");
-            setShowConfirmationWindow(false);
+            setLoading(true);
+            deleteAccount()
+            .then(()=> {
+                navigate("/about");
+                setShowConfirmationWindow(false);
+            })
+            .catch((error) => console.error(error))
+            .finally(()=> setLoading(false));
         }
     }
 
-    function handleClickEditProfileCard(event : React.MouseEvent<HTMLButtonElement> ) {
-        setIsEditing((prev) => !prev)
+    function handleClickEditProfileCard() {
+        setIsEditing((prev) => !prev);
     }
+
+    function handleToggleSwitch(event : React.ChangeEvent<HTMLInputElement>) {
+        const {name, checked} = event.target;
+        setProfileDetails((prev) => {
+            if (!prev) return null; 
+        
+            return {
+              ...prev,
+              profile: {
+                ...prev.profile,
+                [name]: checked, 
+              },
+            };
+          });
+    }
+
+    function handleImageUpdate(file: File): Promise<any> {
+        const request = {
+            file: file,
+            description: "test",
+        };
+        return uploadProfileImage(request) // Return the promise here
+            .then((response) => {
+                console.log(response);
+                return response;
+            })
+            .catch(error => {
+                console.error(error);
+                throw error; // Re-throw the error to handle it in the calling function
+            });
+    }
+
+    function handleProfileUpdate(request: UpdateAnimalProfileRequest): Promise<any> {
+    if (!profileDetails?.profile.id) {
+        return Promise.reject(new Error("Profile ID is missing")); // Return a rejected promise if the ID is missing
+    }
+
+    return updatePetProfile(profileDetails.animal.id, request) // Return the promise here
+        .then((response) => {
+            console.log(response);
+            return response;
+        })
+        .catch(error => {
+            console.error(error);
+            throw error; // Re-throw the error to handle it in the calling function
+        });
+}
+
 
     return(
         <>
@@ -136,21 +180,29 @@ export default function ProfilePage() {
                                     isUserPreferences = {true}
                                     handleLogout={handleLogout} 
                                     handleDeleteAccount={handleDeleteAccountButtonClick} 
-                                    distance={distance}
-                                    onDistanceChange={setDistance}
-                                    showPetsInRange={showPetsInRange}
-                                    onToggleShowPets={toggleShowPets}
-                                    onLightMode={enableLightMode}
-                                    onDarkMode={enableDarkMode}/>
+                                    distance={distance}/>
                             </div>
                             
                             <div className="profile">
-                                {isEditing ? <ProfileEditForm animalTypes={animalTypes} breeds={breeds} profileDetails={profileDetails} handleClickEditProfileCard={handleClickEditProfileCard}/> : <ProfileCard profileDetails={profileDetails} loading={loading} handleClickEditProfileCard={handleClickEditProfileCard}/>}
+                                {isEditing ? <ProfileEditForm 
+                                                animalTypes={animalTypes} 
+                                                breeds={breeds} 
+                                                profileDetails={profileDetails}
+                                                handleClickEditProfileCard={handleClickEditProfileCard}
+                                                handleToggleSwitch={handleToggleSwitch} 
+                                                handleImageUpdate={handleImageUpdate} 
+                                                handleProfileUpdate={handleProfileUpdate}
+                                            /> : 
+                                            <ProfileCard 
+                                                profileDetails={profileDetails} 
+                                                loading={loading} 
+                                                handleClickEditProfileCard={handleClickEditProfileCard}
+                                            />}
                             </div>
                             {
                                 showConfirmationWindow && 
                                 <FormPageWrapper title="delete-account" showHeader={false}>
-                                    <ConfirmationPopup question="You sure you want to delete an account?" description={deleteAccountDescription} handleAction={handleDeleteAccount}/> 
+                                    <ConfirmationPopup question="You sure you want to delete an account?" description={deleteAccountDescription} handleAction={handleDeleteAccount} loading={loading}/> 
                                 </FormPageWrapper>
                             }
                         </>
