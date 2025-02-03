@@ -27,49 +27,56 @@ namespace TinderForPets.Application.Services
             return Result.Success(profileIds);
         }
 
-        public async Task<Result<List<AnimalDetailsDto>>> GetMatchesProfilesData(Guid userId, CancellationToken cancellationToken) 
-      {
-            AnimalProfile? animalProfile = default;
+        public async Task<Result<List<MatchCardDto>>> GetMatchesProfilesData(Guid userId, CancellationToken cancellationToken) 
+        {
+            // get animal profile - current user who is watching his matches
+            AnimalProfile? currentAnimalProfile = default;
             try
             {
-                animalProfile = await _profileRepository.GetAnimalProfileByOwnerIdAsync(userId, cancellationToken);
+                currentAnimalProfile = await _profileRepository.GetAnimalProfileByOwnerIdAsync(userId, cancellationToken);
             }
             catch (AnimalNotFoundException)
             {
-                return Result.Failure<List<AnimalDetailsDto>>(AnimalProfileErrors.NotFound);
+                return Result.Failure<List<MatchCardDto>>(AnimalProfileErrors.NotFound);
             }
-            var matches = await _matchRepository.GetMatches(animalProfile.Id, cancellationToken) ?? new List<Match>();
-            if (matches.Count == 0) 
-            {
-                return Result.Success<List<AnimalDetailsDto>>(new List<AnimalDetailsDto>());
-            }
-            var matchIds = matches.Select(m => m.FirstSwiperId == animalProfile.Id ? m.FirstSwiperId : m.SecondSwiperId).ToList();
-            var filter = new AnimalRecommendationFilter
-            {
-                MatchesIds = matchIds
-            };
-            var matchedAnimalProfiles = await _profileRepository
-                    .GetAnimalProfilesAsync(
-                        AnimalProfileFilterBuilder.BuildAnimalProfileFilter(filter),
-                        cancellationToken);
 
-            var animalDetailsDtos = matchedAnimalProfiles.Select(a =>
+            // get his matches - all entries from Match table where id of current user is appearing 
+            var matchEntries = await _matchRepository.GetMatches(currentAnimalProfile.Id, cancellationToken) ?? new List<Match>();
+            if (matchEntries.Count == 0) 
             {
-                return new AnimalDetailsDto()
+                return Result.Success<List<MatchCardDto>>(new List<MatchCardDto>());
+            }
+            // extract all id fields of of matched animals (the other swiper)
+            var otherSwipersIds = matchEntries.Select(m => m.FirstSwiperId == currentAnimalProfile.Id ? m.SecondSwiperId : m.FirstSwiperId).ToList();
+
+            //var filter = new AnimalRecommendationFilter
+            //{
+            //    MatchesIds = matchIds
+            //};
+            var otherSwipersAnimalProfiles = await _profileRepository.GetAnimalProfilesFromIdListAsync(otherSwipersIds, cancellationToken);
+
+            var matchDetailsDtos = otherSwipersAnimalProfiles.Select(otherSwiperProfile =>
+            {
+                var correspondingMatch = matchEntries.Find(m =>
+                    m.FirstSwiperId == otherSwiperProfile.Id || m.SecondSwiperId == otherSwiperProfile.Id);
+
+                return new MatchCardDto()
                 {
-                    Profile = new AnimalProfileDto
-                    {
-                        Id = a.Id,
-                        Name = a.Name
-                    },
-                    Images = a.Images.Select(i => new AnimalImageDto
+                    MatchId = correspondingMatch?.Id ?? Guid.Empty,
+                    ProfileName = otherSwiperProfile.Name,
+                    Description = otherSwiperProfile.Description,
+                    Age = otherSwiperProfile.Age,
+                    IsVaccinated = otherSwiperProfile.IsVaccinated,
+                    IsSterilized = otherSwiperProfile.IsSterilized,
+                    CreatedAt = correspondingMatch?.CreatedAt ?? DateTime.UtcNow,
+                    Images = otherSwiperProfile.Images.Select(i => new AnimalImageDto
                     {
                         ImageData = i.ImageData,
                         ImageFormat = i.ImageFormat
                     }).ToList()
                 };
             }).ToList();
-            return Result.Success<List<AnimalDetailsDto>>(animalDetailsDtos);
+            return Result.Success<List<MatchCardDto>>(matchDetailsDtos);
         }
     }
 }
