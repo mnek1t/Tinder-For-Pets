@@ -42,7 +42,8 @@ namespace TinderForPets.Application.Services
         public async Task SendConfirmAccountEmail(string apiKey, string subject, string message, string toEmail)
         {
             var client = new SendGridClient(apiKey);
-            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "confirm-account-template.html");
+            var templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TinderForPets.API/EmailTemplates", "confirm-account-template.html");
+            //var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "confirm-account-template.html");
             var htmlMessage = await File.ReadAllTextAsync(templatePath);
             var emailData = JsonSerializer.Deserialize<ConfirmAccountDto>(message);
             htmlMessage = htmlMessage.Replace("{{EmailAddress}}", emailData.EmailAddress);
@@ -67,7 +68,7 @@ namespace TinderForPets.Application.Services
         public async Task SendResetPasswordEmail(string apiKey, string subject, string message, string toEmail)
         {
             var client = new SendGridClient(apiKey);
-            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "EmailTemplates", "reset-password-template.html");
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "TinderForPets.API/EmailTemplates", "reset-password-template.html");
             var htmlMessage = await File.ReadAllTextAsync(templatePath);
             var emailData = JsonSerializer.Deserialize<ResetPasswordEmailDto>(message);
             htmlMessage = htmlMessage.Replace("{{UserName}}", emailData.UserName);
