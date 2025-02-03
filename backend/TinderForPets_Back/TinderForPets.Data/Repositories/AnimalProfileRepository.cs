@@ -27,8 +27,8 @@ namespace TinderForPets.Data.Repositories
         public async Task<AnimalProfile> GetAnimalProfileByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken)
         {
             var animalProfile = await _context.AnimalProfiles
-               .Include(ap => ap.Animal) // Load the related Animal entity
-               .Where(ap => ap.Animal.UserId == ownerId)// Assuming Animal has a UserId property
+               .Include(ap => ap.Animal)
+               .Where(ap => ap.Animal.UserId == ownerId)
                .SingleOrDefaultAsync(cancellationToken);
 
             if (animalProfile == null)
@@ -68,6 +68,17 @@ namespace TinderForPets.Data.Repositories
             return animalProfiles;
         }
 
+        public async Task<List<AnimalProfile>> GetAnimalProfilesFromIdListAsync(List<Guid> profileIds, CancellationToken cancellationToken)
+        {
+            var animalProfiles = await _context.AnimalProfiles
+                .Include(ap => ap.Images)
+                .Where(ap => profileIds.Contains(ap.Id))
+                .Where(ap => ap.Images != null && ap.Images.Any())
+                .ToListAsync(cancellationToken);
+
+            return animalProfiles;
+        }
+
         public Task<AnimalProfile> GetByAnimalIdAsync(Guid animalId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
@@ -94,7 +105,7 @@ namespace TinderForPets.Data.Repositories
                 cancellationToken
             );
 
-            return rowsUpdated == 0 ? throw new AnimalNotFoundException(animalProfile.Id) : rowsUpdated;
+            return rowsUpdated == 0 ? throw new AnimalNotFoundException() : rowsUpdated;
 
         }
     }
