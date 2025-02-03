@@ -89,15 +89,15 @@ namespace TinderForPets.Infrastructure
                 var claimPrincipal = _tokenHandler.ValidateToken(token, _validationParameters, out SecurityToken validatedToken);
                 if (claimPrincipal == null)
                 {
-                    return Result.Failure<string>(JwtErrors.JwtTokenExpired);
+                    return Result.Failure<string>(JwtErrors.InvalidToken);
                 }
 
-                var purpose = claimPrincipal.FindFirst("purpose").Value;
+                var purpose = claimPrincipal.FindFirst("purpose")?.Value;
                 if (purpose != "confirm-account")
                 {
-                    return Result.Failure<string>(JwtErrors.JwtTokenExpired);
+                    return Result.Failure<string>(JwtErrors.InvalidToken);
                 }
-                var userId = claimPrincipal.FindFirst("userId").Value;
+                var userId = claimPrincipal.FindFirst("userId")?.Value;
                 return Result.Success<string>(userId);
             }
             catch (SecurityTokenExpiredException)
@@ -116,15 +116,15 @@ namespace TinderForPets.Infrastructure
                 var claimPrincipal = _tokenHandler.ValidateToken(token, _validationParameters, out SecurityToken validatedToken);
                 if(claimPrincipal == null) 
                 {
-                    return Result.Failure<string>(JwtErrors.JwtTokenExpired);
+                    return Result.Failure<string>(JwtErrors.InvalidToken);
                 }
 
-                var email = claimPrincipal.FindFirst(ClaimTypes.Email).Value;
-                var purpose = claimPrincipal.FindFirst("purpose").Value;
+                var email = claimPrincipal.FindFirst(ClaimTypes.Email)?.Value;
+                var purpose = claimPrincipal.FindFirst("purpose")?.Value;
 
                 if (purpose != "reset-password") 
                 {
-                    return Result.Failure<string>(JwtErrors.JwtTokenExpired);
+                    return Result.Failure<string>(JwtErrors.InvalidToken);
                 }
 
                 return Result.Success<string>(email);
