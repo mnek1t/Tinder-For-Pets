@@ -21,3 +21,5 @@ obj/Debug/net8.0
 /backend/TinderForPets_Back/TinderForPets.Data/mycert.pfx
 /backend/TinderForPets_Back/containers
 /backend/TinderForPets_Back/https/ssl_cert.pfx
+/backend/TinderForPets_Back/UserSecrets
+/backend/TinderForPets_Back/TinderForPets.Data/ssl_cert.pfx
