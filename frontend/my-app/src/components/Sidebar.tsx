@@ -10,11 +10,7 @@ interface SidebarProps extends Partial<UserPreferencesProps> { // partial means 
 export default function Sidebar({
     isUserPreferences = true,
     distance,
-    onDistanceChange,
-    showPetsInRange,
     onToggleShowPets,
-    onLightMode,
-    onDarkMode,
     handleLogout,
     handleDeleteAccount,
 } : SidebarProps) {
@@ -25,11 +21,7 @@ export default function Sidebar({
             <Navigation profileName="Profile"/>
             { isUserPreferences ? <UserPreferences 
                 distance = {distance!}
-                onDistanceChange = {onDistanceChange!}
-                showPetsInRange = {showPetsInRange!}
                 onToggleShowPets = {onToggleShowPets!}
-                onLightMode = {onLightMode!}
-                onDarkMode = {onDarkMode!}
                 handleLogout = {handleLogout!}
                 handleDeleteAccount = {handleDeleteAccount!}
             /> : <TabSelection/>}
