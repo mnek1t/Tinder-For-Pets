@@ -65,7 +65,7 @@ export async function register(registerCredentials: RegisterCredentials) {
 
 export async function deleteAccount() {
     try {
-        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/delete', {}, { withCredentials: true });
+        const response : AxiosResponse = await axios.delete('https://localhost:5295/api/User/delete', { withCredentials: true });
         if (response.status === 204) {
             return response.data;
         } else {
@@ -98,7 +98,7 @@ export async function resetPassword(resetPasswordCredentials : ResetPasswordCred
         }
 
         const response : AxiosResponse = await axios.patch("https://localhost:5295/api/user/password/reset", resetPasswordCredentials); 
-        if (response.status === 204) {
+        if (response.status === 200) {
             console.log(response.data);
             return response.data;
         } else {
