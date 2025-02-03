@@ -27,7 +27,7 @@ namespace TinderForPets.Data.Repositories
                 cancellationToken
             );
 
-            return rowsUpdated == 0 ? throw new AnimalNotFoundException(animalEntity.Id) : rowsUpdated;
+            return rowsUpdated == 0 ? throw new AnimalNotFoundException() : rowsUpdated;
 
         }
         public async Task<Animal> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)

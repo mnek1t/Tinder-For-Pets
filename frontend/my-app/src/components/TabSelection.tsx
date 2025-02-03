@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs"
 import Tab from "@mui/material/Tab"
 import Box from "@mui/material/Box"
-import Typography from "@mui/material/Typography";
 import MatchCard from "./MatchCard";
-import { getMatches, MatchCardProfileData } from "../api/profileApi";
+import { getMatches } from "../api/profileApi";
 import { CircularProgress } from "@mui/material";
+import messagesImg from '../assets/messages-2-svgrepo-com.svg'
+import matchImg from '../assets/heart-like-svgrepo-com.svg'
+import NoData from "./NoData";
 export type MatchCardInterface =  {
     id: string
     name: string,
     imageData: string,
-    imageFormat: string
+    imageFormat: string,
+    isVaccinated: boolean,
+    description: string,
+    isSterilized: boolean,
+    age: number,
+    createdAt: string;
 }
 export default function TabSelection() {
     const [matchCards, setMatchCards] = useState<MatchCardInterface[]>([])
@@ -19,15 +26,19 @@ export default function TabSelection() {
     useEffect(() => {
         document.body.style.background = '#FEFAF6';
         setLoading(true);
-        // api request to get all matches
         getMatches()
         .then((data) => {
             const transformedCards = data.map(card => {
                 return {
-                    id: card.profile.id,
-                    name: card.profile.name,
+                    id: card.matchId,
+                    name: card.profileName,
                     imageData : card.images[0].imageData,
-                    imageFormat: card.images[0].imageFormat
+                    imageFormat: card.images[0].imageFormat,
+                    isVaccinated: card.isVaccinated,
+                    description: card.description,
+                    isSterilized: card.isSterilized,
+                    age: card.age,
+                    createdAt: card.createdAt
                 }
             })
 
@@ -84,8 +95,8 @@ export default function TabSelection() {
                     loading ? (
                     <CircularProgress sx={{ color: "#864c4c", marginTop:'50px' }} size={48} />
                     ) : (
-                    <Typography>
-                        {matchCards && (
+                    <div>
+                        {matchCards.length > 0 ? (
                         <div className="matches">
                             {matchCards.map((card) => (
                             <MatchCard
@@ -97,12 +108,12 @@ export default function TabSelection() {
                             />
                             ))}
                         </div>
-                        )}
-                    </Typography>
+                        ) : <NoData imageSrc={matchImg} title="No Matches yet!" description="When you match with other users, the will appear here and you can navigate to their profile!"/>}
+                    </div>
                     )
                 )}
                 {activeTab === 1 && (
-                    <Typography>Here are your messages!</Typography>
+                    <NoData imageSrc={messagesImg} title="Say Hello!" description="Looking for a strike up conversation? When you match with others, you can send them messages and communicate!"/>
                 )}
             </Box>
         </>

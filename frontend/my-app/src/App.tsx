@@ -12,6 +12,7 @@ import Recommendation from "./pages/RecommendationPage";
 import ProductPage from "./pages/ProductPage";
 import AuthorsPage from "./pages/AuthorsPage";
 import ConfirmedAccountPage from "./pages/ConfirmedAccountPage";
+import MessagePage from "./pages/MessagesPage";
 function App() {
   return (
     <div className="App">
@@ -31,7 +32,7 @@ function App() {
         <Route path="/app/profile" element={<ProfilePage/>}/>
         <Route path="/app/recommendation" element={<Recommendation/>}/>
         <Route path="/accounts/confirm" element={<ConfirmedAccountPage/>}/>
-
+        <Route path="/app/messages/:matchId" element={<MessagePage/>}/>
       </Routes>
       </BrowserRouter>
     </div>

@@ -10,8 +10,8 @@
         bool IsSterilized,
         int BreedId,
         string City,
-        string Country,
-        decimal Height,
-        decimal Weight
+        string Country
+        //decimal Height,
+        //decimal Weight
         );
 }

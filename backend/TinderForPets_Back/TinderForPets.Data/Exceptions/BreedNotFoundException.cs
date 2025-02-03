@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace TinderForPets.Data.Exceptions
 {
-    public class AnimalNotFoundException : Exception
+    public class BreedNotFoundException : Exception
     {
-        public AnimalNotFoundException()
-        : base($"Animal was not found. (null)") { }
+        public BreedNotFoundException() : base("Breeds not found according to this Amimal Type Id") { }
     }
 }

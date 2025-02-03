@@ -18,6 +18,7 @@ export interface ProfileData {
 
 export interface ProfileDetailsData {
     animal : {
+        id: string,
         type?: string,
         breed?: string,
     }
@@ -30,6 +31,8 @@ export interface ProfileDetailsData {
         dateOfBirth?:string,
         isVaccinated?: boolean,
         isSterilized?: boolean,
+        city?: string,
+        country?: string
     }
     images : {
         imageData: string,
@@ -38,16 +41,39 @@ export interface ProfileDetailsData {
 }
 
 export type MatchCardProfileData =  {
-    profile: {
-        id: string,
-        name: string,
-    }
-    
+    matchId: string,
+    profileName: string,
+    isVaccinated: boolean,
+    description: string,
+    isSterilized: boolean,
+    age: number,
+    createdAt: string,
     images : {
         imageData: string,
         imageFormat : string
     }[]
 }
+
+export interface AnimalMediaUploadRequest {
+    description: string,
+    file: File
+}
+
+export interface UpdateAnimalProfileRequest {
+    name : string,
+    typeId : number,
+    description : string,
+    dateOfBirth : string,
+    sexId : number,
+    isVaccinated : boolean,
+    isSterilized : boolean,
+    breedId : number,
+    city : string | undefined,
+    country : string | undefined,
+    //height : number,
+    //weight : number
+}
+
 
 export async function getMatches() {
     try {
@@ -150,6 +176,7 @@ export async function getProfileDetails() {
             withCredentials: true
         });
         if(response.status === 200) {
+            console.log('getProfileDetails',response.data)
             return response.data;
         } else {
             throw new Error('Get Sexes failed.'); 
@@ -210,6 +237,46 @@ export async function getProfileImage() {
         }
     } catch (error) {
         handleError(error, "Error when receiving animal image");
+    }
+}
+
+export async function uploadProfileImage(requestData: AnimalMediaUploadRequest) {
+    try {
+        const formData = new FormData();
+        formData.append("Description", requestData.description);
+        formData.append("File", requestData.file);
+
+        const response : AxiosResponse = await axios.post(`https://localhost:5295/api/Animal/animal/image/upload`, formData, {
+            withCredentials : true,
+            headers : {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        if(response.status === 204) {
+            console.log(response.data);
+            return response.data;
+        } else {
+            throw new Error("Update Profile Image failed");
+        }
+    } catch (error) {
+        handleError(error, "Error when updating animal image");
+    }
+}
+
+export async function updatePetProfile(profileId: string, updateRequestData: UpdateAnimalProfileRequest) {
+    try {
+        console.log('updateRequestData', updateRequestData)
+        const response : AxiosResponse = await axios.post(`https://localhost:5295/api/Animal/animal/profile/update/${profileId}`, updateRequestData, {
+            withCredentials : true,
+        });
+        if(response.status === 204) {
+            console.log(response.data)
+            return response.data;
+        } else {
+            throw new Error('Error when updating profile.'); 
+        }
+    } catch (error) {
+        handleError(error, "Error when updating profile.");
     }
 }
 

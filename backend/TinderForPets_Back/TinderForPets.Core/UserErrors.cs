@@ -2,10 +2,10 @@
 
 namespace TinderForPets.Core
 {
-    public class UserErrors
+    public static class UserErrors
     {
-        public static Error NotFound(Guid userId) => new(
-            "Users.NotFound", $"The user with the Id = {userId} was not found");
+        public static Error NotFoundById(Guid userId) => new(
+            "Users.NotFoundById", $"The user with the Id = {userId} was not found");
         public static Error NotFoundByEmail(string email) => new(
             "Users.NotFoundByEmail", $"The user does not exist");
         public static Error DuplicateUser(string email) => new(
@@ -28,6 +28,9 @@ namespace TinderForPets.Core
 
         public static readonly Error NotAuthorized = new(
         "User.NotAuthorized", "Authorization Header was not attached to request");
+
+        public static readonly Error NotFound = new(
+        "User.NotFound", "The user is not found");
 
     }
 }

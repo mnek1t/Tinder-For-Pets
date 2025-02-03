@@ -1,0 +1,93 @@
+.match-profile__name, .match-profile__description, .match-profile__medicine-info {
+    padding-left: 5%;
+    
+}
+
+.match-profile__medicine-info {
+    display : flex;
+    justify-content: space-between
+}
+
+.match-profile__medicine-info >  span {
+    padding-right: 5%;
+}
+
+.box {
+    border: 1px solid #A75D5D;
+    border-radius: 12px;
+    margin: 2% 2% 2% 2%;
+}
+/* Customizing Input checkbox */
+.custom-checkbox {
+    position: relative;
+    padding: 2%
+}
+
+.custom-checkbox input{
+    display: none;
+}
+.checkmark {
+    margin: auto
+}
+
+.custom-checkbox input~.checkmark {
+    background: #ee0b0b;
+    width: 25px;
+    display: inline-block;
+    position: relative;
+    height: 25px;
+    border-radius: 2px;
+    vertical-align:middle;
+    margin: auto
+}
+
+.custom-checkbox input~.checkmark:after,
+.custom-checkbox input~.checkmark:before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 16px;
+  background: #fff;
+  left: 12px;
+  top: 4px;
+  margin: auto
+}
+
+.custom-checkbox input~.checkmark:after {
+    transform: rotate(-45deg);
+    z-index: 1;
+    margin: auto
+}
+
+.custom-checkbox input~.checkmark:before {
+    transform: rotate(45deg);
+    z-index: 1;
+    margin: auto
+}
+
+.custom-checkbox input:checked~.checkmark {
+    background: #3d8a00;
+    width: 25px;
+    display: inline-block;
+    position: relative;
+    height: 25px;
+    border-radius: 2px;
+    margin: auto
+}
+
+.custom-checkbox input:checked~.checkmark:after {
+    display: none;
+}
+
+.custom-checkbox input:checked~.checkmark:before {
+    background: none;
+    border: 2px solid #fff;
+    width: 6px;
+    top: 2px;
+    left: 9px;
+    border-top: 0;
+    border-left: 0;
+    height: 13px;
+    top: 2px;
+    margin: auto
+}

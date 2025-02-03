@@ -111,7 +111,10 @@ namespace TinderForPets.Application.Services
             {
                 return Result.Failure<string>(new Error("400", "Operation canceled"));
             }
-
+            catch (UserNotFoundException) 
+            {
+                return Result.Failure<string>(UserErrors.NotFound);
+            }
         }
 
         public async Task<Result<string>> ResetPassword(string newPassword, string confirmPassword, string resetPasswordToken, CancellationToken cancellationToken) 
@@ -132,16 +135,16 @@ namespace TinderForPets.Application.Services
 
                 var hashedPassword = _passwordHasher.Generate(newPassword);
                 var userEmail = verifyTokenResult.Value;
-                var result = await _userRepository.ResetPassword(userEmail, hashedPassword, cancellationToken);
-                return Result.Success<string>(result);
+                await _userRepository.ResetPassword(userEmail, hashedPassword, cancellationToken);
+                return Result.Success<string>(userEmail);
             }
             catch (OperationCanceledException)
             {
                 return Result.Failure<string>(new Error("400", "Operation canceled"));
             }
-            catch (UserNotFoundException ex)
+            catch (UserNotFoundException)
             {
-                return Result.Failure<string>(UserErrors.NotFoundByEmail(ex.Message));
+                return Result.Failure<string>(UserErrors.NotFound);
             }
         }
 
@@ -179,7 +182,7 @@ namespace TinderForPets.Application.Services
             }
             catch (UserNotFoundException)
             {
-                return Result.Failure(UserErrors.NotFound(userId));
+                return Result.Failure(UserErrors.NotFoundById(userId));
             }
             catch (OperationCanceledException)
             {

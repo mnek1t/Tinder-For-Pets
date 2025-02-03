@@ -8,11 +8,12 @@ interface Suggestion {
 }
 
 interface LocationSuggestionProps {
-    onSelectLocation : (city: string, country: string) => void  
+    onSelectLocation : (city: string, country: string) => void,
+    defaultValue? : string
 }
 
 export default function LocationSuggestion(props : LocationSuggestionProps) {
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState(props.defaultValue ? props.defaultValue : '');
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
 

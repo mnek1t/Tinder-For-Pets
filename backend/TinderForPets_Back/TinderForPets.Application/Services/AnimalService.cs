@@ -68,7 +68,7 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<List<AnimalTypeDto>>(new Error("400", "Operation canceled"));
+                return Result.Failure<List<AnimalTypeDto>>(OperationCancellationErrors.OperationCancelled);
             }
 
         }
@@ -86,10 +86,6 @@ namespace TinderForPets.Application.Services
                 }
 
                 var result = await _breedRepository.GetBreedsByTypeIdAsync(id, cancellationToken);
-                if (result == null)
-                {
-                    return Result.Failure<List<BreedDto>>(AnimalProfileErrors.BreedNotFound(id));
-                }
 
                 var breedDto = result.Select(b => new BreedDto
                 {
@@ -104,7 +100,11 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<List<BreedDto>>(new Error("400", "Operation canceled"));
+                return Result.Failure<List<BreedDto>>(OperationCancellationErrors.OperationCancelled);
+            }
+            catch (BreedNotFoundException) 
+            {
+                return Result.Failure<List<BreedDto>>(AnimalProfileErrors.BreedNotFound(id));
             }
         }
 
@@ -133,7 +133,7 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<List<SexDto>>(new Error("400", "Operation canceled"));
+                return Result.Failure<List<SexDto>>(OperationCancellationErrors.OperationCancelled);
             }
         }
 
@@ -162,7 +162,11 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<AnimalImageDto>(new Error("400", "Operation canceled"));
+                return Result.Failure<AnimalImageDto>(OperationCancellationErrors.OperationCancelled);
+            }
+            catch (AnimalNotFoundException)
+            {
+                return Result.Failure<AnimalImageDto>(AnimalProfileErrors.ImageIsNotFound);
             }
         }
         public async Task<Result<AnimalDetailsDto>> GetAnimalProfileDetails(Guid ownerId, CancellationToken cancellationToken) 
@@ -176,18 +180,22 @@ namespace TinderForPets.Application.Services
                 {
                     Animal = new AnimalDto()
                     {
+                        Id = animalProfileDetails.Animal.Id,
                         Breed = animalProfileDetails.Animal.Breed.BreedName,
                         AnimalType = animalProfileDetails.Animal.Type.TypeName
                     },
                     Profile = new AnimalProfileDto
                     {
+                        Id = animalProfileDetails.Id,
                         Name = animalProfileDetails.Name,
                         Description = animalProfileDetails.Description,
                         Age = animalProfileDetails.Age,
                         DateOfBirth = animalProfileDetails.DateOfBirth,
                         Sex = animalProfileDetails.Sex.SexName,
                         IsSterilized = animalProfileDetails.IsSterilized,
-                        IsVaccinated = animalProfileDetails.IsVaccinated
+                        IsVaccinated = animalProfileDetails.IsVaccinated,
+                        City = animalProfileDetails.City,
+                        Country = animalProfileDetails.Country,
                     },
                     Images = animalProfileDetails.Images.Select(i => new AnimalImageDto
                     {
@@ -199,7 +207,11 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<AnimalDetailsDto>(new Error("400", "Operation canceled"));
+                return Result.Failure<AnimalDetailsDto>(OperationCancellationErrors.OperationCancelled);
+            }
+            catch (AnimalNotFoundException) 
+            {
+                return Result.Failure<AnimalDetailsDto>(AnimalProfileErrors.NotFound);
             }
         }
 
@@ -214,9 +226,9 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<AnimalProfileModel>(new Error("400", "Operation canceled"));
+                return Result.Failure<AnimalProfileModel>(OperationCancellationErrors.OperationCancelled);
             }
-        }
+        }   
         #endregion
 
         #region Create Actions
@@ -232,7 +244,7 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<Guid>(new Error("400", "Operation canceled"));
+                return Result.Failure<Guid>(OperationCancellationErrors.OperationCancelled);
             }
         }
 
@@ -264,7 +276,7 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<Guid>(new Error("400", "Operation canceled"));
+                return Result.Failure<Guid>(OperationCancellationErrors.OperationCancelled);
             }
         }
         #endregion
@@ -283,7 +295,7 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<string>(new Error("400", "Operation canceled"));
+                return Result.Failure<string>(OperationCancellationErrors.OperationCancelled);
             }
             catch (AnimalNotFoundException ex)
             {
@@ -318,7 +330,7 @@ namespace TinderForPets.Application.Services
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<string>(new Error("400", "Operation canceled"));
+                return Result.Failure<string>(OperationCancellationErrors.OperationCancelled);
             }
             catch (AnimalNotFoundException ex)
             {
