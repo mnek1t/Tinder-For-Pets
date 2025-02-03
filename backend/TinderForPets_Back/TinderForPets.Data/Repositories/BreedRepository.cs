@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TinderForPets.Data.Entities;
+using TinderForPets.Data.Exceptions;
 using TinderForPets.Data.Interfaces;
 
 namespace TinderForPets.Data.Repositories
@@ -18,10 +19,10 @@ namespace TinderForPets.Data.Repositories
             return await _context.Breeds.ToListAsync(cancellationToken);
         }
 
-        public async Task<List<Breed>?> GetBreedsByTypeIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<List<Breed>> GetBreedsByTypeIdAsync(int animalTypeId, CancellationToken cancellationToken)
         {
-            var breeds = await _context.Breeds.Where(b => b.AnimalTypeId == id).ToListAsync(cancellationToken);
-            return breeds.Count > 0 ? breeds : null;
+            var breeds = await _context.Breeds.Where(b => b.AnimalTypeId == animalTypeId).ToListAsync(cancellationToken);
+            return breeds.Count > 0 ? breeds : throw new BreedNotFoundException();
         }
     }
 }
