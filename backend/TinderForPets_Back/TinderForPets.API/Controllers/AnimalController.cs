@@ -169,7 +169,7 @@ namespace TinderForPets.API.Controllers
             {
                 return uploadImageResult.ToProblemDetails();
             }
-
+            
             return Results.Ok(createAnimalProfileResult);
         }
 
@@ -200,42 +200,50 @@ namespace TinderForPets.API.Controllers
                 BreedId = request.BreedId
             };
 
-            var result = await _animalService.UpdateAnimal(animalDto, cancellationToken);
-            if (result.IsSuccess)
+            var animalUpdateResult = await _animalService.UpdateAnimal(animalDto, cancellationToken);
+            if (animalUpdateResult.IsFailure)
             {
-                var animalProfileDto = new AnimalProfileDto
-                {
-                    AnimalId = id,
-                    Name = request.Name,
-                    Description = request.Description,
-                    DateOfBirth = request.DateOfBirth,
-                    SexId = request.SexId,
-                    IsVaccinated = request.IsVaccinated,
-                    IsSterilized = request.IsSterilized,
-                    Country = request.Country,
-                    City = request.City,
-                    Latitude = geoCodingResult.Value.latitude,
-                    Longitude = geoCodingResult.Value.longitude,
-                    S2CellId = s2cellId,
-                    //Height = request.Height,
-                    //Weight = request.Weight
-                };
-
-                result = await _animalService.UpdatePetProfile(animalProfileDto, cancellationToken);
+                return animalUpdateResult.ToProblemDetails();
             }
 
-            return result.IsSuccess ? Results.NoContent() : result.ToProblemDetails();
+            var animalProfileDto = new AnimalProfileDto
+            {
+                AnimalId = id,
+                Name = request.Name,
+                Description = request.Description,
+                DateOfBirth = request.DateOfBirth,
+                SexId = request.SexId,
+                IsVaccinated = request.IsVaccinated,
+                IsSterilized = request.IsSterilized,
+                Country = request.Country,
+                City = request.City,
+                Latitude = geoCodingResult.Value.latitude,
+                Longitude = geoCodingResult.Value.longitude,
+                S2CellId = s2cellId,
+                //Height = request.Height,
+                //Weight = request.Weight
+            };
+
+            var animalProfileUpdateResult = await _animalService.UpdatePetProfile(animalProfileDto, cancellationToken);
+            if (animalProfileUpdateResult.IsFailure)
+            {
+                return animalProfileUpdateResult.ToProblemDetails();
+            }
+
+            await _animalService.UpdateProfileDetailsCache(animalUpdateResult.Value, animalProfileUpdateResult.Value, cancellationToken);
+
+            return Results.NoContent();
         }
 
         [HttpPost("animal/image/upload")]
         public async Task<IResult> UploadAnimalMedia([FromForm] AnimalMediaUploadRequest request, CancellationToken cancellationToken) 
         {
-            var tokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
-            if (tokenResult.IsFailure)
+            var validationTokenResult = _jwtProvider.ValidateAuthTokenAndExtractUserId(HttpContext);
+            if (validationTokenResult.IsFailure)
             {
-                return tokenResult.ToProblemDetails();
+                return validationTokenResult.ToProblemDetails();
             }
-            var animalProfileIdResult = await _animalService.GetAnimalProfileId(tokenResult.Value, cancellationToken);
+            var animalProfileIdResult = await _animalService.GetAnimalProfileId(validationTokenResult.Value, cancellationToken);
             var resizedImagesResult = await _imageResizerService.ResizeImages(request.File, animalProfileIdResult.Value.Id, cancellationToken, request.Description);
             if (resizedImagesResult.IsFailure) 
             {
@@ -243,6 +251,14 @@ namespace TinderForPets.API.Controllers
             }
 
             var uploadImageResult = await _imageResizerService.SaveImages(resizedImagesResult.Value, cancellationToken);
+
+            var animalImageDto = new AnimalImageDto 
+            {
+                ImageData = resizedImagesResult.Value.ImageData,
+                ImageFormat = resizedImagesResult.Value.ImageFormat
+            };
+            //await _animalService.UpdateProfileImagesCache(animalImageDto, validationTokenResult.Value, cancellationToken);
+
             return uploadImageResult.IsSuccess ? Results.NoContent() : uploadImageResult.ToProblemDetails();
         }
     }
