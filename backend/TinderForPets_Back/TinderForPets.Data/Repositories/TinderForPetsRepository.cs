@@ -27,10 +27,11 @@ namespace TinderForPets.Data.Repositories
             return await _dbSet.FindAsync(id, cancellationToken);
         }
 
-        public async virtual Task UpdateAsync(T entity, CancellationToken cancellationToken)
+        public async virtual Task<T> UpdateAsync(T entity, CancellationToken cancellationToken)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
+            return entity;
         }
 
         public async virtual Task DeleteAsync(Guid id, CancellationToken cancellationToken)

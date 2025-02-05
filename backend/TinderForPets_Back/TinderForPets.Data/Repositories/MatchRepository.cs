@@ -50,7 +50,7 @@ namespace TinderForPets.Data.Repositories
             return profileIds;
         }
 
-        public async override Task UpdateAsync(Match entity, CancellationToken cancellationToken)
+        public async override Task<Match> UpdateAsync(Match entity, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

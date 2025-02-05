@@ -174,6 +174,13 @@ namespace TinderForPets.Application.Services
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                var cacheKey = "GET_ANIMAL_PROFILE_DETAILS_BY_OWNER" + ownerId.ToString();
+                var cachedProfile = await _cacheService.GetAsync<AnimalDetailsDto>(cacheKey);
+                if (cachedProfile is not null)
+                {
+                    return Result.Success<AnimalDetailsDto>(cachedProfile);
+                }
+
                 var animalProfileDetails = await _animalProfileRepository.GetAnimalProfileDetails(ownerId, cancellationToken);
 
                 var animalDetailsDto = new AnimalDetailsDto()
@@ -203,6 +210,7 @@ namespace TinderForPets.Application.Services
                         ImageFormat = i.ImageFormat
                     }).ToList(),
                 };
+                await _cacheService.SetAsync<AnimalDetailsDto>(cacheKey, animalDetailsDto, TimeSpan.FromHours(1));
                 return Result.Success<AnimalDetailsDto>(animalDetailsDto);
             }
             catch (OperationCanceledException)
@@ -282,28 +290,34 @@ namespace TinderForPets.Application.Services
         #endregion
 
         #region Update Actions
-        public async Task<Result<string>> UpdateAnimal(AnimalDto animalDto, CancellationToken cancellationToken)
+        public async Task<Result<AnimalDto>> UpdateAnimal(AnimalDto animalDto, CancellationToken cancellationToken)
         {
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var animalModel = AnimalModel.Create(animalDto.Id, animalDto.OwnerId, animalDto.AnimalTypeId, animalDto.BreedId);
                 var animalEntity = _mapper.Map<Animal>(animalModel);
-                await _animalRepository.UpdateAsync(animalEntity, cancellationToken);
-                
-                return Result.Success<string>($"Success. Pet with {animalDto.Id} id was successfully updated");
+                var updatedAnimal = await _animalRepository.UpdateAsync(animalEntity, cancellationToken);
+                var updateAnimalDto = new AnimalDto
+                {
+                    Id = updatedAnimal.Id,
+                    Breed = updatedAnimal.Breed.BreedName,
+                    AnimalType = updatedAnimal.Type.TypeName,
+                    OwnerId = updatedAnimal.UserId
+                };
+                return Result.Success<AnimalDto>(updateAnimalDto);
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<string>(OperationCancellationErrors.OperationCancelled);
+                return Result.Failure<AnimalDto>(OperationCancellationErrors.OperationCancelled);
             }
             catch (AnimalNotFoundException ex)
             {
-                return Result.Failure<string>(AnimalProfileErrors.NotUpdated(ex.Message));
+                return Result.Failure<AnimalDto>(AnimalProfileErrors.NotUpdated(ex.Message));
             }
         }
 
-        public async Task<Result<string>> UpdatePetProfile(AnimalProfileDto animalProfileDto, CancellationToken cancellationToken)
+        public async Task<Result<AnimalProfileDto>> UpdatePetProfile(AnimalProfileDto animalProfileDto, CancellationToken cancellationToken)
         {
             try
             {
@@ -325,18 +339,78 @@ namespace TinderForPets.Application.Services
                 animalProfileDto.Height,
                 animalProfileDto.Weight);
                 var animalProifleEntity = _mapper.Map<AnimalProfile>(animalProfileModel);
-                await _animalProfileRepository.UpdateAsync(animalProifleEntity, cancellationToken);
-                return Result.Success<string>($"Success. Pet with {animalProfileDto.AnimalId} id was successfully updated");
+                var updateAnimalProfile = await _animalProfileRepository.UpdateAsync(animalProifleEntity, cancellationToken);
+                var updateAnimalProfileDto = new AnimalProfileDto 
+                {
+                    Id = updateAnimalProfile.Id,
+                    Name = updateAnimalProfile.Name,
+                    Description = updateAnimalProfile.Description,
+                    Age = updateAnimalProfile.Age,
+                    DateOfBirth = updateAnimalProfile.DateOfBirth,
+                    Sex = updateAnimalProfile.Sex.SexName,
+                    IsSterilized = updateAnimalProfile.IsSterilized,
+                    IsVaccinated = updateAnimalProfile.IsVaccinated,
+                    City = updateAnimalProfile.City,
+                    Country = updateAnimalProfile.Country,
+                };
+                return Result.Success<AnimalProfileDto>(updateAnimalProfileDto);
             }
             catch (OperationCanceledException)
             {
-                return Result.Failure<string>(OperationCancellationErrors.OperationCancelled);
+                return Result.Failure<AnimalProfileDto>(OperationCancellationErrors.OperationCancelled);
             }
             catch (AnimalNotFoundException ex)
             {
-                return Result.Failure<string>(AnimalProfileErrors.NotUpdated(ex.Message));
+                return Result.Failure<AnimalProfileDto>(AnimalProfileErrors.NotUpdated(ex.Message));
             }
         }
+        public async Task UpdateProfileDetailsCache(AnimalDto animalDto, AnimalProfileDto animalProfileDto, CancellationToken cancellationToken) 
+        {
+            var cacheKey = "GET_ANIMAL_PROFILE_DETAILS_BY_OWNER" + animalDto.OwnerId.ToString();
+            var cachedData = await _cacheService.GetAsync<AnimalDetailsDto>(cacheKey);
+            if (cachedData is null) 
+            {
+                return;
+            }
+            var freshAnimalDetailsDto = new AnimalDetailsDto()
+            {
+                Animal = animalDto,
+                Profile = animalProfileDto,
+                Images = cachedData.Images.Select(i => new AnimalImageDto
+                {
+                    ImageData = i.ImageData,
+                    ImageFormat = i.ImageFormat
+                }).ToList(),
+            };
+            await _cacheService.SetAsync<AnimalDetailsDto>(cacheKey, freshAnimalDetailsDto, TimeSpan.FromHours(1));
+        }
+
+        public async Task UpdateProfileImagesCache(AnimalImageDto animalimageDto, Guid ownerId, CancellationToken cancellationToken)
+        {
+            var cacheKey = "GET_ANIMAL_PROFILE_DETAILS_BY_OWNER" + ownerId.ToString();
+            var cachedData = await _cacheService.GetAsync<AnimalDetailsDto>(cacheKey);
+            var freshAnimalDetailsDto = new AnimalDetailsDto()
+            {
+                Animal = cachedData.Animal,
+                Profile = cachedData.Profile,
+                Images = new List<AnimalImageDto>
+                {
+                    new AnimalImageDto{
+                        ImageData = animalimageDto.ImageData,
+                        ImageFormat = animalimageDto.ImageFormat
+                    }
+                }
+            };
+            await _cacheService.SetAsync<AnimalDetailsDto>(cacheKey, freshAnimalDetailsDto, TimeSpan.FromHours(1));
+        }
         #endregion
+
+        private static int CalculateAge(DateOnly birthDate) 
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var age = today.Year - birthDate.Year;
+            if (birthDate > today.AddYears(-age)) age--;
+            return age;
+        }
     }
 }
