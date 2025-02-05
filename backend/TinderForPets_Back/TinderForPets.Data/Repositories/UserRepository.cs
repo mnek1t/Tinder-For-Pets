@@ -77,7 +77,7 @@ namespace TinderForPets.Data.Repositories
                 throw new UserNotFoundException();
             }
         }
-        public override async Task UpdateAsync(UserAccount user, CancellationToken cancellationToken)
+        public override async Task<UserAccount> UpdateAsync(UserAccount user, CancellationToken cancellationToken)
         {
             var rowsUpdated = await _context.UserAccounts
                .Where(u => u.Id == user.Id)
@@ -90,6 +90,8 @@ namespace TinderForPets.Data.Repositories
             {
                 throw new UserNotFoundException();
             }
+
+            return user;
         }
     }
 }

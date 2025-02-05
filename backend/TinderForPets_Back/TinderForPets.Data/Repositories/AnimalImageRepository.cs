@@ -27,7 +27,7 @@ namespace TinderForPets.Data.Repositories
             return animalImage.Id;
         }
 
-        public override Task UpdateAsync(AnimalImage entity, CancellationToken cancellationToken)
+        public override Task<AnimalImage> UpdateAsync(AnimalImage entity, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

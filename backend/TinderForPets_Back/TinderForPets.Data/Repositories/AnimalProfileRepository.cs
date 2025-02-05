@@ -84,28 +84,28 @@ namespace TinderForPets.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public async override Task<int> UpdateAsync(AnimalProfile animalProfile, CancellationToken cancellationToken)
+        public async override Task<AnimalProfile> UpdateAsync(AnimalProfile animalProfile, CancellationToken cancellationToken)
         {
-            var rowsUpdated = await _context.AnimalProfiles
-            .Where(a => a.AnimalId == animalProfile.AnimalId)
-            .ExecuteUpdateAsync(animal =>
-                animal
-                .SetProperty(a => a.IsVaccinated, animalProfile.IsVaccinated)
-                .SetProperty(a => a.IsSterilized, animalProfile.IsSterilized)
-                .SetProperty(a => a.SexId, animalProfile.SexId)
-                .SetProperty(a => a.City, animalProfile.City)
-                .SetProperty(a => a.Country, animalProfile.Country)
-                .SetProperty(a => a.DateOfBirth, animalProfile.DateOfBirth)
-                .SetProperty(a => a.Description, animalProfile.Description)
-                .SetProperty(a => a.Height, animalProfile.Height)
-                .SetProperty(a => a.Weight, animalProfile.Weight)
-                .SetProperty(a => a.Latitude, animalProfile.Latitude)
-                .SetProperty(a => a.Longitude, animalProfile.Longitude)
-                .SetProperty(a => a.Name, animalProfile.Name),
-                cancellationToken
-            );
+            var existingAnimalProfile = await _context.AnimalProfiles.Include(ap => ap.Sex).FirstOrDefaultAsync(ap => ap.AnimalId == animalProfile.AnimalId, cancellationToken);
 
-            return rowsUpdated == 0 ? throw new AnimalNotFoundException() : rowsUpdated;
+            if (existingAnimalProfile == null)
+                throw new AnimalNotFoundException();
+
+            existingAnimalProfile.IsVaccinated = animalProfile.IsVaccinated;
+            existingAnimalProfile.IsSterilized = animalProfile.IsSterilized;
+            existingAnimalProfile.SexId = animalProfile.SexId;
+            existingAnimalProfile.City = animalProfile.City;
+            existingAnimalProfile.Country = animalProfile.Country;
+            existingAnimalProfile.DateOfBirth = animalProfile.DateOfBirth;
+            existingAnimalProfile.Description = animalProfile.Description;
+            existingAnimalProfile.Height = animalProfile.Height;
+            existingAnimalProfile.Weight = animalProfile.Weight;
+            existingAnimalProfile.Latitude = animalProfile.Latitude;
+            existingAnimalProfile.Longitude = animalProfile.Longitude;
+            existingAnimalProfile.Name = animalProfile.Name;
+
+            await _context.SaveChangesAsync(cancellationToken); 
+            return existingAnimalProfile;
 
         }
     }

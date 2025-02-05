@@ -15,20 +15,40 @@ namespace TinderForPets.Data.Repositories
             await _context.SaveChangesAsync();
             return animal.Id;
         }
+        //public async override Task<Animal> UpdateAsync(Animal animalEntity, CancellationToken cancellationToken)
+        //{
+        //    var existingAnimal = await _context.Animals
+        //        .Include(a => animalEntity.Breed)
+        //        .Include(a => animalEntity.Type)
+        //        .FirstOrDefaultAsync(a => a.Id == animalEntity.Id && a.UserId == animalEntity.UserId, cancellationToken);
 
-        public async override Task<int> UpdateAsync(Animal animalEntity, CancellationToken cancellationToken)
+        //    if (existingAnimal == null)
+        //    {
+        //        throw new AnimalNotFoundException();
+        //    }
+
+        //    existingAnimal.AnimalTypeId = animalEntity.AnimalTypeId;
+        //    existingAnimal.BreedId = animalEntity.BreedId;
+        //    await _context.SaveChangesAsync(cancellationToken);
+
+        //    return existingAnimal;
+
+        //}
+        public async override Task<Animal> UpdateAsync(Animal animalEntity, CancellationToken cancellationToken)
         {
-            var rowsUpdated = await _context.Animals
-            .Where(a => a.Id == animalEntity.Id && a.UserId == animalEntity.UserId)
-            .ExecuteUpdateAsync(animal =>
-                animal
-                .SetProperty(a => a.AnimalTypeId, animalEntity.AnimalTypeId)
-                .SetProperty(a => a.BreedId, animalEntity.BreedId),
-                cancellationToken
-            );
+            var existingAnimal = await _context.Animals
+                .Include(ap => ap.Breed)
+                .Include(a => a.Type)
+                .FirstOrDefaultAsync(a => a.Id == animalEntity.Id && a.UserId == animalEntity.UserId, cancellationToken);
 
-            return rowsUpdated == 0 ? throw new AnimalNotFoundException() : rowsUpdated;
+            if (existingAnimal == null)
+                throw new AnimalNotFoundException();
 
+            existingAnimal.AnimalTypeId = animalEntity.AnimalTypeId;
+            existingAnimal.BreedId = animalEntity.BreedId;
+
+            await _context.SaveChangesAsync(cancellationToken);
+            return existingAnimal;
         }
         public async Task<Animal> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
         {
