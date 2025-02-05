@@ -257,7 +257,7 @@ namespace TinderForPets.API.Controllers
                 ImageData = resizedImagesResult.Value.ImageData,
                 ImageFormat = resizedImagesResult.Value.ImageFormat
             };
-            //await _animalService.UpdateProfileImagesCache(animalImageDto, validationTokenResult.Value, cancellationToken);
+            await _animalService.UpdateProfileImagesCache(animalImageDto, validationTokenResult.Value, cancellationToken);
 
             return uploadImageResult.IsSuccess ? Results.NoContent() : uploadImageResult.ToProblemDetails();
         }
