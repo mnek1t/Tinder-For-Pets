@@ -5,6 +5,7 @@ using TinderForPets.Application.DTOs;
 using TinderForPets.Application.Interfaces;
 using TinderForPets.Application.Services;
 using TinderForPets.Core;
+using TinderForPets.Core.Models;
 using TinderForPets.Data.Entities;
 using TinderForPets.Data.Exceptions;
 using TinderForPets.Data.Interfaces;
@@ -14,7 +15,7 @@ namespace TinderForPets.UnitTests
 {
     public class AnimalServiceTest
     {
-        private readonly Mock<IAnimalProfileRepository> _animalProfileRepositroyMock;
+        private readonly Mock<IAnimalProfileRepository> _animalProfileRepositoryMock;
         private readonly Mock<IAnimalRepository> _animalRepositoryMock;
         private readonly Mock<IAnimalTypeRepository> _animalTypeRepositoryMock;
         private readonly Mock<IBreedRepository> _breedRepositoryMock;
@@ -25,7 +26,7 @@ namespace TinderForPets.UnitTests
         private readonly AnimalService _animalService;
         public AnimalServiceTest()
         {
-            _animalProfileRepositroyMock = new Mock<IAnimalProfileRepository>();
+            _animalProfileRepositoryMock = new Mock<IAnimalProfileRepository>();
             _animalRepositoryMock = new Mock<IAnimalRepository>();
             _animalTypeRepositoryMock = new Mock<IAnimalTypeRepository>();
             _breedRepositoryMock = new Mock<IBreedRepository>();
@@ -35,7 +36,7 @@ namespace TinderForPets.UnitTests
             _mapperMock = new Mock<IMapper>();
 
             _animalService = new AnimalService(
-                _animalProfileRepositroyMock.Object,
+                _animalProfileRepositoryMock.Object,
                 _animalRepositoryMock.Object,
                 _cacheServiceMock.Object,
                 _animalTypeRepositoryMock.Object,
@@ -427,12 +428,62 @@ namespace TinderForPets.UnitTests
         }
 
         [Fact]
+        public async Task GetAnimalProfileDetails_ReturnsDataFromCache()
+        {
+            var ownerId = Guid.NewGuid();
+            var animalProfileId = Guid.NewGuid();
+            var cacheKey = "GET_ANIMAL_PROFILE_DETAILS_BY_OWNER" + ownerId.ToString();
+            var mockCachedDataDto = new AnimalDetailsDto()
+            {
+                Animal = new AnimalDto()
+                {
+                    Id = Guid.NewGuid(),
+                    Breed = "test",
+                    AnimalType = "test"
+                },
+                Profile = new AnimalProfileDto
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "test",
+                    Description = "test",
+                    Age = 20,
+                    DateOfBirth = DateOnly.Parse("2004-10-28"),
+                    Sex = "Male",
+                    IsSterilized = true,
+                    IsVaccinated = true,
+                    City = "test",
+                    Country = "test",
+                },
+                Images = new List<AnimalImageDto>()
+                { new AnimalImageDto
+                    {
+                        ImageData = new byte[1],
+                        ImageFormat = "imageFormat",
+                    } 
+                },
+            };
+
+            _cacheServiceMock.Setup(service => service.GetAsync<AnimalDetailsDto>(cacheKey))
+                .ReturnsAsync(mockCachedDataDto);
+
+            var result = await _animalService.GetAnimalProfileDetails(ownerId, CancellationToken.None);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeEquivalentTo(mockCachedDataDto);
+
+            _cacheServiceMock.Verify(service => service.GetAsync<AnimalDetailsDto>(cacheKey), Times.Once);
+
+            _animalProfileRepositoryMock.Verify(repo => repo.GetAnimalProfileDetails(ownerId, CancellationToken.None), Times.Never);
+            _cacheServiceMock.Verify(service => service.SetAsync(cacheKey, It.IsAny<AnimalDetailsDto>(), TimeSpan.FromHours(1)), Times.Never);
+
+        }
+        [Fact]
         public async Task GetAnimalProfileDetails_ReturnsDataNotFoundFromDatabase()
         {
             var ownerId = Guid.NewGuid();
             var cancellationToken = CancellationToken.None;
 
-            _animalProfileRepositroyMock.Setup(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken))
+            _animalProfileRepositoryMock.Setup(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken))
                 .ThrowsAsync(new AnimalNotFoundException());
 
             var result = await _animalService.GetAnimalProfileDetails(ownerId, cancellationToken);
@@ -442,7 +493,7 @@ namespace TinderForPets.UnitTests
             result.Error.Description.Should().Be(AnimalProfileErrors.NotFound.Description);
 
             //_cacheServiceMock.Verify(service => service.GetAsync<AnimalImageDto>(cacheKey), Times.Once);
-            _animalProfileRepositroyMock.Verify(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken), Times.Once);
+            _animalProfileRepositoryMock.Verify(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken), Times.Once);
             //_cacheServiceMock.Verify(service => service.SetAsync(cacheKey, It.IsAny<AnimalImageDto>(), TimeSpan.FromMinutes(5)), Times.Never);
         }
 
@@ -451,7 +502,7 @@ namespace TinderForPets.UnitTests
         {
             var cancellationToken = CancellationToken.None;
             var ownerId = Guid.NewGuid();
-            //var cacheKey = $"GET_ANIMAL_IMAGE {animalProfileId}";
+            var cacheKey = "GET_ANIMAL_PROFILE_DETAILS_BY_OWNER" + ownerId.ToString();
 
             var mockDatabaseData = new AnimalProfile
             {
@@ -459,7 +510,7 @@ namespace TinderForPets.UnitTests
                 Name = "Test Animal Profile Name",
                 Description = "Dummy description",
                 Age = 20,
-                DateOfBirth = DateOnly.Parse("28-10-2004"),
+                DateOfBirth = DateOnly.Parse("2004-10-28"),
                 Sex = new Sex(1, "Male"),
                 IsSterilized = true,
                 IsVaccinated = true,
@@ -496,27 +547,289 @@ namespace TinderForPets.UnitTests
                 }).ToList(),
             };
 
-            //_cacheServiceMock.Setup(service => service.GetAsync<AnimalImageDto?>(cacheKey))
-            //    .ReturnsAsync((AnimalImageDto?)null);
+            _cacheServiceMock.Setup(service => service.GetAsync<AnimalDetailsDto?>(cacheKey))
+                .ReturnsAsync((AnimalDetailsDto?)null);
 
-            _animalProfileRepositroyMock.Setup(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken))
+            _animalProfileRepositoryMock.Setup(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken))
                 .ReturnsAsync(mockDatabaseData);
 
-            //_cacheServiceMock.Setup(service => service.SetAsync<AnimalImageDto>(cacheKey, mockAnimalImageDto, TimeSpan.FromMinutes(5)))
-            //    .Returns(Task.CompletedTask);
+            _cacheServiceMock.Setup(service => service.SetAsync<AnimalDetailsDto>(cacheKey, mockAnimalProfileDto, TimeSpan.FromHours(1)))
+                .Returns(Task.CompletedTask);
 
             var result = await _animalService.GetAnimalProfileDetails(ownerId, cancellationToken);
 
             result.IsSuccess.Should().BeTrue();
             result.Value.Should().BeEquivalentTo(mockAnimalProfileDto);
 
-            //_cacheServiceMock.Verify(service => service.GetAsync<AnimalImageDto>(cacheKey), Times.Once);
-            _animalProfileRepositroyMock.Verify(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken), Times.Once);
-            //_cacheServiceMock.Verify(service => service.SetAsync(
-            //    cacheKey,
-            //    It.Is<AnimalImageDto>(dto => dto.ImageData == mockAnimalImageDto.ImageData && dto.ImageFormat == mockAnimalImageDto.ImageFormat),
-            //    TimeSpan.FromMinutes(5)
-            //), Times.Once);
+            _cacheServiceMock.Verify(service => service.GetAsync<AnimalDetailsDto>(cacheKey), Times.Once);
+            _animalProfileRepositoryMock.Verify(repo => repo.GetAnimalProfileDetails(ownerId, cancellationToken), Times.Once);
+            _cacheServiceMock.Verify(service => service.SetAsync(
+                cacheKey,
+                It.Is<AnimalDetailsDto>(dto => dto.Animal.Id == mockAnimalProfileDto.Animal.Id),
+                TimeSpan.FromHours(1)
+            ), Times.Once);
+        }
+        #endregion
+        #region CreateAnimal
+        [Fact]
+        public async Task CreateAnimal_ReturnsOperationCanceledFailure()
+        {
+            var cts = new CancellationTokenSource();
+            cts.Cancel();
+            var result = await _animalService.CreateAnimalAsync(It.IsAny<AnimalDto>(), cts.Token);
+            cts.Dispose();
+    
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(OperationCancellationErrors.OperationCancelled.Code);
+            result.Error.Description.Should().Be(OperationCancellationErrors.OperationCancelled.Description);
+        }
+
+        [Fact]
+        public async Task CreateAnimal_ReturnAnimalIsNotCreatedFailure() 
+        {
+            var animalDto = new AnimalDto()
+            {
+                Id = Guid.NewGuid(),
+                OwnerId = Guid.NewGuid(),
+                BreedId = 1,
+                AnimalTypeId = 1,
+            };
+
+            _mapperMock.Setup(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()))
+                .Returns(It.IsAny<Animal>());
+
+            _animalRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Animal>(), CancellationToken.None)).ReturnsAsync(Guid.Empty);
+
+            var result = await _animalService.CreateAnimalAsync(animalDto, CancellationToken.None);
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(AnimalProfileErrors.NotCreatedAnimal.Code);
+            result.Error.Description.Should().Be(AnimalProfileErrors.NotCreatedAnimal.Description);
+
+            _mapperMock.Verify(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()), Times.Once);
+            _animalRepositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<Animal>(), CancellationToken.None), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAnimal_ReturnAnimalCreatedSuccess()
+        {
+            var animalDto = new AnimalDto()
+            {
+                Id = Guid.NewGuid(),
+                OwnerId = Guid.NewGuid(),
+                BreedId = 1,
+                AnimalTypeId = 1,
+            };
+            var createdAnimalId = Guid.NewGuid();
+            _mapperMock.Setup(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()))
+                .Returns(It.IsAny<Animal>());
+
+            _animalRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Animal>(), CancellationToken.None)).ReturnsAsync(createdAnimalId);
+
+            var result = await _animalService.CreateAnimalAsync(animalDto, CancellationToken.None);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().Be(createdAnimalId);
+
+            _mapperMock.Verify(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()), Times.Once);
+            _animalRepositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<Animal>(), CancellationToken.None), Times.Once);
+        }
+        #endregion
+        #region CreateAnimalProfile
+        [Fact]
+        public async Task CreatePetProfile_ReturnsOperationCanceledFailure()
+        {
+            var cts = new CancellationTokenSource();
+            cts.Cancel();
+            var result = await _animalService.CreatePetProfile(It.IsAny<AnimalProfileDto>(), cts.Token);
+            cts.Dispose();
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(OperationCancellationErrors.OperationCancelled.Code);
+            result.Error.Description.Should().Be(OperationCancellationErrors.OperationCancelled.Description);
+        }
+
+        [Fact]
+        public async Task CreatePetProfile_ReturnAnimalIsNotCreatedFailure()
+        {
+            var animalProfileDto = new AnimalProfileDto()
+            {
+                Id = Guid.NewGuid()
+            };
+
+            _mapperMock.Setup(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()))
+                .Returns(It.IsAny<AnimalProfile>());
+
+            _animalProfileRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<AnimalProfile>(), CancellationToken.None))
+                .ReturnsAsync(Guid.Empty);
+
+            var result = await _animalService.CreatePetProfile(animalProfileDto, CancellationToken.None);
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(AnimalProfileErrors.NotCreatedProfile.Code);
+            result.Error.Description.Should().Be(AnimalProfileErrors.NotCreatedProfile.Description);
+
+            _mapperMock.Verify(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()), Times.Once);
+            _animalProfileRepositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<AnimalProfile>(), CancellationToken.None), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreatePetProfile_ReturnAnimalCreatedSuccess()
+        {
+            var animalProfileDto = new AnimalProfileDto()
+            {
+                Id = Guid.NewGuid()
+            };
+            var createdAnimalProfileId = Guid.NewGuid();
+            _mapperMock.Setup(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()))
+                .Returns(It.IsAny<AnimalProfile>());
+
+            _animalProfileRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<AnimalProfile>(), CancellationToken.None))
+                .ReturnsAsync(createdAnimalProfileId);
+
+            var result = await _animalService.CreatePetProfile(animalProfileDto, CancellationToken.None);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().Be(createdAnimalProfileId);
+
+            _mapperMock.Verify(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()), Times.Once);
+            _animalProfileRepositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<AnimalProfile>(), CancellationToken.None), Times.Once);
+        }
+        #endregion
+        #region UpdateAnimal
+        [Fact]
+        public async Task UpdateAnimal_ReturnsOperationCanceledFailure()
+        {
+            var cts = new CancellationTokenSource();
+            cts.Cancel();
+            var result = await _animalService.UpdateAnimal(It.IsAny<AnimalDto>(), cts.Token);
+            cts.Dispose();
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(OperationCancellationErrors.OperationCancelled.Code);
+            result.Error.Description.Should().Be(OperationCancellationErrors.OperationCancelled.Description);
+        }
+
+        [Fact]
+        public async Task UpdateAnimal_ReturnsDataNotFoundFromDatabase()
+        {
+            var animalDto =new AnimalDto 
+            {
+                Id = Guid.NewGuid()
+            };
+            var cancellationToken = CancellationToken.None;
+
+            _mapperMock.Setup(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()))
+                .Returns(It.IsAny<Animal>());
+
+            _animalRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<Animal>(), cancellationToken))
+                .ThrowsAsync(new AnimalNotFoundException());
+
+            var result = await _animalService.UpdateAnimal(animalDto, cancellationToken);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(AnimalProfileErrors.NotUpdated.Code);
+            result.Error.Description.Should().Be(AnimalProfileErrors.NotUpdated.Description);
+
+            _mapperMock.Verify(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()), Times.Once);
+            _animalRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Animal>(), cancellationToken), Times.Once);
+        }
+        [Fact]
+        public async Task UpdateAnimal_ReturnsDataUpdatedSuccess()
+        {
+            var animalDto = new AnimalDto
+            {
+                Id = Guid.NewGuid()
+            };
+
+            var mockAnimal = new Animal
+            {
+                Id = Guid.NewGuid(),
+                Breed = new Breed(1, "test", 1),
+                Type = new AnimalType(1, "test"),
+                UserId = Guid.NewGuid(),
+            };
+            var cancellationToken = CancellationToken.None;
+
+            _mapperMock.Setup(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()))
+                .Returns(It.IsAny<Animal>());
+
+            _animalRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<Animal>(), cancellationToken))
+                .ReturnsAsync(mockAnimal);
+
+            var result = await _animalService.UpdateAnimal(animalDto, cancellationToken);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Breed.Should().Be(mockAnimal.Breed.BreedName);
+            result.Value.AnimalType.Should().Be(mockAnimal.Type.TypeName);
+
+
+            _mapperMock.Verify(mapper => mapper.Map<Animal>(It.IsAny<AnimalModel>()), Times.Once);
+            _animalRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Animal>(), cancellationToken), Times.Once);
+        }
+        #endregion
+        #region UpdatePetProfile
+        [Fact]
+        public async Task UpdatePetProfile_ReturnsOperationCanceledFailure()
+        {
+            var cts = new CancellationTokenSource();
+            cts.Cancel();
+            var result = await _animalService.UpdatePetProfile(It.IsAny<AnimalProfileDto>(), cts.Token);
+            cts.Dispose();
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(OperationCancellationErrors.OperationCancelled.Code);
+            result.Error.Description.Should().Be(OperationCancellationErrors.OperationCancelled.Description);
+        }
+
+        [Fact]
+        public async Task UpdatePetProfile_ReturnsDataNotFoundFromDatabase()
+        {
+            var animalProfileDto = new AnimalProfileDto
+            {
+                Id = Guid.NewGuid()
+            };
+            var cancellationToken = CancellationToken.None;
+
+            _mapperMock.Setup(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()))
+                .Returns(It.IsAny<AnimalProfile>());
+
+            _animalProfileRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<AnimalProfile>(), cancellationToken))
+                .ThrowsAsync(new AnimalNotFoundException());
+
+            var result = await _animalService.UpdatePetProfile(animalProfileDto, cancellationToken);
+
+            result.IsFailure.Should().BeTrue();
+            result.Error.Code.Should().Be(AnimalProfileErrors.NotUpdated.Code);
+            result.Error.Description.Should().Be(AnimalProfileErrors.NotUpdated.Description);
+
+            _mapperMock.Verify(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()), Times.Once);
+            _animalProfileRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<AnimalProfile>(), cancellationToken), Times.Once);
+        }
+        [Fact]
+        public async Task UpdatePetProfile_ReturnsDataUpdatedSuccess()
+        {
+            var animaProfilelDto = new AnimalProfileDto
+            {
+                Id = Guid.NewGuid()
+            };
+
+            var mockAnimalProfile = new AnimalProfile
+            {
+                Id = Guid.NewGuid(),
+                Sex = new Sex(1, "male")
+            };
+            var cancellationToken = CancellationToken.None;
+
+            _mapperMock.Setup(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()))
+                .Returns(It.IsAny<AnimalProfile>());
+
+            _animalProfileRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<AnimalProfile>(), cancellationToken))
+                .ReturnsAsync(mockAnimalProfile);
+
+            var result = await _animalService.UpdatePetProfile(animaProfilelDto, cancellationToken);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Sex.Should().Be(mockAnimalProfile.Sex.SexName);
+
+            _mapperMock.Verify(mapper => mapper.Map<AnimalProfile>(It.IsAny<AnimalProfileModel>()), Times.Once);
+            _animalProfileRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<AnimalProfile>(), cancellationToken), Times.Once);
         }
         #endregion
     }
