@@ -311,9 +311,9 @@ namespace TinderForPets.Application.Services
             {
                 return Result.Failure<AnimalDto>(OperationCancellationErrors.OperationCancelled);
             }
-            catch (AnimalNotFoundException ex)
+            catch (AnimalNotFoundException)
             {
-                return Result.Failure<AnimalDto>(AnimalProfileErrors.NotUpdated(ex.Message));
+                return Result.Failure<AnimalDto>(AnimalProfileErrors.NotUpdated);
             }
         }
 
@@ -359,9 +359,9 @@ namespace TinderForPets.Application.Services
             {
                 return Result.Failure<AnimalProfileDto>(OperationCancellationErrors.OperationCancelled);
             }
-            catch (AnimalNotFoundException ex)
+            catch (AnimalNotFoundException)
             {
-                return Result.Failure<AnimalProfileDto>(AnimalProfileErrors.NotUpdated(ex.Message));
+                return Result.Failure<AnimalProfileDto>(AnimalProfileErrors.NotUpdated);
             }
         }
         public async Task UpdateProfileDetailsCache(AnimalDto animalDto, AnimalProfileDto animalProfileDto, CancellationToken cancellationToken) 
@@ -405,12 +405,12 @@ namespace TinderForPets.Application.Services
         }
         #endregion
 
-        private static int CalculateAge(DateOnly birthDate) 
-        {
-            var today = DateOnly.FromDateTime(DateTime.Today);
-            var age = today.Year - birthDate.Year;
-            if (birthDate > today.AddYears(-age)) age--;
-            return age;
-        }
+        //private static int CalculateAge(DateOnly birthDate) 
+        //{
+        //    var today = DateOnly.FromDateTime(DateTime.Today);
+        //    var age = today.Year - birthDate.Year;
+        //    if (birthDate > today.AddYears(-age)) age--;
+        //    return age;
+        //}
     }
 }
