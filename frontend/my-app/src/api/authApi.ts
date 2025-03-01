@@ -23,7 +23,7 @@ export interface ConfirmAccountRequest {
 
 export async function login(loginCredentials: LoginCredentials) {
     try {
-        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/login', loginCredentials, { withCredentials: true });
+        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/login', loginCredentials);
         if (response.status === 200) {
             return response.data;
         } else {
@@ -31,6 +31,19 @@ export async function login(loginCredentials: LoginCredentials) {
         }
     } catch (error: any) {
         handleError(error, "Error during login:");
+    }
+}
+
+export async function googleLogin(googleToken: string) {
+    try {
+        const response : AxiosResponse = await axios.post('https://localhost:5295/api/User/google-login', googleToken);
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            throw new Error('Google Login failed.');
+        }
+    } catch (error: any) {
+        handleError(error, "Error during Google login:");
     }
 }
 
@@ -50,7 +63,7 @@ export async function logout() {
 
 export async function register(registerCredentials: RegisterCredentials) {
     try {
-        const response : AxiosResponse = await axios.post('https://localhost:5295/api/user/register', registerCredentials,  { withCredentials: true });
+        const response : AxiosResponse = await axios.post('https://localhost:5295/api/user/register', registerCredentials);
         if (response.status === 200) {
             console.log(response.data);
             return response.data;

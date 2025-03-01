@@ -15,8 +15,8 @@ namespace TinderForPets.Core
         public static readonly Error ImageIsNotFound = new(
        "Animal.ImageIsNotFound", "The iamge of animal profile was not found");
 
-        public static Error NotUpdated(string message) => new(
-        "Animal.NotUpdated", message);
+        public static readonly Error NotUpdated = new(
+        "Animal.NotUpdated", "The provided pet was not updated");
 
         public static Error BreedNotFound(int id) => new(
         "Breed.NotFoundById", $"Breed were not found for this animal type id: {id}");
