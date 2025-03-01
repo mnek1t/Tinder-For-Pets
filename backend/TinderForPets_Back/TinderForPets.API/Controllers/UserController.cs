@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using TinderForPets.API.Contracts.Users;
 using TinderForPets.API.DTOs;
 using TinderForPets.API.Extensions;
 using TinderForPets.Application.Services;
+using TinderForPets.Core.Models;
 using TinderForPets.Infrastructure;
 
 namespace TinderForPets.API.Controllers
@@ -31,13 +34,13 @@ namespace TinderForPets.API.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _userService.Register(request.UserName, request.Email, request.Password, cancellationToken);
-            if (result.IsFailure) 
+            if (result.IsFailure)
             {
                 return result.ToProblemDetails();
             }
 
             var confirmAccountTokenResult = _userService.GenerateConfirmAccountToken(result.Value);
-            if (confirmAccountTokenResult.IsFailure) 
+            if (confirmAccountTokenResult.IsFailure)
             {
                 return confirmAccountTokenResult.ToProblemDetails();
             }
@@ -57,7 +60,7 @@ namespace TinderForPets.API.Controllers
             {
                 return Results.Problem(statusCode: 500, title: ex.Message);
             }
-            
+
             return result.IsSuccess ? Results.Ok() : result.ToProblemDetails();
         }
 
@@ -68,7 +71,7 @@ namespace TinderForPets.API.Controllers
             CancellationToken cancellationToken)
         {
             var confirmAccountResult = await _userService.ConfirmAccount(request.Token, cancellationToken);
-            if (confirmAccountResult.IsFailure) 
+            if (confirmAccountResult.IsFailure)
             {
                 return confirmAccountResult.ToProblemDetails();
             }
@@ -99,6 +102,29 @@ namespace TinderForPets.API.Controllers
             var jwtToken = result.Value;
             SetAuthTokenInCookies(HttpContext, jwtToken);
 
+            return Results.Ok(jwtToken);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("google-login")]
+        public async Task<IResult> GoogleLogin([FromBody] GoogleLoginRequest request, CancellationToken cancellationToken)  
+        {
+            var googleAuthOptions = HttpContext.RequestServices.GetRequiredService<IOptions<GoogleAuthOptions>>().Value;
+
+            var settings = new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { googleAuthOptions.ClientId }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(request.GoogleToken, settings);
+            var result = await _userService.FindUser(payload.Email, cancellationToken);
+            if (result.IsFailure)
+            {
+                return result.ToProblemDetails();
+            }
+            var userId = result.Value.Id;
+            var jwtToken = _jwtProvider.GenerateToken(userId);
+            SetAuthTokenInCookies(HttpContext, jwtToken);       
             return Results.Ok(jwtToken);
         }
 
